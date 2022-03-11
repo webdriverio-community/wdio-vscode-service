@@ -1,0 +1,43 @@
+{
+  "extends": [
+    "airbnb-base-typescript",
+    "prettier",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:import/errors",
+    "plugin:import/typescript",
+    "plugin:import/warnings",
+    "plugin:node/recommended",
+    "plugin:wdio/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "import", "node", "wdio"],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "import/prefer-default-export": "off",
+    "node/no-unpublished-import": "error",
+    "node/no-missing-import": "off", // duped by import
+    "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }],
+    "import/no-extraneous-dependencies": "off",
+    "node/no-extraneous-import": "off",
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["capabilities"] }],
+    "class-methods-use-this": ["error", { "exceptMethods": ["afterTest"] }]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "node": {
+      "tryExtensions": [".js", ".json", ".node", ".ts"]
+    },
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts"]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+name: Manual NPM Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: "Release type - major, minor or patch"
+        required: true
+        type: choice
+        default: "patch"
+        options:
+          - patch
+          - minor
+          - major
+      distTag:
+        description: 'NPM tag (e.g. use "next" to release a test version)'
+        required: true
+        default: 'latest'
+
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.25.0
+          run_install: true
+      - name: NPM Setup
+        run: |
+          pnpm set registry "https://registry.npmjs.org/"
+          pnpm set //registry.npmjs.org/:_authToken $NPM_TOKEN
+          pnpm whoami
+      - name: Git Setup
+        run: |
+          git config --global user.email "christian+webdriverio-release@saucelabs.com"
+          git config --global user.name "WebdriverIO Release Bot"
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
+      - name: Release
+        run: pnpm run release:ci -- ${{github.event.inputs.releaseType}}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
