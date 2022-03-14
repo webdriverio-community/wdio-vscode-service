@@ -1,5 +1,5 @@
-import VSCodeLauncher from './launcher';
+import VSCodeServiceLauncher from './launcher'
 import VSCodeWorkerService from './service';
 
 export default VSCodeWorkerService;
-export const launcher = VSCodeLauncher;
+export const launcher = VSCodeServiceLauncher;

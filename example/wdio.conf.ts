@@ -1,3 +1,5 @@
+import VSCodeService, { launcher } from "../"
+
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -160,8 +162,16 @@ export const config: WebdriverIO.Config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ['spec'],
-
-
+    services: [[
+        'vscode',
+        {
+            extensionPath: '/Users/christianbromann/Sites/Stateful/projects/vscode-marquee',
+            vscode: { version: '1.61.0' },
+            userSettings: {
+                'marquee.configuration.colorScheme': { r: 1, b: 22, g: 111, a: .5 }
+            }
+        }
+    ]],
     
     //
     // Options to be passed to Mocha.
