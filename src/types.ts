@@ -19,3 +19,14 @@ export interface ServiceCapabilities extends Capabilities.Capabilities {
         vscodePath: string
     }
 }
+
+export type Locators = Record<string | symbol, string | Function>
+/**
+ * Available types of notifications
+ */
+export enum NotificationType {
+    Info = 'info',
+    Warning = 'warning',
+    Error = 'error',
+    Any = 'any'
+}

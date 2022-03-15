@@ -11,11 +11,18 @@ import type { ServiceOptions } from './types'
 
 const log = logger('wdio-vscode-service')
 
+interface UpdatedCapabilities extends Capabilities.Capabilities {
+  'wdio:vscodeService': {
+    path: string
+    version: string
+  }
+}
+
 export default class VSCodeWorkerService implements Services.ServiceInstance {
   constructor (private _options: ServiceOptions) {
   }
 
-  async beforeSession(_: Options.Testrunner, capabilities: Capabilities.Capabilities) {
+  async beforeSession(_: Options.Testrunner, capabilities: UpdatedCapabilities) {
     const storagePath = await tmp.dir()
     const userSettings = path.join(storagePath.path, 'settings', 'User')
     
@@ -36,7 +43,6 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     
     capabilities.browserName = 'chrome';
     capabilities['goog:chromeOptions'] = {
-      // @ts-expect-error
       binary: capabilities['wdio:vscodeService'].path,
       args: [
         ...VSCODE_APPLICATION_ARGS,
@@ -47,7 +53,10 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     };
   }
 
-  before (_: never, __: never, browser: WebdriverIO.Browser) {
-    return Workbench.window.waitForExist()
+  async before (capabilities: UpdatedCapabilities, __: never, browser: WebdriverIO.Browser) {
+    const locators = await import(`./locators/${capabilities['wdio:vscodeService'].version}`)
+    const workbenchPO = new Workbench(locators.workbench.Workbench)
+    browser.addCommand('getWorkbench', () => workbenchPO)
+    return workbenchPO.elem.waitForExist()
   }
 }
