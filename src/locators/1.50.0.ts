@@ -7,4 +7,4 @@ export const editor = {
         ...editorImport.EditorView,
         closeTab: '.codicon-close'
     }
-}
+} as const

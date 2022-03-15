@@ -7,4 +7,4 @@ export const bottomBar = {
         ...bottomBarImport.TerminalView,
         elem: '.terminal-outer-container'
     }
-}
+} as const

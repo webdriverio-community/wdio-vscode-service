@@ -8,4 +8,4 @@ export const workbench = {
         closeBtn: '.codicon-close',
         clear: '.codicon-clear-all'
     }
-}
+} as const

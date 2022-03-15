@@ -7,4 +7,4 @@ export const bottomBar = {
         ...bottomBarImport.TerminalView,
         newCommand: 'terminal: create new terminal'
     }
-}
+} as const

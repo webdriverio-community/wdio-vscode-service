@@ -11,4 +11,4 @@ export const sideBar = {
         ...sideBarImport.ScmView,
         providerHeader: `.div[class*='pane-header scm-provider']`
     }
-}
+} as const

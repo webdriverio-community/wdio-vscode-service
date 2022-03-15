@@ -8,4 +8,4 @@ export const editor = {
         settingsEditor: './/div[@data-editor-id=\'workbench.editor.settings2\']',
         webView: './/div[@data-editor-id=\'WebviewEditor\']'
     }
-}
+} as const
