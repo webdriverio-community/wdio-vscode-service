@@ -111,14 +111,14 @@ export default class Workbench extends BasePage {
     //     return QuickOpenBox.create();
     //  }
 
-    // /**
-    //  * Open the command prompt, type in a command and execute
-    //  * @param command text of the command to be executed
-    //  * @returns Promise resolving when the command prompt is confirmed
-    //  */
-    // async executeCommand(command: string): Promise<void> {
+    /**
+     * Open the command prompt, type in a command and execute
+     * @param command text of the command to be executed
+     * @returns Promise resolving when the command prompt is confirmed
+     */
+    async executeCommand(command: string): Promise<void> {
     //     const prompt = await this.openCommandPrompt();
     //     await prompt.setText(`>${command}`);
     //     await prompt.confirm();
-    // }
+    }
 }
