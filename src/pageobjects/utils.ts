@@ -30,8 +30,18 @@ type AllLocatorType = typeof allLocatorsTypes
 export function PluginDecorator<T extends { new(...args: any[]): any }>(locators: Locators) {
     return (ctor: T) => {
         for (const [prop, locator] of Object.entries(locators)) {
-            ctor.prototype.__defineGetter__(`${prop}$`, () => locator)
-            ctor.prototype.__defineGetter__(`${prop}$$`, () => locator)
+            ctor.prototype.__defineGetter__(`${prop}$`, function (this: BasePage) {
+                if (typeof locator === 'function') {
+                    return (...args: string[]) => this.elem.$(locator(...args))
+                }
+                return this.elem.$(locator)
+            })
+            ctor.prototype.__defineGetter__(`${prop}$$`, function (this: BasePage) {
+                if (typeof locator === 'function') {
+                    return (...args: string[]) => this.elem.$$(locator(...args))
+                }
+                return this.elem.$$(locator)
+            })
         }
         
         ctor.prototype.__defineGetter__(`locatorMap`, () => allLocatorsTypes)
@@ -49,7 +59,8 @@ export function PluginDecorator<T extends { new(...args: any[]): any }>(locators
 export class BasePage {
     constructor (
         private _locators: Locators,
-        private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>
+        private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
+        private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
     ) {}
 
     get elem () {
@@ -63,6 +74,15 @@ export class BasePage {
         }
 
         return browser.$('html')
+    }
+
+    get parent () {
+        if (this._parentElem) {
+            return typeof this._parentElem === 'string'
+                ? browser.$(this._parentElem)
+                : this._parentElem
+        }
+        return
     }
 
     /**

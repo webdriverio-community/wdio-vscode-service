@@ -332,7 +332,7 @@ export const workbench = {
         row: '.monaco-list-row'
     },
     DebugToolbar: {
-        ctor: '.debug-toolbar',
+        elem: '.debug-toolbar',
         button: (title: string) => `.codicon-debug-${title}`
     }
 } as const

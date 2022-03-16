@@ -1,6 +1,7 @@
 import { BasePage, IPluginDecorator } from '../utils'
 import { workbench } from '../../locators/1.61.0'
 import { NotificationType } from '../../types'
+import { ChainablePromiseElement } from 'webdriverio';
 
 /**
  * Abstract element representing a notification
@@ -114,8 +115,8 @@ export class StandaloneNotification extends Notification {
  * Notification displayed within the notifications center
  */
 export class CenterNotification extends Notification {
-    constructor(locators: typeof workbench.NotificationsCenter) {
-        super(locators, locators.elem);
+    constructor(locators: typeof workbench.NotificationsCenter, parent: ChainablePromiseElement<WebdriverIO.Element>) {
+        super(locators, locators.elem, parent);
     }
 }
 

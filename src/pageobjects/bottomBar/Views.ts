@@ -1,8 +1,8 @@
-// import { BottomBarPanel, ContentAssist, Workbench } from "../..";
-import { TextView, ChannelView } from "./AbstractViews";
-import Workbench from '../workbench'
 import clipboard from 'clipboardy';
+
+import { TextView, ChannelView } from "./AbstractViews";
 import { BottomBarPanel } from './BottomBarPanel'
+import { Workbench } from '../workbench/Workbench'
 import { ElementWithContextMenu, PluginDecorator, IPluginDecorator } from "../utils";
 import { bottomBar } from '../../locators/1.61.0'
 

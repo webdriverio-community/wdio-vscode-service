@@ -1,1 +1,1 @@
-export { default as Workbench } from './Workbench'
+export * from './workbench/Workbench'

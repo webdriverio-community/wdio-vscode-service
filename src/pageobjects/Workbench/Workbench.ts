@@ -5,9 +5,9 @@ import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
 /**
  * Page object representing the custom VSCode title bar
  */
-export default interface Workbench extends IPluginDecorator<typeof workbench.Workbench> {}
+export interface Workbench extends IPluginDecorator<typeof workbench.Workbench> {}
 @PluginDecorator(workbench.Workbench)
-export default class Workbench extends BasePage {
+export class Workbench extends BasePage {
     /**
      * Get a title bar handle
      */

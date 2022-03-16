@@ -57,6 +57,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     const locators = await import(`./locators/${capabilities['wdio:vscodeService'].version}`)
     const workbenchPO = new Workbench(locators.workbench.Workbench)
     browser.addCommand('getWorkbench', () => workbenchPO)
+    // Todo(Christian): ensure this is the actual version
+    browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].version)
     return workbenchPO.elem.waitForExist()
   }
 }
