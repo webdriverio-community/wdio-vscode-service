@@ -1,33 +1,25 @@
 import {
-    workbench as workbenchImport,
-    editor as editorImport,
-    sideBar as sideBarImport
+    NotificationsCenter as NotificationsCenterImport,
+    Notification as NotificationImport,
+    EditorView as EditorViewImport,
+    ScmView as ScmViewImport
 } from './1.44.0'
 
 export * from './1.44.0'
-export const workbench = {
-    ...workbenchImport,
-    NotificationsCenter: {
-        ...workbenchImport.NotificationsCenter,
-        closeBtn: '.codicon-notifications-hide',
-        clear: '.codicon-notifications-clear-all'
-    },
-    Notification: {
-        ...workbenchImport.Notification,
-        dismiss: '.codicon-notifications-clear'
-    }
+export const NotificationsCenter = {
+    ...NotificationsCenterImport,
+    closeBtn: '.codicon-notifications-hide',
+    clear: '.codicon-notifications-clear-all'
 }
-export const editor = {
-    ...editorImport,
-    EditorView: {
-        ...editorImport.EditorView,
-        tabSeparator: ''
-    }
+export const Notification = {
+    ...NotificationImport,
+    dismiss: '.codicon-notifications-clear'
 }
-export const sideBar = {
-    ...sideBarImport,
-    ScmView: {
-        ...sideBarImport.ScmView,
-        more: '.codicon-toolbar-more'
-    }
+export const EditorView = {
+    ...EditorViewImport,
+    tabSeparator: ''
+}
+export const ScmView = {
+    ...ScmViewImport,
+    more: '.codicon-toolbar-more'
 }

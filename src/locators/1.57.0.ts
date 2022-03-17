@@ -1,20 +1,14 @@
 import {
-    bottomBar as bottomBarImport,
-    editor as editorImport
+    TerminalView as TerminalViewImport,
+    EditorView as EditorViewImport
 } from './1.56.0'
 
 export * from './1.56.0'
-export const bottomBar = {
-    ...bottomBarImport,
-    TerminalView: {
-        ...bottomBarImport.TerminalView,
-        elem: '.integrated-terminal'
-    }
+export const TerminalView = {
+    ...TerminalViewImport,
+    elem: '.integrated-terminal'
 }
 export const editor = {
-    ...editorImport,
-    EditorView: {
-        ...editorImport.EditorView,
-        settingsEditor: '.settings-editor'
-    }
+    ...EditorViewImport,
+    settingsEditor: '.settings-editor'
 }

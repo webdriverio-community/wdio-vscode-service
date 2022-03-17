@@ -1,10 +1,7 @@
-import { bottomBar as bottomBarImport } from './1.47.0'
+import { TerminalView as TerminalViewImport } from './1.47.0'
 
 export * from './1.47.0'
-export const bottomBar = {
-    ...bottomBarImport,
-    TerminalView: {
-        ...bottomBarImport.TerminalView,
-        elem: '.terminal-outer-container'
-    }
+export const TerminalView = {
+    ...TerminalViewImport,
+    elem: '.terminal-outer-container'
 }
