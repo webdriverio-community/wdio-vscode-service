@@ -10,11 +10,11 @@ export const workbench = {
         ...workbenchImport.NotificationsCenter,
         closeBtn: '.codicon-chevron-down'
     }
-} as const
+}
 export const input = {
     ...inputImport,
     Input: {
         ...inputImport.Input,
         quickPickIndex: (index: number) => `.//div[@role='listitem' and @data-index='${index}']`
     }
-} as const
+}

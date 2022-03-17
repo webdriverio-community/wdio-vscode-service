@@ -14,4 +14,4 @@ export const sideBar = {
         providerTitle: 'name',
         providerType: 'description'
     }
-} as const
+}

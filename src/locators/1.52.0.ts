@@ -7,4 +7,4 @@ export const sideBar = {
         ...sideBarImport.DefaultTreeItem,
         tooltip: '.monaco-icon-label-container'
     }
-} as const
+}

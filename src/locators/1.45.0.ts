@@ -16,18 +16,18 @@ export const workbench = {
         ...workbenchImport.Notification,
         dismiss: '.codicon-notifications-clear'
     }
-} as const
+}
 export const editor = {
     ...editorImport,
     EditorView: {
         ...editorImport.EditorView,
         tabSeparator: ''
     }
-} as const
+}
 export const sideBar = {
     ...sideBarImport,
     ScmView: {
         ...sideBarImport.ScmView,
         more: '.codicon-toolbar-more'
     }
-} as const
+}

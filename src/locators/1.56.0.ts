@@ -10,11 +10,11 @@ export const bottomBar = {
         ...bottomBarImport.TerminalView,
         newTerminal: `.//a[@title='New Terminal']`
     }
-} as const
+}
 export const editor = {
     ...editorImport,
     EditorView: {
         ...editorImport.EditorView,
         webView: `.//div[starts-with(@id, 'webview-editor')]`
     }
-} as const
+}

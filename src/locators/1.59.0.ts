@@ -7,4 +7,4 @@ export const editor = {
         ...editorImport.FindWidget,
         toggleReplace: `.//div[@title="Toggle Replace"]`
     }
-} as const
+}

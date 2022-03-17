@@ -10,11 +10,11 @@ export const sideBar = {
         ...sideBarImport.DefaultTreeItem,
         tooltip: '.monaco-icon-label'
     }
-} as const
+}
 export const bottomBar = {
     ...bottomBarImport,
     BottomBarPanel: {
         ...bottomBarImport.BottomBarPanel,
         globalActions: '.global-actions'
     }
-} as const
+}

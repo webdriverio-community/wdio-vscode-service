@@ -16,18 +16,18 @@ export const workbench = {
         ...workbenchImport.Notification,
         dismiss: '.codicon-close'
     }
-} as const
+}
 export const bottomBar = {
     ...bottomBarImport,
     BottomBarViews: {
         ...bottomBarImport.BottomBarViews,
         clearText: '.codicon-clear-all'
     }
-} as const
+}
 export const sideBar = {
     ...sideBarImport,
     ScmView: {
         ...sideBarImport.ScmView,
         more: '.codicon-more'
     }
-} as const
+}

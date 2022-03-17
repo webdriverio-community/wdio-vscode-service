@@ -10,11 +10,11 @@ export const bottomBar = {
         ...bottomBarImport.TerminalView,
         elem: '.integrated-terminal'
     }
-} as const
+}
 export const editor = {
     ...editorImport,
     EditorView: {
         ...editorImport.EditorView,
         settingsEditor: '.settings-editor'
     }
-} as const
+}

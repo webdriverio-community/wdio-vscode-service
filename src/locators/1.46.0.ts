@@ -7,4 +7,4 @@ export const sideBar = {
         ...sideBarImport.CustomTreeItem,
         elem: (label: string) => `.//div[@role='listitem' and .//span[text()='${label}']]`
     }
-} as const
+}

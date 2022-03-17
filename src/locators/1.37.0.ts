@@ -13,7 +13,7 @@ export const activityBar = {
         debugId: '#workbench.view.debug',
         badge: '.badge'
     }
-} as const
+}
 
 export const bottomBar = {
     BottomBarPanel: {
@@ -67,7 +67,7 @@ export const bottomBar = {
         elem: '#workbench.panel.output',
         actionsLabel: 'Output actions'
     }
-} as const
+}
 
 export const editor = {
     EditorView: {
@@ -147,7 +147,7 @@ export const editor = {
         iframe: 'iframe[class=\'webview ready\']',
         activeFrame: '#active-frame'
     }
-} as const
+}
 
 export const menu = {
     ContextMenu: {
@@ -174,7 +174,7 @@ export const menu = {
         restore: '.window-unmaximize',
         close: '.window-close'
     }
-} as const
+}
 
 export const sideBar = {
     SideBarView: {
@@ -287,7 +287,7 @@ export const sideBar = {
         optionByName: (name: string) => `.//option[@value='${name}']`,
         startButton: '.codicon-debug-start'
     }
-} as const
+}
 
 export const statusBar = {
     StatusBar: {
@@ -302,7 +302,7 @@ export const statusBar = {
         item: '.statusbar-item',
         itemTitle: 'aria-label'
     }
-} as const
+}
 
 export const workbench = {
     Workbench: {
@@ -335,7 +335,7 @@ export const workbench = {
         elem: '.debug-toolbar',
         button: (title: string) => `.codicon-debug-${title}`
     }
-} as const
+}
 
 export const input = {
     Input: {
@@ -364,7 +364,7 @@ export const input = {
         quickList: '.quick-open-tree',
         row: './/div[@role=\'treeitem\']'
     }
-} as const
+}
 
 export const dialog = {
     Dialog: {
@@ -375,10 +375,10 @@ export const dialog = {
         button: '.monaco-text-button',
         closeButton: '.codicon-dialog-close'
     }
-} as const
+}
 
-export const welcomeContentButtonSelector = ".//a[@class='monaco-button monaco-text-button']" as const
-export const welcomeContentTextSelector = ".//p" as const
+export const welcomeContentButtonSelector = ".//a[@class='monaco-button monaco-text-button']"
+export const welcomeContentTextSelector = ".//p"
 
 export const welcome = {
     WelcomeContent: {
@@ -386,4 +386,4 @@ export const welcome = {
         buttonOrText: `${welcomeContentButtonSelector} | ${welcomeContentTextSelector}`,
         text: welcomeContentTextSelector
     }
-} as const
+}

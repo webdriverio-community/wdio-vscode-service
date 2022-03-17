@@ -8,4 +8,4 @@ export const bottomBar = {
         newTerminal: `.//a[starts-with(@title, 'Create New Integrated Terminal')]`,
         killTerminal: `.//a[@title='Kill the Active Terminal Instance']`
     }
-} as const
+}
