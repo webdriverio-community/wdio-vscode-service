@@ -1,4 +1,4 @@
-import { Editor } from "./Editor";
+import { Editor, EditorLocators } from "./Editor";
 import { ContextMenu } from "../menu/ContextMenu";
 import { EditorView, EditorGroup } from "./EditorView";
 
@@ -8,16 +8,16 @@ import { editor } from '../../locators/1.61.0'
 /**
  * Page object representing the internal VSCode settings editor
  */
-export interface SettingsEditor extends IPluginDecorator<typeof editor.SettingsEditor> {}
+export interface SettingsEditor extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(editor.SettingsEditor)
 export class SettingsEditor extends Editor {
     public view: EditorView | EditorGroup
 
     constructor(
         locators: typeof editor.SettingsEditor,
-        view: EditorView | EditorGroup
+        view?: EditorView | EditorGroup
     ) {
-        super(locators);
+        super(locators, view?.elem)
         this.view = view || new EditorView(this.locatorMap.editor.EditorView)
     }
 

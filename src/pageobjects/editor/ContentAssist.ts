@@ -49,7 +49,7 @@ export class ContentAssist extends Menu {
                     : (await item.elem.getAttribute('data-last-element')) === 'true';
             }
             if (!lastItem) {
-                await scrollable.addValue('PageDown');
+                await scrollable.addValue(['PageDown']);
                 await new Promise(res => setTimeout(res, 100));
             }
         }

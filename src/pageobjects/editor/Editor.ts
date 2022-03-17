@@ -1,20 +1,31 @@
 import { EditorView, EditorGroup, EditorTab } from './EditorView'
-import { ElementWithContextMenu } from '../utils'
+import { ElementWithContextMenu, IPluginDecorator } from '../utils'
 import { Locators } from "../../types";
+import { editor } from 'locators/1.61.0';
+import { ChainablePromiseElement } from 'webdriverio';
+
+export type EditorLocators = (
+    typeof editor.Editor &
+    typeof editor.SettingsEditor &
+    typeof editor.TextEditor &
+    typeof editor.DiffEditor &
+    typeof editor.WebView
+)
 
 /**
  * Abstract representation of an editor tab
  */
+export interface Editor extends IPluginDecorator<EditorLocators> { }
 export abstract class Editor extends ElementWithContextMenu {
     public view: EditorView | EditorGroup
     constructor(
         locators: Locators,
-        view: EditorView | EditorGroup
+        element?: ChainablePromiseElement<WebdriverIO.Element> | string,
+        view?: EditorView | EditorGroup
     ) {
-        super(locators, locators.elem as string);
-
-        // @ts-expect-error
+        super(locators, element, view?.elem);
         this.view = view || new EditorView(this.locatorMap.editor.EditorView)
+        this.setParentElement(this.view.elem)
     }
 
     /**

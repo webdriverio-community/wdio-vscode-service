@@ -91,15 +91,13 @@ export interface ContextMenuItem extends IPluginDecorator<typeof menu.ContextMen
 @PluginDecorator(menu.ContextMenu)
 export class ContextMenuItem extends MenuItem {
     public label = ''
-    public parentMenu: Menu
 
     constructor(
         locators: typeof menu.ContextMenu,
         base: ChainablePromiseElement<WebdriverIO.Element>,
-        parent: Menu
+        public parentMenu: Menu
     ) {
-        super(locators, base);
-        this.parentMenu = parent
+        super(locators, base, parentMenu.elem);
     }
 
     async select(): Promise<Menu | undefined> {

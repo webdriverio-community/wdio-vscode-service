@@ -3,10 +3,12 @@ import { ViewContent } from './ViewContent';
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
 import { sideBar } from 'locators/1.61.0';
 
+export type PageLocators = typeof sideBar.SideBarView & typeof sideBar.DebugView & typeof sideBar.ScmView
+
 /**
  * Page object for the side bar view
  */
-export interface SideBarView extends IPluginDecorator<typeof sideBar.SideBarView> { }
+export interface SideBarView extends IPluginDecorator<PageLocators> { }
 @PluginDecorator(sideBar.SideBarView)
 export class SideBarView extends BasePage {
     /**

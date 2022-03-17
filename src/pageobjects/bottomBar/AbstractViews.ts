@@ -16,7 +16,7 @@ export abstract class ChannelView extends ElementWithContextMenu {
     */
     async getChannelNames(): Promise<string[]> {
         const names: string[] = [];
-        const elements = await this.parent!
+        const elements = await this.parent
             .$(this.locatorMap.bottomBar.BottomBarViews.actionsContainer(this.actionsLabel))
             .$$(this.locatorMap.bottomBar.BottomBarViews.channelOption);
 
@@ -34,7 +34,7 @@ export abstract class ChannelView extends ElementWithContextMenu {
      * @returns Promise resolving to the current channel name
      */
     async getCurrentChannel(): Promise<string> {
-        const combo = await this.parent!.$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
+        const combo = await this.parent.$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
         return combo.getAttribute('title');
     }
 
@@ -58,7 +58,7 @@ export abstract class ChannelView extends ElementWithContextMenu {
     }
 
     private async getOptions() {
-        const combo = await this.parent!.$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
+        const combo = await this.parent.$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
         const workbench = await browser.$(this.locatorMap.workbench.Workbench.elem);
         const menus = await workbench.$$(this.locatorMap.menu.ContextMenu.contextView);
         let menu!: WebdriverIO.Element;
@@ -111,7 +111,7 @@ export abstract class TextView extends ChannelView {
      * @returns Promise resolving when the clear text button is pressed
      */
     async clearText(): Promise<void> {
-        await this.parent!
+        await this.parent
             .$(this.locatorMap.bottomBar.BottomBarViews.actionsContainer(this.actionsLabel))
             .$(this.locatorMap.bottomBar.BottomBarViews.clearText)
             .click();

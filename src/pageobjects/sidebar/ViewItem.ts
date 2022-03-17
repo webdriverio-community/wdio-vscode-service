@@ -16,11 +16,15 @@ export abstract class ViewItem extends ElementWithContextMenu {
     }
 }
 
-
 /**
  * Abstract representation of a row in the tree inside a view content section
  */
-export interface TreeItem extends IPluginDecorator<typeof sideBar.TreeItem> { }
+export type TreeItemLocators = (
+    typeof sideBar.TreeItem &
+    typeof sideBar.CustomTreeItem &
+    typeof sideBar.DefaultTreeItem
+)
+export interface TreeItem extends IPluginDecorator<TreeItemLocators> { }
 export abstract class TreeItem extends ViewItem {
     /**
      * Retrieves the label of this view item
@@ -151,7 +155,7 @@ export abstract class TreeItem extends ViewItem {
         const items: WebdriverIO.Element[] = [];
         await this.expand();
 
-        const rows = await this.parent!.$$(locator);
+        const rows = await this.parent.$$(locator);
         const baseIndex = +await this.elem.getAttribute(this.locatorMap.sideBar.ViewSection.index);
         const baseLevel = +await this.elem.getAttribute(this.locatorMap.sideBar.ViewSection.level);
 

@@ -12,11 +12,13 @@ import { sideBar } from 'locators/1.61.0';
 export interface ViewContent extends IPluginDecorator<typeof sideBar.ViewContent> { }
 @PluginDecorator(sideBar.ViewContent)
 export class ViewContent extends BasePage {
+    public view: SideBarView
     constructor(
         locators: typeof sideBar.ViewContent,
-        view: SideBarView = new SideBarView(sideBar.SideBarView)
+        view: SideBarView
     ) {
-        super(locators, locators.elem, view.elem);
+        super(locators, locators.elem);
+        this.view = view || new SideBarView(this.locatorMap.sideBar.SideBarView)
     }
 
     /**
@@ -67,15 +69,21 @@ export class ViewContent extends BasePage {
     }
 
     private async createSection(panel: WebdriverIO.Element): Promise<ViewSection> {
-        let section: ViewSection = new DefaultTreeSection(panel, this);
+        const viewSectionLocators = {
+            ...this.locatorMap.sideBar.ViewSection,
+            ...this.locatorMap.sideBar.ExtensionsViewSection,
+            ...this.locatorMap.sideBar.CustomTreeSection,
+            ...this.locatorMap.sideBar.DefaultTreeSection
+        }
+        let section: ViewSection = new DefaultTreeSection(viewSectionLocators, panel as any, this);
 
         if (await section.elem.$(this.locators.defaultView).isExisting()) {
             return section
         }
         if (await section.elem.$(this.locators.extensionsView).isExisting()) {
-            return new ExtensionsViewSection(panel, this);
+            return new ExtensionsViewSection(viewSectionLocators, panel as any, this);
         }
         
-        return new CustomTreeSection(panel, this);
+        return new CustomTreeSection(viewSectionLocators, panel as any, this);
     }
 }

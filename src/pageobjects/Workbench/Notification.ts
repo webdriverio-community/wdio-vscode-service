@@ -106,8 +106,11 @@ export abstract class Notification extends BasePage {
  * Notification displayed on its own in the notifications-toasts container
  */
 export class StandaloneNotification extends Notification {
-    constructor(locators: typeof workbench.Notification) {
-        super(locators, locators.standaloneContainer);
+    constructor(
+        locators: typeof workbench.Notification,
+        notification: ChainablePromiseElement<WebdriverIO.Element>
+    ) {
+        super(locators, notification, locators.standaloneContainer);
     }
 }
 
@@ -115,8 +118,11 @@ export class StandaloneNotification extends Notification {
  * Notification displayed within the notifications center
  */
 export class CenterNotification extends Notification {
-    constructor(locators: typeof workbench.NotificationsCenter, parent: ChainablePromiseElement<WebdriverIO.Element>) {
-        super(locators, locators.elem, parent);
+    constructor(
+        locators: typeof workbench.NotificationsCenter,
+        notification: ChainablePromiseElement<WebdriverIO.Element>
+    ) {
+        super(locators, notification);
     }
 }
 

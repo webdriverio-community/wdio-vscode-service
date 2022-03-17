@@ -65,7 +65,7 @@ export abstract class Input extends BasePage {
      * @returns Promise resolving when the input is cancelled
      */
     async cancel(): Promise<void> {
-        await this.inputBox$.$(this.locators.input).addValue('Escape');
+        await this.inputBox$.$(this.locators.input).addValue(['Escape']);
     }
 
     /**

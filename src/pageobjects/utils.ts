@@ -82,7 +82,11 @@ export class BasePage {
                 ? browser.$(this._parentElem)
                 : this._parentElem
         }
-        return
+        return browser.$('html')
+    }
+
+    setParentElement (parentElem: string | ChainablePromiseElement<WebdriverIO.Element>) {
+        this._parentElem = parentElem
     }
 
     /**

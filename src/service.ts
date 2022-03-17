@@ -59,6 +59,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     browser.addCommand('getWorkbench', () => workbenchPO)
     // Todo(Christian): ensure this is the actual version
     browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].version)
+    browser.addCommand('getVSCodeChannel', () => capabilities['wdio:vscodeService'].version === 'insiders' ? 'insiders' : 'vscode')
     return workbenchPO.elem.waitForExist()
   }
 }

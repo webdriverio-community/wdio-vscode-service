@@ -196,18 +196,33 @@ export class EditorGroup extends BasePage {
         await tab.select();
 
         if (await this.settingsEditor$.isExisting()) {
-            return new SettingsEditor(this.locatorMap.editor.SettingsEditor, this).wait();
+            return new SettingsEditor(
+                this.locatorMap.editor.SettingsEditor,
+                this
+            ).wait();
         }
 
         if (await this.webView$.isExisting()) {
-            return new WebView(this.locatorMap.editor.WebView, this).wait();
+            return new WebView(
+                this.locatorMap.editor.WebView,
+                this.locatorMap.editor.Editor.elem,
+                this
+            ).wait();
         }
 
         if (await this.diffEditor$.isExisting()) {
-            return new DiffEditor(this.locatorMap.editor.DiffEditor, this).wait();
+            return new DiffEditor(
+                this.locatorMap.editor.DiffEditor,
+                this.locatorMap.editor.Editor.elem,
+                this
+            ).wait();
         }
 
-        return new TextEditor(this.locatorMap.editor.TextEditor, this).wait();
+        return new TextEditor(
+            this.locatorMap.editor.TextEditor,
+            this.locatorMap.editor.Editor.elem,
+            this
+        ).wait();
     }
 
     /**

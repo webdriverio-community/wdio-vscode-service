@@ -1,5 +1,5 @@
 import { WebView } from './WebView';
-import { Editor } from './Editor';
+import { Editor, EditorLocators } from './Editor';
 import { InputBox } from "../workbench/input/InputBox";
 import { PluginDecorator, IPluginDecorator } from "../utils";
 import { editor } from '../../locators/1.61.0'
@@ -7,7 +7,7 @@ import { editor } from '../../locators/1.61.0'
 /**
  * Page object for custom editors
  */
-export interface CustomEditor extends IPluginDecorator<typeof editor.Editor> {}
+export interface CustomEditor extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(editor.Editor)
 export class CustomEditor extends Editor {
 
@@ -16,7 +16,7 @@ export class CustomEditor extends Editor {
      * @returns WebView page object
      */
     getWebView(): WebView {
-        return new WebView(this.locatorMap.editor.WebView, this.view);
+        return new WebView(this.locatorMap.editor.WebView, undefined, this.view);
     }
 
     /**

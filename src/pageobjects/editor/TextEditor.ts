@@ -5,7 +5,7 @@ import { InputBox } from "../workbench/input/InputBox";
 import { ContextMenu } from '../menu/ContextMenu'
 import { ContentAssist } from './ContentAssist';
 import { StatusBar } from "../statusBar/StatusBar";
-import { Editor } from "./Editor";
+import { Editor, EditorLocators } from "./Editor";
 
 import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu } from "../utils";
 import { editor } from '../../locators/1.61.0'
@@ -16,7 +16,7 @@ import { Locators } from "types";
 /**
  * Page object representing the active text editor
  */
-export interface TextEditor extends IPluginDecorator<typeof editor.TextEditor> {}
+export interface TextEditor extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(editor.TextEditor)
 export class TextEditor extends Editor {
     /**
@@ -110,7 +110,7 @@ export class TextEditor extends Editor {
         const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
         await inputarea.addValue(['Control', 'a', 'Control', 'c']);
         const text = clipboard.readSync();
-        await inputarea.addValue('ArrowUp');
+        await inputarea.addValue(['ArrowUp']);
         clipboard.writeSync('');
         return text;
     }

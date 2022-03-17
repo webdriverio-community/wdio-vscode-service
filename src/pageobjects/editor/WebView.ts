@@ -1,13 +1,13 @@
-import { Editor } from "./Editor";
+import { Editor, EditorLocators } from "./Editor";
 import { PluginDecorator, IPluginDecorator } from "../utils";
 import { editor } from '../../locators/1.61.0'
 
 let handle: string | undefined;
-browser.$$
+
 /**
  * Page object representing an open editor containing a web view
  */
-export interface WebView extends IPluginDecorator<typeof editor.WebView> {}
+export interface WebView extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(editor.WebView)
 export class WebView extends Editor {
     /**

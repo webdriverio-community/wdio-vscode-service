@@ -6,17 +6,24 @@ import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu } f
 import { sideBar } from 'locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
+export type ViewSectionLocators = (
+    typeof sideBar.ViewSection &
+    typeof sideBar.ExtensionsViewSection &
+    typeof sideBar.CustomTreeSection &
+    Omit<typeof sideBar.DefaultTreeSection, 'itemLabel'>
+)
+
 /**
  * Page object representing a collapsible content section of the side bar view
  */
-export interface ViewSection extends IPluginDecorator<typeof sideBar.ViewSection> { }
+export interface ViewSection extends IPluginDecorator<ViewSectionLocators> { }
 export abstract class ViewSection extends BasePage {
     constructor(
-        locators: typeof sideBar.ViewSection,
+        locators: ViewSectionLocators,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
-        content: ViewContent
+        public content: ViewContent
     ) {
-        super(locators, panel, content.elem);
+        super(locators, panel);
     }
 
     /**
