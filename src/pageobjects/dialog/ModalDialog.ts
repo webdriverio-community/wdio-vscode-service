@@ -1,12 +1,14 @@
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
-import { dialog } from '../../locators/1.61.0'
+import { Dialog as DialogLocators } from '../../locators/1.61.0'
 
 /**
  * Page Object for Custom Style Modal Dialogs (non-native)
  */
-export interface ModalDialog extends IPluginDecorator<typeof dialog.Dialog> {}
-@PluginDecorator(dialog.Dialog)
-export class ModalDialog extends BasePage {
+export interface ModalDialog extends IPluginDecorator<typeof DialogLocators> {}
+@PluginDecorator(DialogLocators)
+export class ModalDialog extends BasePage<typeof DialogLocators> {
+    public locatorKey = 'Dialog' as const
+
     /**
      * Get the dialog's message in a Promise
      */

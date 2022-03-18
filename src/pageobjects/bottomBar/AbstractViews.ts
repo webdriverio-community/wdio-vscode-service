@@ -1,13 +1,11 @@
 import clipboard from 'clipboardy';
 
-import { ElementWithContextMenu, IPluginDecorator } from "../utils";
-import { bottomBar } from '../../locators/1.61.0'
+import { ElementWithContextMenu } from "../utils";
 
 /**
  * View with channel selector
  */
-export interface ChannelView extends Omit<IPluginDecorator<typeof bottomBar.BottomBarViews>, 'locators'> {}
-export abstract class ChannelView extends ElementWithContextMenu {
+export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
     protected actionsLabel!: string;
 
     /**
@@ -17,8 +15,8 @@ export abstract class ChannelView extends ElementWithContextMenu {
     async getChannelNames(): Promise<string[]> {
         const names: string[] = [];
         const elements = await this.parent
-            .$(this.locatorMap.bottomBar.BottomBarViews.actionsContainer(this.actionsLabel))
-            .$$(this.locatorMap.bottomBar.BottomBarViews.channelOption);
+            .$((this.locatorMap.BottomBarViews.actionsContainer as Function)(this.actionsLabel))
+            .$$(this.locatorMap.BottomBarViews.channelOption as string);
 
         for (const element of elements) {
             const disabled = await element.getAttribute('disabled');
@@ -34,7 +32,7 @@ export abstract class ChannelView extends ElementWithContextMenu {
      * @returns Promise resolving to the current channel name
      */
     async getCurrentChannel(): Promise<string> {
-        const combo = await this.parent.$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
+        const combo = await this.parent.$(this.locatorMap.BottomBarViews.channelCombo as string);
         return combo.getAttribute('title');
     }
 
@@ -46,7 +44,7 @@ export abstract class ChannelView extends ElementWithContextMenu {
         const rows = await this.getOptions();
         for (let i = 0; i < rows.length; i++) {
             if ((await rows[i].getAttribute('class')).indexOf('disabled') < 0) {
-                const text = await rows[i].$(this.locatorMap.bottomBar.BottomBarViews.channelText).getText();
+                const text = await rows[i].$(this.locatorMap.BottomBarViews.channelText as string).getText();
                 if (name === text) {
                     await rows[i].click();
                     await new Promise(res => setTimeout(res, 500));
@@ -58,35 +56,35 @@ export abstract class ChannelView extends ElementWithContextMenu {
     }
 
     private async getOptions() {
-        const combo = await this.parent.$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
-        const workbench = await browser.$(this.locatorMap.workbench.Workbench.elem);
-        const menus = await workbench.$$(this.locatorMap.menu.ContextMenu.contextView);
+        const combo = await this.parent.$(this.locatorMap.BottomBarViews.channelCombo as string);
+        const workbench = await browser.$(this.locatorMap.Workbench.elem as string);
+        const menus = await workbench.$$(this.locatorMap.ContextMenu.contextView as string);
         let menu!: WebdriverIO.Element;
 
         if (menus.length < 1) {
             await combo.click();
             await browser.pause(500);
-            menu = await workbench.$(this.locatorMap.menu.ContextMenu.contextView);
-            return menu.$$(this.locatorMap.bottomBar.BottomBarViews.channelRow);
+            menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string);
+            return menu.$$(this.locatorMap.BottomBarViews.channelRow as string);
         } else if (await menus[0].isDisplayed()) {
             await combo.click();
             await browser.pause(500);
         }
         await combo.click();
         await browser.pause(500);
-        menu = await workbench.$(this.locatorMap.menu.ContextMenu.contextView);
+        menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string);
         if (!await menu.isDisplayed()) {
             await combo.click();
             await browser.pause(500);
         }
-        return menu.$$(this.locatorMap.bottomBar.BottomBarViews.channelRow);
+        return menu.$$(this.locatorMap.BottomBarViews.channelRow as string);
     }
 }
 
 /**
  * View with channel selection and text area
  */
-export abstract class TextView extends ChannelView {
+export abstract class TextView<T> extends ChannelView<T> {
     protected actionsLabel!: string;
 
     /**
@@ -94,7 +92,7 @@ export abstract class TextView extends ChannelView {
      * @returns Promise resolving to the view's text
      */
     async getText(): Promise<string> {
-        const textarea = await this.elem.$(this.locatorMap.bottomBar.BottomBarViews.textArea);
+        const textarea = await this.elem.$(this.locatorMap.BottomBarViews.textArea as string);
         /**
          * Todo(Christian): replace with actions command
          */
@@ -112,8 +110,8 @@ export abstract class TextView extends ChannelView {
      */
     async clearText(): Promise<void> {
         await this.parent
-            .$(this.locatorMap.bottomBar.BottomBarViews.actionsContainer(this.actionsLabel))
-            .$(this.locatorMap.bottomBar.BottomBarViews.clearText)
+            .$((this.locatorMap.BottomBarViews.actionsContainer as Function)(this.actionsLabel))
+            .$(this.locatorMap.BottomBarViews.clearText as string)
             .click();
     }
 }

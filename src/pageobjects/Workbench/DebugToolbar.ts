@@ -1,24 +1,14 @@
-import { workbench } from 'locators/1.61.0'
 import { ChainablePromiseElement } from 'webdriverio';
-import { BasePage, PluginDecorator, IPluginDecorator } from './utils'
+import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
+import { DebugToolbar as DebugToolbarLocators } from '../../locators/1.61.0'
 
 /**
  * Page object for the Debugger Toolbar
  */
-export interface DebugToolbar extends IPluginDecorator<typeof workbench.DebugToolbar> {}
-@PluginDecorator(workbench.DebugToolbar)
-export class DebugToolbar extends BasePage {
-    /**
-     * Wait for the debug toolbar to appear and instantiate it.
-     * Assumes that debug session is already starting and it is just
-     * a matter of waiting for the toolbar to appear.
-     * 
-     * @param timeout max time to wait in milliseconds, default 5000
-     */
-    // static async create(timeout = 5000): Promise<DebugToolbar> {
-    //     await DebugToolbar.driver.wait(until.elementLocated(DebugToolbar.locators.DebugToolbar.ctor), timeout);
-    //     return new DebugToolbar().wait(timeout);
-    // }
+export interface DebugToolbar extends IPluginDecorator<typeof DebugToolbarLocators> {}
+@PluginDecorator(DebugToolbarLocators)
+export class DebugToolbar extends BasePage<typeof DebugToolbarLocators> {
+    public locatorKey = 'DebugToolbar' as const
 
     /**
      * Wait for the execution to pause at the next breakpoint

@@ -1,4 +1,8 @@
+import fs from 'fs/promises'
+import path from 'path'
 import child_process from 'child_process'
+
+import type { LocatorMap } from './pageobjects/utils'
 
 function isEmulatedRosettaEnvironment() {
     const archName = child_process.spawnSync('uname', ['-m']).stdout.toString().trim();
@@ -48,4 +52,15 @@ export function validatePlatform() {
     }
 
     return process.platform;
+}
+
+export async function getLocators (version: string): Promise<LocatorMap> {
+    const files = (await fs.readdir(path.join(__dirname, 'locators'), { encoding: 'utf-8' }))
+        .map((filename) => filename.slice(0, -3))
+    
+    if (!files.includes(version)) {
+        throw new Error(`No locators for VSCode version "${version}" available, please choose between the following versions: ${files.join(', ')}`)
+    }
+    
+    return import(`./locators/${version}`)
 }

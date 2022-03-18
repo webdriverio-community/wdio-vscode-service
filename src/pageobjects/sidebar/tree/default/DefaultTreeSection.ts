@@ -4,19 +4,21 @@ import { ViewSectionLocators } from '../../ViewSection'
 import { DefaultTreeItem } from "./DefaultTreeItem";
 
 import { PluginDecorator, IPluginDecorator } from '../../../utils'
-import { sideBar } from 'locators/1.61.0';
+import { DefaultTreeSection as DefaultTreeSectionLocators } from '../../../../locators/1.61.0';
 
 /**
  * Default view section
  */
 export interface DefaultTreeSection extends IPluginDecorator<ViewSectionLocators> { }
-@PluginDecorator(sideBar.DefaultTreeItem)
+@PluginDecorator(DefaultTreeSectionLocators)
 export class DefaultTreeSection extends TreeSection {
+    public locatorKey = 'DefaultTreeSection' as const
+    
     async getVisibleItems(): Promise<TreeItem[]> {
         const items: TreeItem[] = [];
         const elements = await this.itemRow$$;
         for (const element of elements) {
-            items.push(await new DefaultTreeItem(this.locatorMap.sideBar.DefaultTreeItem, element as any, this).wait());
+            items.push(await new DefaultTreeItem(this.locatorMap, element as any, this).wait());
         }
         return items;
     }
@@ -27,11 +29,11 @@ export class DefaultTreeSection extends TreeSection {
         await container.addValue(['Home']);
         let item: TreeItem | undefined = undefined;
         do {
-            const temp = await container.$$(this.locatorMap.sideBar.DefaultTreeItem.ctor(label));
+            const temp = await container.$$((this.locatorMap.DefaultTreeItem.ctor as Function)(label));
             if (temp.length > 0) {
                 const level = +await temp[0].getAttribute(this.locators.level);
                 if (maxLevel < 1 || level <= maxLevel) {
-                    item = await new DefaultTreeItem(this.locatorMap.sideBar.DefaultTreeItem, temp[0] as any, this).wait();
+                    item = await new DefaultTreeItem(this.locatorMap, temp[0] as any, this).wait();
                 }
             } 
             if (!item) {

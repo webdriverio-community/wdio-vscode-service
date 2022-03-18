@@ -1,11 +1,28 @@
-import { IPluginDecorator, BasePage, ElementWithContextMenu } from '../utils'
-import { sideBar } from 'locators/1.61.0';
+import { IPluginDecorator, BasePage, ElementWithContextMenu, PluginDecorator, LocatorMap } from '../utils'
+import {
+    ViewSection as ViewSectionLocators,
+    TreeItem as TreeItemLocators,
+    CustomTreeItem as CustomTreeItemLocators,
+    DefaultTreeItem as DefaultTreeItemLocators,
+    ExtensionsViewItem as ExtensionsViewItemLocators
+} from '../../locators/1.61.0';
+
+/**
+ * Abstract representation of a row in the tree inside a view content section
+ */
+export type ViewItemLocators = (
+    typeof ViewSectionLocators &
+    typeof TreeItemLocators &
+    typeof CustomTreeItemLocators &
+    typeof DefaultTreeItemLocators &
+    typeof ExtensionsViewItemLocators
+)
 
 /**
  * Arbitrary item in the side bar view
  */
-export interface ViewSection extends IPluginDecorator<typeof sideBar.ViewSection> { }
-export abstract class ViewItem extends ElementWithContextMenu {
+export interface ViewItem extends IPluginDecorator<ViewItemLocators> { }
+export abstract class ViewItem extends ElementWithContextMenu<ViewItemLocators> {
     /**
      * Select the item in the view.
      * Note that selecting the item will toggle its expand state when applicable.
@@ -16,15 +33,7 @@ export abstract class ViewItem extends ElementWithContextMenu {
     }
 }
 
-/**
- * Abstract representation of a row in the tree inside a view content section
- */
-export type TreeItemLocators = (
-    typeof sideBar.TreeItem &
-    typeof sideBar.CustomTreeItem &
-    typeof sideBar.DefaultTreeItem
-)
-export interface TreeItem extends IPluginDecorator<TreeItemLocators> { }
+export interface TreeItem extends IPluginDecorator<ViewItemLocators> { }
 export abstract class TreeItem extends ViewItem {
     /**
      * Retrieves the label of this view item
@@ -128,7 +137,7 @@ export abstract class TreeItem extends ViewItem {
 
         for (const item of items) {
             const label = await item.getAttribute(this.locators.actionTitle);
-            actions.push(new ViewItemAction(this.locatorMap.sideBar.ViewSection, label, this));
+            actions.push(new ViewItemAction(this.locatorMap, label, this));
         }
         return actions;
     }
@@ -156,12 +165,12 @@ export abstract class TreeItem extends ViewItem {
         await this.expand();
 
         const rows = await this.parent.$$(locator);
-        const baseIndex = +await this.elem.getAttribute(this.locatorMap.sideBar.ViewSection.index);
-        const baseLevel = +await this.elem.getAttribute(this.locatorMap.sideBar.ViewSection.level);
+        const baseIndex = +await this.elem.getAttribute(this.locatorMap.ViewSection.index as string);
+        const baseLevel = +await this.elem.getAttribute(this.locatorMap.ViewSection.level as string);
 
         for (const row of rows) {
-            const level = +await row.getAttribute(this.locatorMap.sideBar.ViewSection.level);
-            const index = +await row.getAttribute(this.locatorMap.sideBar.ViewSection.index);
+            const level = +await row.getAttribute(this.locatorMap.ViewSection.level as string);
+            const index = +await row.getAttribute(this.locatorMap.ViewSection.index as string);
 
             if (index <= baseIndex) { continue; }
             if (level > baseLevel + 1) { continue; }
@@ -181,16 +190,18 @@ export abstract class TreeItem extends ViewItem {
 /**
  * Action button bound to a view item
  */
-export interface ViewItemAction extends IPluginDecorator<typeof sideBar.ViewSection> { }
-export class ViewItemAction extends BasePage {
+export interface ViewItemAction extends IPluginDecorator<typeof ViewSectionLocators> { }
+@PluginDecorator(ViewSectionLocators)
+export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
+    public locatorKey = 'ViewSection' as const
     private label: string;
 
     constructor(
-        locators: typeof sideBar.ViewSection,
+        locators: LocatorMap,
         label: string,
         viewItem: TreeItem
     ) {
-        super(locators, locators.actionConstructor(label), viewItem.elem);
+        super(locators, (locators['ViewSection'].actionConstructor as Function)(label), viewItem.elem);
         this.label = label;
     }
 

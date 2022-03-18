@@ -1,20 +1,23 @@
 import type { ChainablePromiseElement } from "webdriverio";
 
 import { BottomBarPanel } from "./BottomBarPanel";
-import { BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator } from "../utils";
-import { bottomBar } from '../../locators/1.61.0'
+import { BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
+import { ProblemsView as ProblemsViewLocators } from '../../locators/1.61.0'
 
 /**
  * Problems view in the bottom panel
  */
-export interface ProblemsView extends IPluginDecorator<typeof bottomBar.ProblemsView> {}
-@PluginDecorator(bottomBar.ProblemsView)
-export class ProblemsView extends BasePage {
-    public panel: BottomBarPanel
+export interface ProblemsView extends IPluginDecorator<typeof ProblemsViewLocators> {}
+@PluginDecorator(ProblemsViewLocators)
+export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
+    public locatorKey = 'ProblemsView' as const
 
-    constructor(locators: typeof bottomBar.ProblemsView) {
-        super(locators, locators.elem);
-        this.panel = new BottomBarPanel(this.locatorMap.bottomBar.BottomBarPanel)
+    constructor(
+        locators: LocatorMap,
+        public panel = new BottomBarPanel(locators)
+    ) {
+        super(locators);
+        this.setParentElement(this.panel.elem)
     }
 
     /**
@@ -33,7 +36,7 @@ export class ProblemsView extends BasePage {
      */
     async clearFilter() {
         const filterField = await this.panel.elem
-            .$(this.locatorMap.bottomBar.BottomBarPanel.actions)
+            .$(this.locatorMap.BottomBarPanel.actions as string)
             .$(this.locators.markersFilter)
             .$(this.locators.input);
         await filterField.clearValue();
@@ -46,7 +49,7 @@ export class ProblemsView extends BasePage {
      */
     async collapseAll(): Promise<void> {
         const button = await this.panel.elem
-            .$(this.locatorMap.bottomBar.BottomBarPanel.actions)
+            .$(this.locatorMap.BottomBarPanel.actions as string)
             .$(this.locators.collapseAll);
         await button.click();
     }
@@ -59,9 +62,9 @@ export class ProblemsView extends BasePage {
      */
     async getAllMarkers(type: MarkerType): Promise<Marker[]> {
         const markers: Marker[] = [];
-        const elements = await this.elem.$$(this.locators.markerRow);
+        const elements = await this.markerRow$$;
         for (const element of elements) {
-            const marker = await new Marker(this.locators, element as any, this).wait();
+            const marker = await new Marker(this.locatorMap, element as any, this).wait();
             if (type === MarkerType.Any || type === await marker.getType()) {
                 markers.push(marker);
             }
@@ -73,15 +76,17 @@ export class ProblemsView extends BasePage {
 /**
  * Page object for marker in problems view
  */
-export interface Marker extends IPluginDecorator<typeof bottomBar.ProblemsView> {}
-@PluginDecorator(bottomBar.ProblemsView)
-export class Marker extends ElementWithContextMenu {
+export interface Marker extends IPluginDecorator<typeof ProblemsViewLocators> {}
+@PluginDecorator(ProblemsViewLocators)
+export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> {
+    public locatorKey = 'ProblemsView' as const
+
     constructor(
-        locators: typeof bottomBar.ProblemsView,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ProblemsView
     ) {
-        super(locators, element);
+        super(locators, element, view.elem);
     }
 
     /**
@@ -90,7 +95,7 @@ export class Marker extends ElementWithContextMenu {
      * @returns Promise resolving to a MarkerType
      */
     async getType(): Promise<MarkerType> {
-        const twist = await this.elem.$(this.locators.markerTwistie);
+        const twist = await this.markerTwistie$;
         if ((await twist.getAttribute('class')).indexOf('collapsible') > -1) {
             return MarkerType.File;            
         }
@@ -117,7 +122,7 @@ export class Marker extends ElementWithContextMenu {
      */
     async toggleExpand(expand: boolean): Promise<void> {
         if (await this.getType() === MarkerType.File) {
-            const klass = await this.elem.$(this.locators.markerTwistie).getAttribute('class');
+            const klass = await this.markerTwistie$.getAttribute('class');
             if ((klass.indexOf('collapsed') > -1) === expand) {
                 await this.elem.click();
             }

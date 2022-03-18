@@ -1,14 +1,13 @@
-import { PageLocators } from '../SideBarView'
 import { ScmView, ScmProvider, MoreAction, ScmChange } from "./ScmView";
 import { ContextMenu } from "../../menu/ContextMenu";
-import { PluginDecorator, IPluginDecorator, ElementWithContextMenu } from '../../utils'
-import { sideBar } from 'locators/1.61.0';
+import { PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap } from '../../utils'
+import { ScmView as ScmViewLocators } from '../../../locators/1.61.0';
 
 /**
  * New SCM view for code 1.47 onwards
  */
-export interface NewScmView extends IPluginDecorator<PageLocators> { }
-@PluginDecorator(sideBar.ScmView)
+export interface NewScmView extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
 export class NewScmView extends ScmView {
     async getProviders(): Promise<ScmProvider[]> {
         const inputs = await this.inputField$$;
@@ -18,13 +17,13 @@ export class NewScmView extends ScmView {
 
         const providers = await this.multiScmProvider$$;
         if (inputs.length === 1 && providers.length < 1) {
-            return [await new SingleScmProvider(this.locators, this.singleScmProvider$, this).wait()];
+            return [await new SingleScmProvider(this.locatorMap, this.singleScmProvider$, this).wait()];
         }
 
         const elements = await this.multiProviderItem$$;
         return Promise.all(
             elements.map(async element => (
-                new MultiScmProvider(this.locators, element as any, this).wait()
+                new MultiScmProvider(this.locatorMap, element as any, this).wait()
             ))
         );
     }
@@ -33,8 +32,8 @@ export class NewScmView extends ScmView {
 /**
  * Implementation for a single SCM provider
  */
-export interface SingleScmProvider extends IPluginDecorator<typeof sideBar.ScmView> { }
-@PluginDecorator(sideBar.ScmView)
+export interface SingleScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
 export class SingleScmProvider extends ScmProvider {
 
     /**
@@ -66,7 +65,7 @@ export class SingleScmProvider extends ScmProvider {
 
     async openMoreActions(): Promise<ContextMenu> {
         const view = this.view as NewScmView;
-        return new MoreAction(this.locators, view).openContextMenu();
+        return new MoreAction(this.locatorMap, view).openContextMenu();
     }
 
     async getChanges(staged: boolean = false): Promise<ScmChange[]> {
@@ -90,7 +89,7 @@ export class SingleScmProvider extends ScmProvider {
         }
         return Promise.all(
             elements.map(async element => (
-                new ScmChange(this.locators, element as any, this).wait()
+                new ScmChange(this.locatorMap, element as any, this).wait()
             ))
         );
     }
@@ -99,8 +98,8 @@ export class SingleScmProvider extends ScmProvider {
 /**
  * Implementation of an SCM provider when multiple providers are available
  */
-export interface MultiScmProvider extends IPluginDecorator<typeof sideBar.ScmView> { }
-@PluginDecorator(sideBar.ScmView)
+export interface MultiScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
 export class MultiScmProvider extends ScmProvider {
 
     async takeAction(title: string): Promise<boolean> {
@@ -116,7 +115,7 @@ export class MultiScmProvider extends ScmProvider {
     }
 
     async openMoreActions(): Promise<ContextMenu> {
-        return new MultiMoreAction(this.locators, this).openContextMenu();
+        return new MultiMoreAction(this.locatorMap, this).openContextMenu();
     }
 
     async commitChanges(message: string): Promise<void> {
@@ -160,7 +159,7 @@ export class MultiScmProvider extends ScmProvider {
         }
         return Promise.all(
             elements.map(async element => (
-                new ScmChange(this.locators, element as any, this).wait()
+                new ScmChange(this.locatorMap, element as any, this).wait()
             ))
         );
     }
@@ -180,13 +179,14 @@ export class MultiScmProvider extends ScmProvider {
     }
 }
 
-interface MultiMoreAction extends IPluginDecorator<typeof sideBar.ScmView> { }
-@PluginDecorator(sideBar.ScmView)
-class MultiMoreAction extends ElementWithContextMenu {
+interface MultiMoreAction extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
+class MultiMoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
+    public locatorKey = 'ScmView' as const
     constructor(
-        locators: typeof sideBar.ScmView,
+        locators: LocatorMap,
         public scm: ScmProvider
     ) {
-        super(locators, locators.multiMore, scm.elem);
+        super(locators, locators['ScmView'].multiMore as string, scm.elem);
     }
 }

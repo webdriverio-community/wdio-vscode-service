@@ -1,18 +1,20 @@
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
-import { statusBar } from '../../locators/1.61.0'
+import { StatusBar as StatusBarLocators } from '../../locators/1.61.0'
 
 /**
  * Page object for the status bar at the bottom
  */
-export interface StatusBar extends IPluginDecorator<typeof statusBar.StatusBar> {}
-@PluginDecorator(statusBar.StatusBar)
-export class StatusBar extends BasePage {
+export interface StatusBar extends IPluginDecorator<typeof StatusBarLocators> {}
+@PluginDecorator(StatusBarLocators)
+export class StatusBar extends BasePage<typeof StatusBarLocators> {
+    public locatorKey = 'StatusBar' as const
+
     /**
      * Retrieve all status bar items currently displayed
      * @returns Promise resolving to an array of WebElement
      */
     async getItems() {
-        return this.elem.$$(this.locators.item);
+        return this.item$$;
     }
 
     /**
@@ -53,7 +55,7 @@ export class StatusBar extends BasePage {
      * @returns Promise resolving when the language selection is opened
      */
     async openLanguageSelection(): Promise<void> {
-        await this.elem.$(this.locators.language).click();
+        await this.language$.click();
     }
 
     /**
@@ -71,7 +73,7 @@ export class StatusBar extends BasePage {
      * @returns Promise resolving when the line ending selection is opened
      */
     async openLineEndingSelection(): Promise<void> {
-        await this.elem.$(this.locators.lines).click();
+        await this.lines$.click();
     }
 
     /**
@@ -89,7 +91,7 @@ export class StatusBar extends BasePage {
      * @returns Promise resolving when the encoding selection is opened
      */
     async openEncodingSelection(): Promise<void> {
-        await this.elem.$(this.locators.encoding).click();
+        await this.encoding$.click();
     }
 
     /**
@@ -107,7 +109,7 @@ export class StatusBar extends BasePage {
      * @returns Promise resolving when the indentation selection is opened
      */
     async openIndentationSelection(): Promise<void> {
-        await this.elem.$(this.locators.indent).click();
+        await this.indent$.click();
     }
 
     /**
@@ -125,7 +127,7 @@ export class StatusBar extends BasePage {
      * @returns Promise resolving when the line selection is opened
      */
     async openLineSelection(): Promise<void> {
-        await this.elem.$(this.locators.selection).click();
+        await this.selection$.click();
     }
 
     /**
@@ -145,7 +147,7 @@ export class StatusBar extends BasePage {
         let visible = false;
         try {
             const klass = await browser
-                .$(this.locatorMap.workbench.Workbench.elem)
+                .$(this.locatorMap.Workbench.elem as string)
                 .$(this.locators.notifications)
                 .getAttribute('class');
             visible = klass.indexOf('visible') > -1;
@@ -153,7 +155,7 @@ export class StatusBar extends BasePage {
             // element doesn't exist until the button is first clicked
         }
         if (visible !== open) {
-            await this.elem.$(this.locators.bell).click();
+            await this.bell$.click();
         }
     }
 

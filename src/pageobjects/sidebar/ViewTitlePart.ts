@@ -1,21 +1,20 @@
-import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage } from '../utils'
+import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
 import { SideBarView } from './SideBarView'
-import { sideBar } from 'locators/1.61.0';
+import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0';
 
 /**
  * Page object representing the top (title) part of a side bar view
  */
-export interface ViewTitlePart extends IPluginDecorator<typeof sideBar.ViewTitlePart> { }
-@PluginDecorator(sideBar.ViewTitlePart)
-export class ViewTitlePart extends ElementWithContextMenu {
-    public view: SideBarView
+export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
+@PluginDecorator(ViewTitlePartLocators)
+export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLocators> {
+    public locatorKey = 'ViewTitlePart' as const
 
     constructor(
-        locators: typeof sideBar.ViewTitlePart,
-        view: SideBarView
+        locators: LocatorMap,
+        public view: SideBarView<any> = new SideBarView(locators)
     ) {
         super(locators);
-        this.view = view || new SideBarView(this.locatorMap.sideBar.SideBarView)
     }
 
     /**
@@ -35,7 +34,7 @@ export class ViewTitlePart extends ElementWithContextMenu {
         const elements = await this.action$$;
         for (const element of elements) {
             const title = await element.getAttribute(this.locators.actionLabel);
-            actions.push(await new TitleActionButton(this.locators, title, this).wait());
+            actions.push(await new TitleActionButton(this.locatorMap, title, this).wait());
         }
         return actions;
     }
@@ -46,17 +45,20 @@ export class ViewTitlePart extends ElementWithContextMenu {
      * @returns Promise resolving to TitleActionButton object
      */
     async getAction(title: string): Promise<TitleActionButton> {
-        return new TitleActionButton(this.locators, title, this);
+        return new TitleActionButton(this.locatorMap, title, this);
     }
 }
 
 /**
  * Page object representing a button inside the view title part
  */
-export interface ViewTitlePart extends IPluginDecorator<typeof sideBar.ViewTitlePart> { }
-export class TitleActionButton extends BasePage {
-    constructor(locators: typeof sideBar.ViewTitlePart, private title: string, viewTitle: ViewTitlePart) {
-        super(locators, locators.actionContstructor(title), viewTitle.elem);
+export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
+@PluginDecorator(ViewTitlePartLocators)
+export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
+    public locatorKey = 'ViewTitlePart' as const
+
+    constructor(locators: LocatorMap, private title: string, viewTitle: ViewTitlePart) {
+        super(locators, (locators['ViewTitlePart'].actionContstructor as Function)(title), viewTitle.elem);
         this.title = title;
     }
 

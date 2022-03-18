@@ -4,8 +4,8 @@ import type { Menu } from "./Menu";
 /**
  * Abstract element representing a menu item
  */
-export abstract class MenuItem extends BasePage {
-    abstract parentMenu: Menu;
+export abstract class MenuItem<T> extends BasePage<T> {
+    abstract parentMenu: Menu<T>;
     abstract label: string;
 
     /**
@@ -14,7 +14,7 @@ export abstract class MenuItem extends BasePage {
      * 
      * @returns Menu object representing the submenu if the item has children, void otherwise.
      */
-    async select(): Promise<Menu | undefined> {
+    async select(): Promise<Menu<any> | undefined> {
         await this.elem.click();
         return undefined;
     }
@@ -22,7 +22,7 @@ export abstract class MenuItem extends BasePage {
     /**
      * Return the Menu object representing the menu this item belongs to
      */
-    getParent(): Menu {
+    getParent(): Menu<T> {
         return this.parentMenu;
     }
 

@@ -4,7 +4,7 @@ import { BasePage } from '../utils'
 /**
  * Abstract element representing a menu
  */
-export abstract class Menu extends BasePage {
+export abstract class Menu<T> extends BasePage<T> {
     /**
      * Find whether the menu has an item of a given name
      * @param name name of the item to search for
@@ -19,13 +19,13 @@ export abstract class Menu extends BasePage {
      * Return a menu item of a given name, undefined if not found
      * @param name name of the item to search for
      */
-    abstract getItem(name: string): Promise<MenuItem | undefined>;
+    abstract getItem(name: string): Promise<MenuItem<T> | undefined>;
 
     /**
      * Get all items of a menu
      * @returns array of MenuItem object representing the menu items
      */
-    abstract getItems(): Promise<MenuItem[]>;
+    abstract getItems(): Promise<MenuItem<T>[]>;
 
     /**
      * Recursively select an item with a given path.
@@ -41,8 +41,8 @@ export abstract class Menu extends BasePage {
      * @returns void if the last clicked item is a leaf, Menu item representing
      * its submenu otherwise
      */
-    async select(...path: string[]): Promise<Menu | undefined> {
-        let parent: Menu = this;
+    async select(...path: string[]): Promise<Menu<T> | undefined> {
+        let parent: Menu<T> = this;
         for (const label of path) {
 			const item = await parent.getItem(label);
             if (!item) return parent;

@@ -1,31 +1,18 @@
 import { TitleBar } from "../menu/TitleBar";
-// import { ProblemsView, OutputView, DebugConsoleView, TerminalView, EditorView } from "../..";
-import { BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator } from "../utils";
-import { bottomBar } from '../../locators/1.61.0'
-
-class EditorView {
-    constructor (public locator: any) {}
-    getActiveTab () { return { click: () => {} } }
-}
-class ProblemsView extends ElementWithContextMenu {
-    constructor (public param: any) { super(param) }
-}
-class OutputView extends ElementWithContextMenu {
-    constructor (public param: any) { super(param) }
-}
-class DebugConsoleView extends ElementWithContextMenu {
-    constructor (public param: any) { super(param) }
-}
-class TerminalView extends ElementWithContextMenu {
-    constructor (public param: any) { super(param) }
-}
+import { ProblemsView } from './ProblemsView'
+import { EditorView } from '../editor/EditorView'
+import { DebugConsoleView, OutputView, TerminalView } from '../bottomBar/Views'
+import { BasePage, PluginDecorator, IPluginDecorator } from "../utils";
+import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.61.0'
 
 /**
  * Page object for the bottom view panel
  */
-export interface BottomBarPanel extends IPluginDecorator<typeof bottomBar.BottomBarPanel> {}
-@PluginDecorator(bottomBar.BottomBarPanel)
-export class BottomBarPanel extends BasePage {
+export interface BottomBarPanel extends IPluginDecorator<typeof BottomBarPanelLocators> {}
+@PluginDecorator(BottomBarPanelLocators)
+export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
+    public locatorKey = 'BottomBarPanel' as const
+
     /**
      * Open/Close the bottom bar panel
      * @param open true to open. false to close
@@ -33,8 +20,8 @@ export class BottomBarPanel extends BasePage {
      */
     async toggle(open: boolean): Promise<void> {
         try {
-            const tab = await new EditorView(this.locatorMap.editor.EditorView).getActiveTab()
-            await tab?.click();
+            const tab = await new EditorView(this.locatorMap).getActiveTab()
+            await tab?.elem.click();
         } catch (err) {
             // ignore and move on
         }
@@ -55,7 +42,7 @@ export class BottomBarPanel extends BasePage {
      */
     async openProblemsView(): Promise<ProblemsView> {
         await this.openTab(this.locators.problemsTab);
-        return new ProblemsView(this).wait();
+        return new ProblemsView(this.locatorMap, this).wait();
     }
 
     /**
@@ -64,7 +51,7 @@ export class BottomBarPanel extends BasePage {
      */
     async openOutputView(): Promise<OutputView> {
         await this.openTab(this.locators.outputTab);
-        return new OutputView(this).wait();
+        return new OutputView(this.locatorMap, this).wait();
     }
 
     /**
@@ -73,7 +60,7 @@ export class BottomBarPanel extends BasePage {
      */
     async openDebugConsoleView(): Promise<DebugConsoleView> {
         await this.openTab(this.locators.debugTab);
-        return new DebugConsoleView(this).wait();
+        return new DebugConsoleView(this.locatorMap, this).wait();
     }
 
     /**
@@ -82,7 +69,7 @@ export class BottomBarPanel extends BasePage {
      */
     async openTerminalView(): Promise<TerminalView> {
         await this.openTab(this.locators.terminalTab);
-        return new TerminalView(this).wait();
+        return new TerminalView(this.locatorMap, this).wait();
     }
 
     /**
@@ -103,7 +90,7 @@ export class BottomBarPanel extends BasePage {
 
     private async openTab(title: string) {
         await this.toggle(true);
-        const tabContainer = await this.elem.$(this.locators.tabContainer);
+        const tabContainer = await this.tabContainer$;
         try {
             const tabs = await tabContainer.$$(this.locators.tab(title));
             if (tabs.length > 0) {
@@ -113,7 +100,7 @@ export class BottomBarPanel extends BasePage {
                 await label.click();
             }
         } catch (err) {
-            await new TitleBar(this.locatorMap.menu.TitleBar).select('View', title);
+            await new TitleBar(this.locatorMap).select('View', title);
         }
     }
 

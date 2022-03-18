@@ -1,21 +1,23 @@
-import { ViewItem } from "../ViewItem";
+import { ViewItem, ViewItemLocators } from "../ViewItem";
 import { ContextMenu } from "../../menu/ContextMenu";
 import { ExtensionsViewSection } from "./ExtensionsViewSection";
 
-import { PluginDecorator, IPluginDecorator } from '../../utils'
-import { sideBar } from 'locators/1.61.0';
+import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../utils'
+import { ExtensionsViewItem as ExtensionsViewItemLocators } from '../../../locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
 /**
  * Page object representing an extension in the extensions view
  */
-export interface ExtensionsViewItem extends IPluginDecorator<typeof sideBar.ExtensionsViewItem> { }
-@PluginDecorator(sideBar.ExtensionsViewItem)
+export interface ExtensionsViewItem extends IPluginDecorator<ViewItemLocators> { }
+@PluginDecorator(ExtensionsViewItemLocators)
 export class ExtensionsViewItem extends ViewItem {
+    public locatorKey = 'ExtensionsViewItem' as const
+
     constructor(
-        locators: typeof sideBar.ExtensionsViewItem,
+        locators: LocatorMap,
         extensionElement: ChainablePromiseElement<WebdriverIO.Element>,
-        section: ExtensionsViewSection
+        public section: ExtensionsViewSection
     ) {
         super(locators, extensionElement, section.elem);
     }
@@ -24,8 +26,7 @@ export class ExtensionsViewItem extends ViewItem {
      * Get title of the extension
      */
     async getTitle(): Promise<string> {
-        const title = await this.elem.$(this.locatorMap.sideBar.ExtensionsViewSection.itemTitle);
-        return title.getText();
+        return this.section.itemLabel$.getText();
     }
 
     /**

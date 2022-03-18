@@ -1,18 +1,20 @@
-import { TreeItem, TreeItemLocators } from "../../ViewItem";
-import { TreeSection } from "../TreeSection";
-
-import { PluginDecorator, IPluginDecorator } from '../../../utils'
-import { sideBar } from 'locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
+
+import { TreeSection } from "../TreeSection";
+import { TreeItem, ViewItemLocators } from "../../ViewItem";
+import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../../utils'
+import { CustomTreeItem as CustomTreeItemLocator } from '../../../../locators/1.61.0';
 
 /**
  * View item in a custom-made content section (e.g. an extension tree view)
  */
-export interface CustomTreeItem extends IPluginDecorator<TreeItemLocators> { }
-@PluginDecorator(sideBar.CustomTreeItem)
+export interface CustomTreeItem extends IPluginDecorator<ViewItemLocators> { }
+@PluginDecorator(CustomTreeItemLocator)
 export class CustomTreeItem extends TreeItem {
+    public locatorKey = 'CustomTreeItem' as const
+
     constructor(
-        locators: typeof sideBar.CustomTreeItem,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public viewPart: TreeSection
     ) {
@@ -20,7 +22,7 @@ export class CustomTreeItem extends TreeItem {
     }
 
     async getLabel(): Promise<string> {
-        return this.elem.$(this.locatorMap.sideBar.CustomTreeSection.itemLabel).getText();
+        return this.elem.$(this.locatorMap.CustomTreeSection.itemLabel as string).getText();
     }
 
     async getTooltip(): Promise<string> {
@@ -37,10 +39,10 @@ export class CustomTreeItem extends TreeItem {
     }
 
     async getChildren(): Promise<TreeItem[]> {
-        const rows = await this.getChildItems(this.locatorMap.sideBar.DefaultTreeSection.itemRow);
+        const rows = await this.getChildItems(this.locatorMap.DefaultTreeSection.itemRow as string);
         const items = await Promise.all(
             rows.map(async row => (
-                new CustomTreeItem(this.locators, row as any, this.viewPart as TreeSection).wait()
+                new CustomTreeItem(this.locatorMap, row as any, this.viewPart as TreeSection).wait()
             ))
         );
         return items;

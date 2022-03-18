@@ -6,6 +6,7 @@ import { Services, Options, Capabilities } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
+import { getLocators } from './utils'
 import { VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS } from './constants'
 import type { ServiceOptions } from './types'
 
@@ -54,9 +55,9 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
   }
 
   async before (capabilities: UpdatedCapabilities, __: never, browser: WebdriverIO.Browser) {
-    const locators = await import(`./locators/${capabilities['wdio:vscodeService'].version}`)
-    const workbenchPO = new Workbench(locators.workbench.Workbench)
-    browser.addCommand('getWorkbench', () => workbenchPO)
+    const locators = await getLocators(capabilities['wdio:vscodeService'].version)
+    const workbenchPO = new Workbench(locators)
+    browser.addCommand('getWorkbench', () => workbenchPO.wait())
     // Todo(Christian): ensure this is the actual version
     browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].version)
     browser.addCommand('getVSCodeChannel', () => capabilities['wdio:vscodeService'].version === 'insiders' ? 'insiders' : 'vscode')

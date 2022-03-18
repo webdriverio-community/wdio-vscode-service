@@ -1,6 +1,6 @@
 import { Editor, EditorLocators } from "./Editor";
 import { PluginDecorator, IPluginDecorator } from "../utils";
-import { editor } from '../../locators/1.61.0'
+import { WebView as WebViewLocators } from '../../locators/1.61.0'
 
 let handle: string | undefined;
 
@@ -8,8 +8,10 @@ let handle: string | undefined;
  * Page object representing an open editor containing a web view
  */
 export interface WebView extends IPluginDecorator<EditorLocators> {}
-@PluginDecorator(editor.WebView)
-export class WebView extends Editor {
+@PluginDecorator(WebViewLocators)
+export class WebView extends Editor<EditorLocators> {
+    public locatorKey = 'WebView' as const
+
     /**
      * Search for an element inside the webview iframe.
      * Requires webdriver being switched to the webview iframe first.
@@ -56,7 +58,7 @@ export class WebView extends Editor {
         }
         await browser.switchToWindow(handle);
 
-        const reference = await this.elem.$(this.locatorMap.editor.EditorView.webView);
+        const reference = await this.elem.$(this.locatorMap.EditorView.webView as string);
         const flowToAttr = await reference.getAttribute('aria-flowto')
         const container = await browser.$(`#${flowToAttr}`)
         await container.waitForExist({ timeout: 5000 })
@@ -72,7 +74,7 @@ export class WebView extends Editor {
         const view = tries[0]!
         await browser.switchToFrame(view);
 
-        const frame = await this.elem.$(this.locators.activeFrame);
+        const frame = await this.activeFrame$;
         await frame.waitForExist({ timeout: 5000 });
         await browser.switchToFrame(frame);
     }

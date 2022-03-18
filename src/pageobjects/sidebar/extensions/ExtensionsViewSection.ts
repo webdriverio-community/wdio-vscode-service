@@ -2,7 +2,7 @@ import { ViewSection, ViewSectionLocators } from "../ViewSection";
 import { ExtensionsViewItem } from "./ExtensionsViewItem";
 
 import { PluginDecorator, IPluginDecorator } from '../../utils'
-import { sideBar } from 'locators/1.61.0';
+import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0';
 
 /**
  * Categories of extensions to search for
@@ -19,13 +19,15 @@ enum ExtensionCategory {
  * View section containing extensions
  */
 export interface ExtensionsViewSection extends IPluginDecorator<ViewSectionLocators> { }
-@PluginDecorator(sideBar.ExtensionsViewSection)
+@PluginDecorator(ExtensionsViewSectionLocators)
 export class ExtensionsViewSection extends ViewSection {
+    public locatorKey = 'ExtensionsViewSection' as const
+
     async getVisibleItems(): Promise<ExtensionsViewItem[]> {
         const extensionRows = await this.items$.$$(this.locators.itemRow);
         return Promise.all(
             extensionRows.map(async row => (
-                new ExtensionsViewItem(this.locatorMap.sideBar.ExtensionsViewItem, row as any, this).wait()
+                new ExtensionsViewItem(this.locatorMap, row as any, this).wait()
             ))
         );
     }

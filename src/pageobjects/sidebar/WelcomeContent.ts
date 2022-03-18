@@ -1,6 +1,6 @@
 import { ViewSection } from './ViewSection'
-import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
-import { welcome } from 'locators/1.61.0'
+import { BasePage, PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
+import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.61.0'
 import { ChainablePromiseElement } from "webdriverio";
 
 /**
@@ -8,15 +8,17 @@ import { ChainablePromiseElement } from "webdriverio";
  *
  * To execute the command bound to this button simply run: `await button.click();`.
  */
-export interface WelcomeContentButton extends IPluginDecorator<typeof welcome.WelcomeContent> {}
-@PluginDecorator(welcome.WelcomeContent)
-export class WelcomeContentButton extends BasePage {
+export interface WelcomeContentButton extends IPluginDecorator<typeof WelcomeContentLocators> {}
+@PluginDecorator(WelcomeContentLocators)
+export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators> {
+    public locatorKey = 'WelcomeContent' as const
+
     /**
      * @param panel  The panel containing the button in the welcome section
      * @param welcomeSection  The enclosing welcome section
      */
     constructor(
-        locators: typeof welcome.WelcomeContent,
+        locators: LocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public welcomeSection: WelcomeContentSection
     ) {
@@ -41,15 +43,17 @@ export class WelcomeContentButton extends BasePage {
  * which returns both in the order that they are found (at the expense, that you
  * now must use typechecks to find out what you got).
  */
-export interface WelcomeContentSection extends IPluginDecorator<typeof welcome.WelcomeContent> {}
-@PluginDecorator(welcome.WelcomeContent)
-export class WelcomeContentSection extends BasePage {
+export interface WelcomeContentSection extends IPluginDecorator<typeof WelcomeContentLocators> {}
+@PluginDecorator(WelcomeContentLocators)
+export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocators> {
+    public locatorKey = 'WelcomeContent' as const
+
     /**
      * @param panel  The panel containing the welcome content.
      * @param parent  The webelement in which the welcome content is embedded.
      */
     constructor(
-        locators: typeof welcome.WelcomeContent,
+        locators: LocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         parent: ViewSection
     ) {
@@ -66,14 +70,14 @@ export class WelcomeContentSection extends BasePage {
             if (tagName === "p") {
                 return e.getText();
             } else {
-                return new WelcomeContentButton(this.locators, e as any, this);
+                return new WelcomeContentButton(this.locatorMap, e as any, this);
             }
         }));
     }
 
     /** Finds all buttons in the welcome content */
     public getButtons(): Promise<WelcomeContentButton[]> {
-        return this.button$$.map((elem) => new WelcomeContentButton(this.locators, elem as any, this));
+        return this.button$$.map((elem) => new WelcomeContentButton(this.locatorMap, elem as any, this));
     }
 
     /**

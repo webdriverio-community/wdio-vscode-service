@@ -1,16 +1,18 @@
-import { PluginDecorator, IPluginDecorator } from '../utils'
+import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
 import { WindowControls } from "./WindowControls";
 import { ContextMenu } from './ContextMenu'
 import { Menu } from "./Menu";
 import { MenuItem } from "./MenuItem";
-import { menu } from '../../locators/1.61.0'
+import { TitleBar as TitleBarLocators } from '../../locators/1.61.0'
 
 /**
  * Page object representing the custom VSCode title bar
  */
-export interface TitleBar extends IPluginDecorator<typeof menu.TitleBar> {}
-@PluginDecorator(menu.TitleBar)
-export class TitleBar extends Menu {
+export interface TitleBar extends IPluginDecorator<typeof TitleBarLocators> {}
+@PluginDecorator(TitleBarLocators)
+export class TitleBar extends Menu<typeof TitleBarLocators> {
+    public locatorKey = 'TitleBar' as const
+
     /**
      * Get title bar item by name
      * @param name name of the item to search by
@@ -19,7 +21,7 @@ export class TitleBar extends Menu {
     async getItem(name: string): Promise<TitleBarItem | undefined> {
         try {
             const titleBar = new TitleBarItem(
-                this.locatorMap.menu.TitleBar,
+                this.locatorMap,
                 this.locators.itemConstructor(name),
                 this
             )
@@ -45,7 +47,7 @@ export class TitleBar extends Menu {
             }
 
             const item = new TitleBarItem(
-                this.locatorMap.menu.TitleBar,
+                this.locatorMap,
                 await element.getAttribute(this.locators.itemLabel),
                 this
             )
@@ -67,34 +69,36 @@ export class TitleBar extends Menu {
      * Get a reference to the WindowControls
      */
     getWindowControls(): WindowControls {
-        return new WindowControls(this.locatorMap.menu.WindowControls, this.elem);
+        return new WindowControls(this.locatorMap, this.elem);
     }
 }
 
 /**
  * Page object representing an item of the custom VSCode title bar
  */
-export interface TitleBarItem extends IPluginDecorator<typeof menu.TitleBar> {}
-@PluginDecorator(menu.TitleBar)
-export class TitleBarItem extends MenuItem {
+export interface TitleBarItem extends IPluginDecorator<typeof TitleBarLocators> {}
+@PluginDecorator(TitleBarLocators)
+export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
+    public locatorKey = 'TitleBar' as const
+
     constructor(
-        locators: typeof menu.TitleBar,
+        locators: LocatorMap,
         public label: string,
-        public parentMenu: Menu
+        public parentMenu: Menu<typeof TitleBarLocators>
     ) {
-        super(locators, locators.itemConstructor(label));
+        super(locators, (locators['TitleBar'].itemConstructor as Function)(label));
         this.parentMenu = parentMenu;
         this.label = label;
     }
 
-    async select(): Promise<ContextMenu> {
-        const openMenus = await browser.$$(this.locatorMap.menu.ContextMenu.elem)
+    async select() {
+        const openMenus = await browser.$$(this.locatorMap.ContextMenu.elem as string)
         if (openMenus.length > 0 && await openMenus[0].isDisplayed()) {
             await browser.keys('Escape');
         }
         await this.elem.click();
 
-        const menu = new ContextMenu(this.locatorMap.menu.ContextMenu, this.elem)
+        const menu = new ContextMenu(this.locatorMap, this.elem)
         await menu.wait()
         return menu;
     }

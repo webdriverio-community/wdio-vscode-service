@@ -1,14 +1,14 @@
-import { Notification, CenterNotification } from './Notification'
+import { Notification, CenterNotification, NotificationType } from './Notification'
 import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
-import { workbench } from '../../locators/1.61.0'
-import { NotificationType } from '../../types'
+import { NotificationsCenter as NotificationsCenterLocator } from '../../locators/1.61.0'
 
 /**
  * Notifications center page object
  */
-export interface NotificationsCenter extends IPluginDecorator<typeof workbench.NotificationsCenter> {}
-@PluginDecorator(workbench.NotificationsCenter)
-export class NotificationsCenter extends BasePage {
+export interface NotificationsCenter extends IPluginDecorator<typeof NotificationsCenterLocator> {}
+@PluginDecorator(NotificationsCenterLocator)
+export class NotificationsCenter extends BasePage<typeof NotificationsCenterLocator> {
+    public locatorKey = 'NotificationsCenter' as const
     /**
      * Close the notifications center
      * @returns Promise resolving when the center is closed
@@ -40,7 +40,7 @@ export class NotificationsCenter extends BasePage {
         const elements = await this.row$$;
 
         for (const element of elements) {
-            const not = new CenterNotification(this.locatorMap.workbench.NotificationsCenter, element as any);
+            const not = new CenterNotification(this.locatorMap, element as any);
             if (type === NotificationType.Any || await not.getType() === type) {
                 notifications.push(await not.wait());
             }

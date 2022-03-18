@@ -1,18 +1,20 @@
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
-import { menu } from '../../locators/1.61.0'
+import { WindowControls as WindowControlsLocators } from '../../locators/1.61.0'
 
 /**
  * Page object for the windows controls part of the title bar
  */
-export interface WindowControls extends IPluginDecorator<typeof menu.WindowControls> {}
-@PluginDecorator(menu.WindowControls)
-export class WindowControls extends BasePage {
+export interface WindowControls extends IPluginDecorator<typeof WindowControlsLocators> {}
+@PluginDecorator(WindowControlsLocators)
+export class WindowControls extends BasePage<typeof WindowControlsLocators> {
+    public locatorKey = 'WindowControls' as const
+
     /**
      * Use the minimize window button
      * @returns Promise resolving when minimize button is pressed
      */
     async minimize(): Promise<void> {
-        await this.elem.$(this.locators.minimize).click();
+        await this.minimize$.click();
     }
 
     /**
@@ -21,7 +23,7 @@ export class WindowControls extends BasePage {
      */
     async maximize(): Promise<void> {
         try {
-            await this.elem.$(this.locators.maximize).click();
+            await this.maximize$.click();
         } catch (err) {
             console.log('Window is already maximized');
         }
@@ -33,7 +35,7 @@ export class WindowControls extends BasePage {
      */
     async restore(): Promise<void> {
         try {
-            await this.elem.$(this.locators.restore).click();
+            await this.restore$.click();
         } catch (err) {
             console.log('Window is not maximized');
         }
@@ -44,6 +46,6 @@ export class WindowControls extends BasePage {
      * @returns Promise resolving when close button is pressed
      */
     async close(): Promise<void> {
-        await this.elem.$(this.locators.close).click();
+        await this.close$.click();
     }
 }

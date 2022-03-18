@@ -1,30 +1,35 @@
-import { EditorView, EditorGroup, EditorTab } from './EditorView'
-import { ElementWithContextMenu, IPluginDecorator } from '../utils'
-import { Locators } from "../../types";
-import { editor } from 'locators/1.61.0';
 import { ChainablePromiseElement } from 'webdriverio';
 
+import { EditorView, EditorGroup, EditorTab } from './EditorView'
+import { ElementWithContextMenu, LocatorMap } from '../utils'
+import {
+    Editor as EditorLocators,
+    SettingsEditor as SettingsEditorLocators,
+    TextEditor as TextEditorLocators,
+    DiffEditor as DiffEditorLocators,
+    EditorView as EditorViewLocators,
+    WebView as WebViewLocators
+} from '../../locators/1.61.0'
+
 export type EditorLocators = (
-    typeof editor.Editor &
-    typeof editor.SettingsEditor &
-    typeof editor.TextEditor &
-    typeof editor.DiffEditor &
-    typeof editor.WebView
+    typeof EditorLocators &
+    typeof SettingsEditorLocators &
+    typeof TextEditorLocators &
+    typeof DiffEditorLocators &
+    typeof WebViewLocators &
+    typeof EditorViewLocators
 )
 
 /**
  * Abstract representation of an editor tab
  */
-export interface Editor extends IPluginDecorator<EditorLocators> { }
-export abstract class Editor extends ElementWithContextMenu {
-    public view: EditorView | EditorGroup
+export abstract class Editor<T> extends ElementWithContextMenu<T> {
     constructor(
-        locators: Locators,
+        locators: LocatorMap,
         element?: ChainablePromiseElement<WebdriverIO.Element> | string,
-        view?: EditorView | EditorGroup
+        public view: EditorView | EditorGroup = new EditorView(locators)
     ) {
-        super(locators, element, view?.elem);
-        this.view = view || new EditorView(this.locatorMap.editor.EditorView)
+        super(locators, element);
         this.setParentElement(this.view.elem)
     }
 

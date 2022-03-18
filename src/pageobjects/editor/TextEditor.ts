@@ -1,31 +1,33 @@
 import { fileURLToPath } from "url";
 import clipboard from 'clipboardy';
+import type { ChainablePromiseElement } from "webdriverio";
 
-import { InputBox } from "../workbench/input/InputBox";
+import { InputBox } from "../workbench/Input";
 import { ContextMenu } from '../menu/ContextMenu'
 import { ContentAssist } from './ContentAssist';
 import { StatusBar } from "../statusBar/StatusBar";
 import { Editor, EditorLocators } from "./Editor";
 
-import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu } from "../utils";
-import { editor } from '../../locators/1.61.0'
-import { ChainablePromiseElement } from "webdriverio";
-import { Locators } from "types";
-
+import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap } from "../utils";
+import {
+    TextEditor as TextEditorLocators,
+    FindWidget as FindWidgetLocators
+} from '../../locators/1.61.0'
 
 /**
  * Page object representing the active text editor
  */
 export interface TextEditor extends IPluginDecorator<EditorLocators> {}
-@PluginDecorator(editor.TextEditor)
-export class TextEditor extends Editor {
+@PluginDecorator(TextEditorLocators)
+export class TextEditor extends Editor<EditorLocators> {
+    public locatorKey = 'TextEditor' as const
+
     /**
      * Find whether the active editor has unsaved changes
      * @returns Promise resolving to true/false
      */
     async isDirty(): Promise<boolean> {
-        const tab = await this.view.elem.$(this.locators.activeTab);
-        const klass = await tab.getAttribute('class');
+        const klass = await this.parent.$(this.locators.activeTab).getAttribute('class');
         return klass.indexOf('dirty') >= 0;
     }
 
@@ -34,7 +36,7 @@ export class TextEditor extends Editor {
      * @returns Promise resolving when ctrl+s is invoked
      */
     async save(): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         await inputarea.addValue(['Control', 's']);
     }
 
@@ -46,9 +48,9 @@ export class TextEditor extends Editor {
     async saveAs(): Promise<InputBox> {
         const tab = await this.getTab();
         await tab.elem.addValue(['Control', 'Shift', 's']);
-        const inputBox = browser.$(this.locatorMap.input.InputBox.elem);
+        const inputBox = browser.$(this.locatorMap.InputBox.elem as string);
         await inputBox.waitForExist({ timeout: 5000 })
-        return new InputBox(this.locatorMap.input.InputBox, inputBox);
+        return new InputBox(this.locatorMap, inputBox);
     }
 
     /**
@@ -56,7 +58,7 @@ export class TextEditor extends Editor {
      * @returns Promise resolving to editor's underlying Uri
      */
     async getFileUri(): Promise<string> {
-        const ed = await this.elem.$(this.locators.editorContainer);
+        const ed = await this.editorContainer$;
         return ed.getAttribute(this.locators.dataUri);
     }
 
@@ -77,22 +79,22 @@ export class TextEditor extends Editor {
     async toggleContentAssist(open: boolean): Promise<ContentAssist | void> {
         let isHidden = true;
         try {
-            const assist = await this.elem.$(this.locatorMap.editor.ContentAssist.elem)
+            const assist = await this.elem.$(this.locatorMap.ContentAssist.elem as string)
             const klass = await assist.getAttribute('class');
             const visibility = await assist.getCSSProperty('visibility');
             isHidden = klass.indexOf('visible') < 0 || visibility.value === 'hidden';
         } catch (err) {
             isHidden = true;
         }
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
 
         if (open) {
             if (isHidden) {
                 await inputarea.addValue(['Control', 'Space']);
-                await browser.$(this.locatorMap.editor.ContentAssist.elem)
+                await browser.$(this.locatorMap.ContentAssist.elem as string)
                     .waitForExist({ timeout: 2000 });
             }
-            const assist = await new ContentAssist(this.locatorMap.editor.ContentAssist, this).wait();
+            const assist = await new ContentAssist(this.locatorMap, this).wait();
             await browser.waitUntil(() => { return assist.isLoaded(); }, { timeout: 10000 });
             return assist;
         } else {
@@ -107,7 +109,7 @@ export class TextEditor extends Editor {
      * @returns Promise resolving to editor text
      */
     async getText(): Promise<string> {
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         await inputarea.addValue(['Control', 'a', 'Control', 'c']);
         const text = clipboard.readSync();
         await inputarea.addValue(['ArrowUp']);
@@ -122,7 +124,7 @@ export class TextEditor extends Editor {
      * @returns Promise resolving once the new text is copied over
      */
     async setText(text: string, formatText: boolean = false): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         clipboard.writeSync(text);
         await inputarea.sendKeys(['Control', 'a', 'Control', 'v']);
         clipboard.writeSync('');
@@ -136,7 +138,7 @@ export class TextEditor extends Editor {
      * @returns Promise resolving once the text is deleted
      */
     async clearText(): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         await inputarea.addValue(['Control', 'a']);
         await inputarea.addValue(['Backspace']);
     }
@@ -241,11 +243,11 @@ export class TextEditor extends Editor {
      * @returns Selection page object
      */
     async getSelection(): Promise<Selection|undefined> {
-        const selection = await this.elem.$$(this.locators.selection);
+        const selection = await this.selection$$;
         if (selection.length < 1) {
             return undefined;
         }
-        return new Selection(this.locatorMap.editor.Editor, selection[0] as any, this);
+        return new Selection(this.locatorMap, selection[0] as any, this);
     }
 
     async openFindWidget(): Promise<FindWidget> {
@@ -253,7 +255,7 @@ export class TextEditor extends Editor {
         const widget = await browser.$(this.locators.findWidget)
         await widget.waitForDisplayed({ timeout: 2000 })
 
-        return new FindWidget(this.locatorMap.editor.FindWidget, widget as any, this);
+        return new FindWidget(this.locatorMap, widget as any, this);
     }
 
     /**
@@ -265,7 +267,7 @@ export class TextEditor extends Editor {
      */
     async typeTextAt(line: number, column: number, text: string): Promise<void> {
         await this.moveCursor(line, column);
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         await inputarea.addValue(text);
     }
 
@@ -275,7 +277,7 @@ export class TextEditor extends Editor {
      * @returns promise resolving when the text is typed in
      */
     async typeText(text: string): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         await inputarea.addValue(text);
     }
 
@@ -292,7 +294,7 @@ export class TextEditor extends Editor {
         if (column < 1) {
             throw new Error(`Column number ${column} does not exist`);
         }
-        const inputarea = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         let coordinates = await this.getCoordinates();
         const lineGap = coordinates[0] - line;
         const lineKey = lineGap >= 0 ? 'ArrowUp' : 'ArrowDown';
@@ -342,7 +344,7 @@ export class TextEditor extends Editor {
         
         if (shadowRootHost.length > 0) {
             const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]));
-            return new ContextMenu(this.locatorMap.menu.ContextMenu, shadowRoot).wait();
+            return new ContextMenu(this.locatorMap, shadowRoot).wait();
         }
         return super.openContextMenu();
     }
@@ -354,7 +356,7 @@ export class TextEditor extends Editor {
      */
     async getCoordinates(): Promise<[number, number]> {
         const coords: number[] = [];
-        const statusBar = new StatusBar(this.locatorMap.statusBar.StatusBar);
+        const statusBar = new StatusBar(this.locatorMap);
         const coordinates = <RegExpMatchArray>(await statusBar.getCurrentPosition()).match(/\d+/g);
         for(const c of coordinates) {
             coords.push(+c);
@@ -369,7 +371,7 @@ export class TextEditor extends Editor {
      * @returns promise resolving to true when a breakpoint was added, false when removed or
      */
     async toggleBreakpoint(line: number): Promise<boolean> {
-        const margin = await this.elem.$(this.locators.marginArea);
+        const margin = await this.marginArea$;
         const lineNum = await margin.$(this.locators.lineNumber(line));
         await lineNum.moveTo();
 
@@ -400,7 +402,7 @@ export class TextEditor extends Editor {
         const items = await widgets.$$(`.//span[contains(@widgetid, 'codelens.widget')]`);
 
         for (const item of items) {
-            lenses.push(await new CodeLens(this.locatorMap.editor.Editor, item as any, this).wait());
+            lenses.push(await new CodeLens(this.locatorMap, item as any, this).wait());
         }
         return lenses;
     }
@@ -432,11 +434,13 @@ export class TextEditor extends Editor {
 /**
  * Text selection block
  */
-interface Selection extends IPluginDecorator<typeof editor.TextEditor> {}
-@PluginDecorator(editor.TextEditor)
-class Selection extends ElementWithContextMenu {
+interface Selection extends IPluginDecorator<typeof TextEditorLocators> {}
+@PluginDecorator(TextEditorLocators)
+class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
+    public locatorKey = 'TextEditor' as const
+
     constructor(
-        locators: Locators,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public editor: TextEditor
     ) {
@@ -449,7 +453,7 @@ class Selection extends ElementWithContextMenu {
         
         if (shadowRootHost.length > 0) {
             const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]));
-            return new ContextMenu(this.locatorMap.menu.ContextMenu, shadowRoot).wait();
+            return new ContextMenu(this.locatorMap, shadowRoot).wait();
         }
         return super.openContextMenu();
     }
@@ -458,11 +462,13 @@ class Selection extends ElementWithContextMenu {
 /**
  * Page object for Code Lens inside a text editor
  */
-export interface CodeLens extends IPluginDecorator<typeof editor.Editor> {}
-@PluginDecorator(editor.Editor)
-export class CodeLens extends BasePage {
+export interface CodeLens extends IPluginDecorator<typeof TextEditorLocators> {}
+@PluginDecorator(TextEditorLocators)
+export class CodeLens extends BasePage<typeof TextEditorLocators> {
+    public locatorKey = 'TextEditor' as const
+
     constructor(
-        locators: Locators,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public editor: TextEditor
     ) {
@@ -491,11 +497,13 @@ export class CodeLens extends BasePage {
 /**
  * Text Editor's Find Widget
  */
-export interface FindWidget extends IPluginDecorator<typeof editor.FindWidget> {}
-@PluginDecorator(editor.FindWidget)
-export class FindWidget extends BasePage {
+export interface FindWidget extends IPluginDecorator<typeof FindWidgetLocators> {}
+@PluginDecorator(FindWidgetLocators)
+export class FindWidget extends BasePage<typeof FindWidgetLocators> {
+    public locatorKey = 'FindWidget' as const
+
     constructor(
-        locators: typeof editor.FindWidget,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public textEditor: TextEditor
     ) {
@@ -507,7 +515,7 @@ export class FindWidget extends BasePage {
      * @param replace true for replace, false for find
      */
     async toggleReplace(replace: boolean): Promise<void> {
-        const btn = await this.elem.$(this.locators.toggleReplace);
+        const btn = await this.toggleReplace$;
         const klass = await btn.getAttribute('class');
         
         if (replace && klass.includes('collapsed') || !replace && !klass.includes('collapsed')) {
@@ -527,7 +535,7 @@ export class FindWidget extends BasePage {
      * @param text text to fill in
      */
     async setSearchText(text: string): Promise<void> {
-        const findPart = await this.elem.$(this.locators.findPart);
+        const findPart = await this.findPart$;
         await this.setText(text, findPart);
     }
 
@@ -536,7 +544,7 @@ export class FindWidget extends BasePage {
      * @returns value of find input as string
      */
     async getSearchText(): Promise<string> {
-        const findPart = await this.elem.$(this.locators.findPart);
+        const findPart = await this.findPart$;
         return this.getInputText(findPart);
     }
 
@@ -546,7 +554,7 @@ export class FindWidget extends BasePage {
      */
     async setReplaceText(text: string): Promise<void> {
         await this.toggleReplace(true);
-        const replacePart = await this.elem.$(this.locators.replacePart);
+        const replacePart = await this.replacePart$;
         await this.setText(text, replacePart);
     }
 
@@ -556,7 +564,7 @@ export class FindWidget extends BasePage {
      * @returns value of replace input as string
      */
      async getReplaceText(): Promise<string> {
-        const replacePart = await this.elem.$(this.locators.replacePart);
+        const replacePart = await this.replacePart$;
         return this.getInputText(replacePart);
     }
 
@@ -605,7 +613,7 @@ export class FindWidget extends BasePage {
      * @returns pair in form of [current result index, total number of results]
      */
     async getResultCount(): Promise<[number, number]> {
-        const count = await this.elem.$(this.locators.matchCount);
+        const count = await this.matchCount$;
         const text = await count.getText();
 
         if (text.includes('No results')) {
@@ -653,8 +661,8 @@ export class FindWidget extends BasePage {
         }
 
         const element = part === 'find'
-            ? await this.elem.$(this.locators.findPart)
-            : await this.elem.$(this.locators.replacePart);
+            ? await this.findPart$
+            : await this.replacePart$;
         
         if (part === 'replace') {
             await this.toggleReplace(true);
@@ -673,8 +681,8 @@ export class FindWidget extends BasePage {
         }
 
         const element = part === 'find'
-            ? await this.elem.$(this.locators.findPart)
-            : await this.elem.$(this.locators.replacePart);
+            ? await this.findPart$
+            : await this.replacePart$;
         
         if (part === 'replace') {
             await this.toggleReplace(true);

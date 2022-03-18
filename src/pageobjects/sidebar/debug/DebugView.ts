@@ -1,13 +1,14 @@
-import { SideBarView, PageLocators } from "../SideBarView";
+import { SideBarView } from "../SideBarView";
 import { PluginDecorator, IPluginDecorator } from '../../utils'
-import { sideBar } from 'locators/1.61.0';
+import { DebugView as DebugViewLocators } from '../../../locators/1.61.0';
 
 /**
  * Page object representing the Run/Debug view in the side bar
  */
-export interface DebugView extends IPluginDecorator<PageLocators> { }
-@PluginDecorator(sideBar.DebugView)
-export class DebugView extends SideBarView {
+export interface DebugView extends IPluginDecorator<typeof DebugViewLocators> { }
+@PluginDecorator(DebugViewLocators)
+export class DebugView extends SideBarView<typeof DebugViewLocators> {
+    public locatorKey = 'DebugView' as const
     
     /**
      * Get the title of the selected launch configuration

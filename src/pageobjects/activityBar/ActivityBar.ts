@@ -1,25 +1,28 @@
 import { PluginDecorator, IPluginDecorator, ElementWithContextMenu } from '../utils'
 import { ViewControl } from './ViewControl'
-import { ActionsControl } from './ActionControl'
-import { activityBar } from '../../locators/1.61.0'
+import { ActionsControl } from './ActionsControl'
+import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
 
 /**
  * Page object representing the left side activity bar in VS Code
  */
-export interface ActivityBar extends IPluginDecorator<typeof activityBar.ActivityBar> {}
-@PluginDecorator(activityBar.ActivityBar)
-export class ActivityBar extends ElementWithContextMenu {
+export interface ActivityBar extends IPluginDecorator<typeof ActivityBarLocators> {}
+@PluginDecorator(ActivityBarLocators)
+export class ActivityBar extends ElementWithContextMenu<typeof ActivityBarLocators> {
+    public locatorKey = 'ActivityBar' as const;
+
     /**
      * Find all view containers displayed in the activity bar
      * @returns Promise resolving to array of ViewControl objects
      */
     async getViewControls(): Promise<ViewControl[]> {
         const views: ViewControl[] = [];
-        const viewContainer = await this.elem.$(this.locators.viewContainer);
+        const viewContainer = await this.viewContainer$;
         for(const element of await viewContainer.$$(this.locators.actionItem)) {
             views.push(await new ViewControl(
-                this.locatorMap.activityBar.ViewControl,
-                element as any
+                this.locatorMap,
+                element as any,
+                this
             ).wait());
         }
         return views;
@@ -48,10 +51,10 @@ export class ActivityBar extends ElementWithContextMenu {
      */
     async getGlobalActions(): Promise<ActionsControl[]> {
         const actions: ActionsControl[] = [];
-        const actionContainer = await this.elem.$(this.locators.actionsContainer);
+        const actionContainer = await this.actionsContainer$;
         for(const element of await actionContainer.$$(this.locators.actionItem)) {
             actions.push(await new ActionsControl(
-                this.locatorMap.activityBar.ActivityBar,
+                this.locatorMap,
                 element as any
             ).wait());
         }

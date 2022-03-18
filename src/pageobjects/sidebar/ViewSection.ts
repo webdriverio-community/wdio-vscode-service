@@ -2,24 +2,29 @@ import { ViewContent } from './ViewContent';
 import { ViewItem } from './ViewItem';
 import { ContextMenu } from '../menu/ContextMenu'
 import { WelcomeContentSection } from './WelcomeContent';
-import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu } from '../utils'
-import { sideBar } from 'locators/1.61.0';
+import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap } from '../utils'
+import {
+    ViewSection as ViewSectionLocators,
+    ExtensionsViewSection as ExtensionsViewSectionLocators,
+    CustomTreeSection as CustomTreeSectionLocators,
+    DefaultTreeSection as DefaultTreeSectionLocators
+} from '../../locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
 export type ViewSectionLocators = (
-    typeof sideBar.ViewSection &
-    typeof sideBar.ExtensionsViewSection &
-    typeof sideBar.CustomTreeSection &
-    Omit<typeof sideBar.DefaultTreeSection, 'itemLabel'>
+    typeof ViewSectionLocators &
+    typeof ExtensionsViewSectionLocators &
+    typeof CustomTreeSectionLocators &
+    typeof DefaultTreeSectionLocators
 )
 
 /**
  * Page object representing a collapsible content section of the side bar view
  */
 export interface ViewSection extends IPluginDecorator<ViewSectionLocators> { }
-export abstract class ViewSection extends BasePage {
+export abstract class ViewSection extends BasePage<ViewSectionLocators> {
     constructor(
-        locators: ViewSectionLocators,
+        locators: LocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public content: ViewContent
     ) {
@@ -88,7 +93,7 @@ export abstract class ViewSection extends BasePage {
             if (!await res.isDisplayed()) {
                 return undefined;
             }
-            return new WelcomeContentSection(this.locatorMap.welcome.WelcomeContent, res as any, this);
+            return new WelcomeContentSection(this.locatorMap, res as any, this);
         } catch (_err) {
             return undefined;
         }
@@ -144,7 +149,7 @@ export abstract class ViewSection extends BasePage {
             for (const element of elements) {
                 actions.push(
                     await new ViewPanelAction(
-                        this.locatorMap.sideBar.ViewSection,
+                        this.locatorMap,
                         element as any,
                         this
                     ).wait()
@@ -181,17 +186,19 @@ export abstract class ViewSection extends BasePage {
         }
         const section = this;
         const self = this;
-        const btn = new class extends ElementWithContextMenu {
+        const btn = new class extends ElementWithContextMenu<typeof ViewSectionLocators> {
+            locatorKey = 'ViewSection' as const
+
             async openContextMenu() {
                 await this.elem.click();
                 const shadowRootHost = await section.elem.$$('.shadow-root-host');
                 if (shadowRootHost.length > 0) {
                     const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]));
-                    return new ContextMenu(self.locatorMap.menu.ContextMenu, shadowRoot).wait();
+                    return new ContextMenu(self.locatorMap, shadowRoot).wait();
                 }
                 return super.openContextMenu();
             }
-        }(this.locatorMap.menu.ContextMenu, more.elem, this.elem);
+        }(this.locatorMap, more.elem, this.elem);
         return btn.openContextMenu();
     }
 
@@ -203,11 +210,13 @@ export abstract class ViewSection extends BasePage {
 /**
  * Action button on the header of a view section
  */
-export interface ViewPanelAction extends IPluginDecorator<typeof sideBar.ViewSection> { }
-@PluginDecorator(sideBar.ViewSection)
-export class ViewPanelAction extends BasePage {
+export interface ViewPanelAction extends IPluginDecorator<typeof ViewSectionLocators> { }
+@PluginDecorator(ViewSectionLocators)
+export class ViewPanelAction extends BasePage<typeof ViewSectionLocators> {
+    public locatorKey = 'ViewSection' as const
+
     constructor(
-        locators: typeof sideBar.ViewSection,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         viewPart: ViewSection
     ) {

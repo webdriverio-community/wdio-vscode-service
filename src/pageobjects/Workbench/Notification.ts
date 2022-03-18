@@ -1,19 +1,28 @@
-import { BasePage, IPluginDecorator } from '../utils'
-import { workbench } from '../../locators/1.61.0'
-import { NotificationType } from '../../types'
+import { BasePage, IPluginDecorator, LocatorMap } from '../utils'
+import { Notification as NotificationLocators } from '../../locators/1.61.0'
 import { ChainablePromiseElement } from 'webdriverio';
+
+/**
+ * Available types of notifications
+ */
+export enum NotificationType {
+    Info = 'info',
+    Warning = 'warning',
+    Error = 'error',
+    Any = 'any'
+}
 
 /**
  * Abstract element representing a notification
  */
-export interface Notification extends IPluginDecorator<typeof workbench.Notification> {}
-export abstract class Notification extends BasePage {
+export interface Notification extends IPluginDecorator<typeof NotificationLocators> {}
+export abstract class Notification extends BasePage<typeof NotificationLocators> {
     /**
      * Get the message of the notification
      * @returns Promise resolving to notification message
      */
     async getMessage(): Promise<string> {
-        return await this.elem.$(this.locators.message).getText();
+        return await this.message$.getText();
     }
 
     /**
@@ -21,7 +30,7 @@ export abstract class Notification extends BasePage {
      * @returns Promise resolving to NotificationType
      */
     async getType(): Promise<NotificationType> {
-        const iconType = await this.elem.$(this.locators.icon).getAttribute('class');
+        const iconType = await this.icon$.getAttribute('class');
         if (iconType.indexOf('icon-info') > -1) {
             return NotificationType.Info;
         } else if (iconType.indexOf('icon-warning') > -1) {
@@ -37,7 +46,7 @@ export abstract class Notification extends BasePage {
      */
     async getSource(): Promise<string> {
         await this.expand();
-        return await this.elem.$(this.locators.source).getAttribute('title');
+        return await this.source$.getAttribute('title');
     }
 
     /**
@@ -45,7 +54,7 @@ export abstract class Notification extends BasePage {
      * @returns Promise resolving to true/false
      */
     async hasProgress(): Promise<boolean> {
-        const klass = await this.elem.$(this.locators.progress).getAttribute('class');
+        const klass = await this.progress$.getAttribute('class');
         return klass.indexOf('done') < 0;
     }
 
@@ -54,7 +63,7 @@ export abstract class Notification extends BasePage {
      * @returns Promise resolving when notification is dismissed
      */
     async dismiss(): Promise<void> {
-        const btn = await this.elem.$(this.locators.dismiss)
+        const btn = await this.dismiss$
         await btn.click()
         await btn.waitForDisplayed({ reverse: true, timeout: 2000 })
     }
@@ -66,12 +75,12 @@ export abstract class Notification extends BasePage {
      */
     async getActions(): Promise<NotificationButton[]> {
         const buttons: NotificationButton[] = [];
-        const elements = await this.elem.$(this.locators.actions)
+        const elements = await this.actions$
             .$$(this.locators.action);
 
         for (const button of elements) {
             buttons.push(await new NotificationButton(
-                this.locatorMap.workbench.Notification,
+                this.locatorMap,
                 await button.getAttribute(this.locators.actionLabel)
             ).wait());
         }
@@ -85,7 +94,7 @@ export abstract class Notification extends BasePage {
      */
     async takeAction(title: string): Promise<void> {
         await new NotificationButton(
-            this.locatorMap.workbench.Notification,
+            this.locatorMap,
             title
         ).elem.click();
     }
@@ -94,8 +103,8 @@ export abstract class Notification extends BasePage {
      * Expand the notification if possible
      */
     async expand(): Promise<void> {
-        // await this.getDriver().actions().mouseMove(this).perform();
-        const exp = await this.elem.$$(this.locators.expand);
+        await this.elem.moveTo()
+        const exp = await this.expand$$;
         if (exp[0]) {
             await exp[0].click();
         }
@@ -106,11 +115,13 @@ export abstract class Notification extends BasePage {
  * Notification displayed on its own in the notifications-toasts container
  */
 export class StandaloneNotification extends Notification {
+    public locatorKey = 'Notification' as const
+
     constructor(
-        locators: typeof workbench.Notification,
+        locators: LocatorMap,
         notification: ChainablePromiseElement<WebdriverIO.Element>
     ) {
-        super(locators, notification, locators.standaloneContainer);
+        super(locators, notification, locators['Notification'].standaloneContainer as string);
     }
 }
 
@@ -118,8 +129,10 @@ export class StandaloneNotification extends Notification {
  * Notification displayed within the notifications center
  */
 export class CenterNotification extends Notification {
+    public locatorKey = 'Notification' as const
+
     constructor(
-        locators: typeof workbench.NotificationsCenter,
+        locators: LocatorMap,
         notification: ChainablePromiseElement<WebdriverIO.Element>
     ) {
         super(locators, notification);
@@ -129,14 +142,16 @@ export class CenterNotification extends Notification {
 /**
  * Notification button
  */
-class NotificationButton extends BasePage {
+interface NotificationButton extends IPluginDecorator<typeof NotificationLocators> {}
+class NotificationButton extends BasePage<typeof NotificationLocators> {
+    public locatorKey = 'Notification' as const
     private title: string;
 
     constructor(
-        locators: typeof workbench.Notification,
+        locators: LocatorMap,
         title: string
     ) {
-        super(locators, locators.buttonConstructor(title));
+        super(locators, (locators['Notification'].buttonConstructor as Function)(title));
         this.title = title;
     }
 

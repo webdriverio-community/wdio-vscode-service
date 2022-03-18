@@ -1,14 +1,17 @@
-import { QuickOpenBox } from "./QuickOpenBox";
 import clipboard from 'clipboardy';
-import { IPluginDecorator, BasePage, PluginDecorator } from '../../utils'
-import { input } from 'locators/1.61.0'
+import { IPluginDecorator, BasePage, PluginDecorator, LocatorMap } from '../utils'
+import {
+    Input as InputLocators,
+    InputBox as InputBoxLocators,
+    QuickOpenBox as QuickOpenBoxLocators
+} from '../../locators/1.61.0'
 
 /**
  * Abstract page object for input fields
  */
-export interface Input extends IPluginDecorator<typeof input.Input> {}
-export abstract class Input extends BasePage {
-
+type InputLocators = typeof InputLocators & typeof InputBoxLocators & typeof QuickOpenBoxLocators
+export interface Input extends IPluginDecorator<InputLocators> {}
+export abstract class Input extends BasePage<InputLocators> {
     /**
      * Get current text of the input field
      * @returns Promise resolving to text of the input field
@@ -24,7 +27,7 @@ export abstract class Input extends BasePage {
      * @returns Promise resolving when the text is typed in
      */
     async setText(text: string): Promise<void> {
-        const input = await this.inputBox$.$(this.locators.input);
+        const input = await this.inputBox$.$(this.locators.input as string);
         await this.clear();
         await new Promise(res => setTimeout(res, 200));
         if ((await this.getText()).length > 0) {
@@ -139,7 +142,7 @@ export abstract class Input extends BasePage {
         while(!endReached) {
             const picks = await this.getQuickPicks();
             for (const pick of picks) {
-                const lastRow = await this.elem.$$(this.locatorMap.sideBar.DefaultTreeSection.lastRow);
+                const lastRow = await this.elem.$$(this.locatorMap.DefaultTreeSection.lastRow as string);
                 if (lastRow.length > 0) {
                     endReached = true;
                 } else if (await pick.elem.getAttribute('aria-posinset') === await pick.elem.getAttribute('aria-setsize')) {
@@ -212,14 +215,17 @@ export abstract class Input extends BasePage {
 /**
  * Page object representing a quick pick option in the input box
  */
-export interface QuickPickItem extends IPluginDecorator<typeof input.Input> {}
-@PluginDecorator(input.Input)
-export class QuickPickItem extends BasePage {
+export interface QuickPickItem extends IPluginDecorator<typeof InputLocators> {}
+@PluginDecorator(InputLocators)
+export class QuickPickItem extends BasePage<typeof InputLocators> {
+    public locatorKey = 'Input' as const
     private index: number;
     public input: Input
 
-    constructor(locators: typeof input.Input, index: number, inputField: Input) {
-        super(locators, input instanceof QuickOpenBox ? locators.quickPickPosition(index) : locators.quickPickIndex(index));
+    constructor(locators: LocatorMap, index: number, inputField: Input) {
+        const quickPickPositionFn = locators['Input'].quickPickPosition as Function
+        const quickPickIndexFn = locators['Input'].quickPickIndex as Function
+        super(locators, inputField instanceof QuickOpenBox ? quickPickPositionFn(index) : quickPickIndexFn(index));
         this.index = index;
         this.input = inputField
     }
@@ -255,5 +261,91 @@ export class QuickPickItem extends BasePage {
      */
     async select(): Promise<void> {
         await this.elem.click();
+    }
+}
+
+/**
+ * Plain input box variation of the input page object
+ */
+export interface InputBox extends IPluginDecorator<typeof InputBoxLocators> {}
+@PluginDecorator({ ...InputLocators, ...InputBoxLocators})
+export class InputBox extends Input {
+    public locatorKey = ['Input' as const, 'InputBox' as const]
+
+    /**
+     * Get the message below the input field
+     */
+    async getMessage(): Promise<string> {
+        return await this.message$.getText();
+    }
+
+    async hasProgress(): Promise<boolean> {
+        const klass = await this.progress$.getAttribute('class');
+        return klass.indexOf('done') < 0;
+    }
+
+    async getQuickPicks(): Promise<QuickPickItem[]> {
+        const picks: QuickPickItem[] = [];
+        const elements = await this.quickList$
+            .$(this.locators.rows as string)
+            .$$(this.locators.row as string);
+        
+        for (const element of elements) {
+            if (await element.isDisplayed()) {
+                picks.push(await new QuickPickItem(
+                    this.locatorMap,
+                    parseInt(await element.getAttribute('data-index')),
+                    this
+                ).wait());
+            }
+        }
+        return picks;
+    }
+
+    /**
+     * Find whether the input is showing an error
+     * @returns Promise resolving to notification message
+     */
+    async hasError(): Promise<boolean> {
+        const klass = await this.inputBox$.getAttribute('class');
+        return klass.indexOf('error') > -1;
+    }
+
+    /**
+     * Check if the input field is masked (input type password)
+     * @returns Promise resolving to notification message
+     */
+    async isPassword(): Promise<boolean> {
+        return await this.input$.getAttribute('type') === 'password';
+    }
+}
+
+/**
+ * @deprecated as of VS Code 1.44.0, quick open box has been replaced with input box
+ * The quick open box variation of the input
+ */
+export interface QuickOpenBox extends IPluginDecorator<InputLocators> {}
+@PluginDecorator({ ...InputLocators, ...QuickOpenBoxLocators })
+export class QuickOpenBox extends Input {
+    public locatorKey = ['Input' as const, 'QuickOpenBox' as const]
+
+    async hasProgress(): Promise<boolean> {
+        const klass = await this.progress$
+            .getAttribute('class');
+        return klass.indexOf('done') < 0;
+    }
+
+    async getQuickPicks(): Promise<QuickPickItem[]> {
+        const picks: QuickPickItem[] = [];
+        const tree = await browser.$(this.locators.quickList);
+        await tree.waitForExist({ timeout: 1000 })
+        const elements = await tree.$$(this.locators.row);
+        for (const element of elements) {
+            const index = parseInt(await element.getAttribute('aria-posinset'), 10);
+            if (await element.isDisplayed()) {
+                picks.push(await new QuickPickItem(this.locatorMap, index, this).wait());
+            }
+        }
+        return picks;
     }
 }

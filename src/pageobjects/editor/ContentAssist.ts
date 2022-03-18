@@ -4,20 +4,23 @@ import { TextEditor } from './TextEditor'
 import { Menu } from '../menu/Menu'
 import { MenuItem } from '../menu/MenuItem'
 import { DebugConsoleView } from "../bottomBar/Views";
-import { PluginDecorator, IPluginDecorator } from "../utils";
-import { editor } from '../../locators/1.61.0'
+import { PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
+import { ContentAssist as ContentAssistLocators } from '../../locators/1.61.0'
 
 /**
  * Page object representing the content assistant
  */
-export interface ContentAssist extends IPluginDecorator<typeof editor.ContentAssist> {}
-@PluginDecorator(editor.ContentAssist)
-export class ContentAssist extends Menu {
+export interface ContentAssist extends IPluginDecorator<typeof ContentAssistLocators> {}
+@PluginDecorator(ContentAssistLocators)
+export class ContentAssist extends Menu<typeof ContentAssistLocators> {
+    public locatorKey = 'ContentAssist' as const
+
     constructor(
-        locators: typeof editor.ContentAssist,
+        locators: LocatorMap,
         parent: TextEditor | DebugConsoleView
     ) {
-        super(locators, locators.elem, parent.elem);
+        super(locators);
+        this.setParentElement(parent.elem)
     }
 
     /**
@@ -29,12 +32,12 @@ export class ContentAssist extends Menu {
      */
     async getItem(name: string): Promise<ContentAssistItem | undefined> {
         let lastItem = false;
-        const scrollable = await this.elem.$(this.locators.itemList);
+        const scrollable = await this.itemList$;
 
-        let firstItem = await this.elem.$$(this.locators.firstItem);
+        let firstItem = await this.firstItem$$;
         while(firstItem.length < 1) {
             await scrollable.addValue(['Page Up']);
-            firstItem = await this.elem.$$(this.locators.firstItem);
+            firstItem = await this.firstItem$$;
         }
 
         while(!lastItem) {
@@ -70,7 +73,7 @@ export class ContentAssist extends Menu {
         const items: ContentAssistItem[] = [];
 
         for (const item of elements) {
-            items.push(await new ContentAssistItem(this.locators, item as any, this).wait());
+            items.push(await new ContentAssistItem(this.locatorMap, item as any, this).wait());
         }
         return items;
     }
@@ -81,7 +84,7 @@ export class ContentAssist extends Menu {
      * to false otherwise
      */
     async isLoaded(): Promise<boolean> {
-        const message = await this.elem.$(this.locators.message);
+        const message = await this.message$;
         if (await message.isDisplayed()) {
             if ((await message.getText()).startsWith('No suggestions')) {
                 return true;
@@ -95,14 +98,15 @@ export class ContentAssist extends Menu {
 /**
  * Page object for a content assist item
  */
-export interface ContentAssistItem extends IPluginDecorator<typeof editor.ContentAssist> {}
-@PluginDecorator(editor.ContentAssist)
-export class ContentAssistItem extends MenuItem {
+export interface ContentAssistItem extends IPluginDecorator<typeof ContentAssistLocators> {}
+@PluginDecorator(ContentAssistLocators)
+export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
+    public locatorKey = 'ContentAssist' as const
     public parentMenu: ContentAssist
     public label = ''
 
     constructor(
-        locators: typeof editor.ContentAssist,
+        locators: LocatorMap,
         item: string | ChainablePromiseElement<WebdriverIO.Element>,
         contentAssist: ContentAssist
     ) {
@@ -111,7 +115,7 @@ export class ContentAssistItem extends MenuItem {
     }
 
     async getLabel(): Promise<string> {
-        const labelDiv = await this.elem.$(this.locators.itemLabel);
+        const labelDiv = await this.itemLabel$;
         return labelDiv.getText();
     }
 }

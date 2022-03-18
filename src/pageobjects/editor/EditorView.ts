@@ -1,22 +1,22 @@
-import { ChainablePromiseElement } from 'webdriverio';
+import type { ChainablePromiseElement } from 'webdriverio';
 
 import { TextEditor } from "./TextEditor";
-import { Editor } from "./Editor";
 import { SettingsEditor } from "./SettingsEditor";
 import { WebView } from "./WebView";
 import { DiffEditor } from './DiffEditor';
-import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu } from "../utils";
-import { editor } from '../../locators/1.61.0'
+import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap } from "../utils";
+import {
+    EditorView as EditorViewLocators,
+    Editor as EditorLocatorsObj
+} from '../../locators/1.61.0'
 
 /**
  * View handling the open editors
  */
-export interface EditorView extends IPluginDecorator<typeof editor.EditorView> {}
-@PluginDecorator(editor.EditorView)
-export class EditorView extends BasePage {
-    constructor(locators: typeof editor.EditorView) {
-        super(locators, locators.elem);
-    }
+export interface EditorView extends IPluginDecorator<typeof EditorViewLocators> {}
+@PluginDecorator(EditorViewLocators)
+export class EditorView extends BasePage<typeof EditorViewLocators> {
+    public locatorKey = 'EditorView' as const
 
     /**
      * Switch to an editor tab with the given title
@@ -24,7 +24,7 @@ export class EditorView extends BasePage {
      * @param groupIndex zero based index for the editor group (0 for the left most group)
      * @returns Promise resolving to Editor object
      */
-    async openEditor(title: string, groupIndex: number = 0): Promise<Editor> {
+    async openEditor(title: string, groupIndex: number = 0) {
         const group = await this.getEditorGroup(groupIndex);
         return group.openEditor(title);
     }
@@ -125,7 +125,7 @@ export class EditorView extends BasePage {
         const elements = await this.editorGroup$$;
         const groups = await Promise.all(
             elements.map(async (element) => (
-                new EditorGroup(this.locatorMap.editor.EditorView, element as any, this).wait()
+                new EditorGroup(this.locatorMap, element as any, this).wait()
             ))
         );
         
@@ -175,11 +175,13 @@ export class EditorView extends BasePage {
 /**
  * Page object representing an editor group
  */
-export interface EditorGroup extends IPluginDecorator<typeof editor.EditorView> {}
-@PluginDecorator(editor.EditorView)
-export class EditorGroup extends BasePage {
+export interface EditorGroup extends IPluginDecorator<typeof EditorViewLocators> {}
+@PluginDecorator(EditorViewLocators)
+export class EditorGroup extends BasePage<typeof EditorViewLocators> {
+    public locatorKey = 'EditorView' as const
+
     constructor(
-        locators: typeof editor.EditorView,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view = new EditorView(locators)
     ) {
@@ -191,36 +193,36 @@ export class EditorGroup extends BasePage {
      * @param title title of the tab
      * @returns Promise resolving to Editor object
      */
-    async openEditor(title: string): Promise<Editor> {
+    async openEditor(title: string): Promise<SettingsEditor | WebView | DiffEditor | TextEditor> {
         const tab = await this.getTabByTitle(title);
         await tab.select();
 
         if (await this.settingsEditor$.isExisting()) {
             return new SettingsEditor(
-                this.locatorMap.editor.SettingsEditor,
+                this.locatorMap,
                 this
             ).wait();
         }
 
         if (await this.webView$.isExisting()) {
             return new WebView(
-                this.locatorMap.editor.WebView,
-                this.locatorMap.editor.Editor.elem,
+                this.locatorMap,
+                this.locatorMap.Editor.elem as string,
                 this
             ).wait();
         }
 
         if (await this.diffEditor$.isExisting()) {
             return new DiffEditor(
-                this.locatorMap.editor.DiffEditor,
-                this.locatorMap.editor.Editor.elem,
+                this.locatorMap,
+                this.locatorMap.Editor.elem as string,
                 this
             ).wait();
         }
 
         return new TextEditor(
-            this.locatorMap.editor.TextEditor,
-            this.locatorMap.editor.Editor.elem,
+            this.locatorMap,
+            this.locatorMap.Editor.elem as string,
             this
         ).wait();
     }
@@ -263,7 +265,7 @@ export class EditorGroup extends BasePage {
         const tabs = await this.tab$$;
         const titles = [];
         for (const tab of tabs) {
-            const title = await new EditorTab(this.locatorMap.editor.Editor, tab as any, this.view).getTitle();
+            const title = await new EditorTab(this.locatorMap, tab as any, this.view).getTitle();
             titles.push(title);
         }
         return titles;
@@ -277,7 +279,7 @@ export class EditorGroup extends BasePage {
     async getTabByTitle(title: string): Promise<EditorTab> {
         const tabs = await this.tab$$;
         for (const tab of tabs) {
-            const editorTab = new EditorTab(this.locatorMap.editor.Editor, tab as any, this.view)
+            const editorTab = new EditorTab(this.locatorMap, tab as any, this.view)
             const label = await editorTab.getTitle();
             if (label === title) {
                 return editorTab;
@@ -294,7 +296,7 @@ export class EditorGroup extends BasePage {
         const tabs = await this.tab$$;
         return Promise.all(
             tabs.map(async tab => (
-                new EditorTab(this.locatorMap.editor.Editor, tab as any, this.view).wait()
+                new EditorTab(this.locatorMap, tab as any, this.view).wait()
             ))
         );
     }
@@ -341,11 +343,13 @@ export class EditorGroup extends BasePage {
 /**
  * Page object for editor view tab
  */
-export interface EditorTab extends IPluginDecorator<typeof editor.Editor> {}
-@PluginDecorator(editor.Editor)
-export class EditorTab extends ElementWithContextMenu {
+export interface EditorTab extends IPluginDecorator<typeof EditorLocatorsObj> {}
+@PluginDecorator(EditorLocatorsObj)
+export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> {
+    public locatorKey = 'Editor' as const
+
     constructor(
-        locators: typeof editor.Editor,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: EditorView
     ) {

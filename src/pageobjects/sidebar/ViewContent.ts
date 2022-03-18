@@ -3,22 +3,22 @@ import { ViewSection } from './ViewSection';
 import { DefaultTreeSection } from "./tree/default/DefaultTreeSection";
 import { CustomTreeSection } from "./tree/custom/CustomTreeSection";
 import { ExtensionsViewSection } from "./extensions/ExtensionsViewSection";
-import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
-import { sideBar } from 'locators/1.61.0';
+import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
+import { ViewContent as ViewContentLocators } from '../../locators/1.61.0';
 
 /**
  * Page object representing the view container of a side bar view
  */
-export interface ViewContent extends IPluginDecorator<typeof sideBar.ViewContent> { }
-@PluginDecorator(sideBar.ViewContent)
-export class ViewContent extends BasePage {
-    public view: SideBarView
+export interface ViewContent extends IPluginDecorator<typeof ViewContentLocators> { }
+@PluginDecorator(ViewContentLocators)
+export class ViewContent extends BasePage<typeof ViewContentLocators> {
+    public locatorKey = 'ViewContent' as const
+    
     constructor(
-        locators: typeof sideBar.ViewContent,
-        view: SideBarView
+        locators: LocatorMap,
+        public view: SideBarView<any> = new SideBarView(locators)
     ) {
-        super(locators, locators.elem);
-        this.view = view || new SideBarView(this.locatorMap.sideBar.SideBarView)
+        super(locators, locators['ViewContent'].elem as string);
     }
 
     /**
@@ -69,21 +69,15 @@ export class ViewContent extends BasePage {
     }
 
     private async createSection(panel: WebdriverIO.Element): Promise<ViewSection> {
-        const viewSectionLocators = {
-            ...this.locatorMap.sideBar.ViewSection,
-            ...this.locatorMap.sideBar.ExtensionsViewSection,
-            ...this.locatorMap.sideBar.CustomTreeSection,
-            ...this.locatorMap.sideBar.DefaultTreeSection
-        }
-        let section: ViewSection = new DefaultTreeSection(viewSectionLocators, panel as any, this);
+        let section: ViewSection = new DefaultTreeSection(this.locatorMap, panel as any, this);
 
         if (await section.elem.$(this.locators.defaultView).isExisting()) {
             return section
         }
         if (await section.elem.$(this.locators.extensionsView).isExisting()) {
-            return new ExtensionsViewSection(viewSectionLocators, panel as any, this);
+            return new ExtensionsViewSection(this.locatorMap, panel as any, this);
         }
         
-        return new CustomTreeSection(viewSectionLocators, panel as any, this);
+        return new CustomTreeSection(this.locatorMap, panel as any, this);
     }
 }

@@ -2,23 +2,24 @@ import { Editor, EditorLocators } from "./Editor";
 import { ContextMenu } from "../menu/ContextMenu";
 import { EditorView, EditorGroup } from "./EditorView";
 
-import { PluginDecorator, IPluginDecorator, BasePage } from "../utils";
-import { editor } from '../../locators/1.61.0'
+import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from "../utils";
+import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.61.0'
 
 /**
  * Page object representing the internal VSCode settings editor
  */
 export interface SettingsEditor extends IPluginDecorator<EditorLocators> {}
-@PluginDecorator(editor.SettingsEditor)
-export class SettingsEditor extends Editor {
+@PluginDecorator(SettingsEditorLocators)
+export class SettingsEditor extends Editor<EditorLocators> {
+    public locatorKey = 'SettingsEditor' as const
     public view: EditorView | EditorGroup
 
     constructor(
-        locators: typeof editor.SettingsEditor,
+        locators: LocatorMap,
         view?: EditorView | EditorGroup
     ) {
         super(locators, view?.elem)
-        this.view = view || new EditorView(this.locatorMap.editor.EditorView)
+        this.view = view || new EditorView(this.locatorMap)
     }
 
     /**
@@ -35,7 +36,7 @@ export class SettingsEditor extends Editor {
      */
     async findSetting(title: string, ...categories: string[]): Promise<Setting> {
         const category = categories.join(' › ');
-        const searchBox = await this.elem.$(this.locatorMap.editor.Editor.inputArea);
+        const searchBox = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         await searchBox.addValue(['Control', 'a', `${category}: ${title}`]);
 
         const count = await this.itemCount$;
@@ -52,8 +53,7 @@ export class SettingsEditor extends Editor {
         });
 
         let setting!: Setting;
-        const items = await this.elem.$$(this.locators.itemRow);
-
+        const items = await this.itemRow$$;
         for (const item of items) {
             try {
                 return (await this.createSetting(item, title, category)).wait();
@@ -90,22 +90,22 @@ export class SettingsEditor extends Editor {
 
         // try a combo setting
         if (await element.$(this.locators.comboSetting).isExisting()) {
-            return new ComboSetting(this.locators, title, category, this);
+            return new ComboSetting(this.locatorMap, title, category, this);
         }
         
         // try text setting
         if (await element.$(this.locators.textSetting).isExisting()) {
-            return new TextSetting(this.locators, title, category, this);
+            return new TextSetting(this.locatorMap, title, category, this);
         }
 
         // try checkbox setting
         if (await element.$(this.locators.checkboxSetting).isExisting()) {
-            return new CheckboxSetting(this.locators, title, category, this);
+            return new CheckboxSetting(this.locatorMap, title, category, this);
         }
 
         // try link setting
         if (await element.$(this.locators.linkButton).isExisting()) {
-            return new LinkSetting(this.locators, title, category, this);
+            return new LinkSetting(this.locatorMap, title, category, this);
         }
 
         throw new Error('Setting type not supported');
@@ -116,17 +116,17 @@ export class SettingsEditor extends Editor {
  * Abstract item representing a Setting with title, description and
  * an input element (combo/textbox/checkbox/link)
  */
-export interface Setting extends IPluginDecorator<typeof editor.SettingsEditor> {}
-export abstract class Setting extends BasePage {
+export interface Setting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
     private title: string;
     private category: string;
 
     constructor(
-        locators: typeof editor.SettingsEditor,
+        locators: LocatorMap,
         title: string, category: string,
         public settings: SettingsEditor
     ) {
-        super(locators, locators.settingConstructor(title, category));
+        super(locators, (locators['SettingsEditor'].settingConstructor as Function)(title, category));
         this.title = title;
         this.category = category;
     }
@@ -173,6 +173,8 @@ export abstract class Setting extends BasePage {
  * Setting with a combo box 
  */
 export class ComboSetting extends Setting {
+    public locatorKey = 'SettingsEditor' as const
+
     async getValue(): Promise<string> {
         return await this.comboSetting$.getAttribute('title');
     }
@@ -210,20 +212,20 @@ export class ComboSetting extends Setting {
 
     private async openCombo() {
         const combo = await this.comboSetting$;
-        const workbench = await browser.$(this.locatorMap.workbench.Workbench.elem);
-        const menus = await workbench.$$(this.locatorMap.menu.ContextMenu.contextView);
+        const workbench = await browser.$(this.locatorMap.Workbench.elem as string);
+        const menus = await workbench.$$(this.locatorMap.ContextMenu.contextView as string);
         let menu!: WebdriverIO.Element;
 
         if (menus.length < 1) {
             await combo.click();
-            menu = await workbench.$(this.locatorMap.menu.ContextMenu.contextView);
+            menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string);
             return menu;
         } else if (await menus[0].isDisplayed()) {
             await combo.click();
             await browser.pause(200);
         }
         await combo.click();
-        menu = await workbench.$(this.locatorMap.menu.ContextMenu.contextView);
+        menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string);
         return menu;
     }
 }
@@ -231,9 +233,11 @@ export class ComboSetting extends Setting {
 /**
  * Setting with a text box input
  */
-export interface TextSetting extends IPluginDecorator<typeof editor.SettingsEditor> {}
-@PluginDecorator(editor.SettingsEditor)
+export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+@PluginDecorator(SettingsEditorLocators)
 export class TextSetting extends Setting {
+    public locatorKey = 'SettingsEditor' as const
+
     async getValue(): Promise<string> {
         return this.textSetting$.getAttribute('value');
     }
@@ -247,7 +251,11 @@ export class TextSetting extends Setting {
 /**
  * Setting with a checkbox
  */
+export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+@PluginDecorator(SettingsEditorLocators)
 export class CheckboxSetting extends Setting {
+    public locatorKey = 'SettingsEditor' as const
+
     async getValue(): Promise<boolean> {
         const checked = await this.checkboxSetting$.getAttribute(this.locators.checkboxChecked);
         if (checked === 'true') {
@@ -266,9 +274,11 @@ export class CheckboxSetting extends Setting {
 /**
  * Setting with no value, with a link to settings.json instead
  */
-export interface LinkSetting extends IPluginDecorator<typeof editor.SettingsEditor> {}
-@PluginDecorator(editor.SettingsEditor)
+export interface LinkSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+@PluginDecorator(SettingsEditorLocators)
 export class LinkSetting extends Setting {
+    public locatorKey = 'SettingsEditor' as const
+
     async getValue(): Promise<string> {
         throw new Error('Method getValue is not available for LinkSetting');
     }

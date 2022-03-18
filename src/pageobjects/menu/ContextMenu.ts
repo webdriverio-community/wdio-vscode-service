@@ -1,23 +1,25 @@
-import { PluginDecorator, IPluginDecorator } from '../utils'
+import type { ChainablePromiseElement } from 'webdriverio';
 
 import { Menu } from "./Menu";
 import { MenuItem } from './MenuItem'
-import { menu } from '../../locators/1.61.0'
-import { ChainablePromiseElement } from 'webdriverio';
+import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
+import { ContextMenu as ContextMenuLocators } from '../../locators/1.61.0'
 
 
 /**
  * Object representing a context menu
  */
-export interface ContextMenu extends IPluginDecorator<typeof menu.ContextMenu> {}
-@PluginDecorator(menu.ContextMenu)
-export class ContextMenu extends Menu {
+export interface ContextMenu extends IPluginDecorator<typeof ContextMenuLocators> {}
+@PluginDecorator(ContextMenuLocators)
+export class ContextMenu extends Menu<typeof ContextMenuLocators> {
+    public locatorKey = 'ContextMenu' as const
+
     /**
      * Get context menu item by name
      * @param name name of the item to search by
      * @returns Promise resolving to ContextMenuItem object
      */
-    async getItem(name: string): Promise<ContextMenuItem | undefined> {
+    async getItem(name: string): Promise<MenuItem<typeof ContextMenuLocators> | undefined> {
         try {
             const items = await this.getItems();
             for (const item of items) {
@@ -44,7 +46,7 @@ export class ContextMenu extends Menu {
             const classProperty = await element.getAttribute('class');
             if (classProperty.indexOf('disabled') < 0) {
                 const item = new ContextMenuItem(
-                    this.locatorMap.menu.ContextMenu,
+                    this.locatorMap,
                     element as any,
                     this
                 )
@@ -87,24 +89,25 @@ export class ContextMenu extends Menu {
 /**
  * Object representing an item of a context menu
  */
-export interface ContextMenuItem extends IPluginDecorator<typeof menu.ContextMenu> {}
-@PluginDecorator(menu.ContextMenu)
-export class ContextMenuItem extends MenuItem {
+export interface ContextMenuItem extends IPluginDecorator<typeof ContextMenuLocators> {}
+@PluginDecorator(ContextMenuLocators)
+export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
+    public locatorKey = 'ContextMenu' as const
     public label = ''
 
     constructor(
-        locators: typeof menu.ContextMenu,
+        locators: LocatorMap,
         base: ChainablePromiseElement<WebdriverIO.Element>,
-        public parentMenu: Menu
+        public parentMenu: Menu<typeof ContextMenuLocators>
     ) {
         super(locators, base, parentMenu.elem);
     }
 
-    async select(): Promise<Menu | undefined> {
+    async select() {
         await this.elem.click();
         await new Promise(res => setTimeout(res, 500));
         if (await this.isNesting()) {
-            await new ContextMenu(this.locators, this.elem).wait();
+            await new ContextMenu(this.locatorMap, this.elem).wait();
         }
         return undefined;
     }

@@ -1,34 +1,48 @@
-import { ElementWithContextMenu } from "../utils";
+import { ActivityBar, DebugView, SideBarView, ScmView } from "../..";
+import { NewScmView } from "../sidebar/scm/NewScmView";
+
+import { PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap } from '../utils'
+import { ViewControl as ViewControlLocators } from '../../locators/1.61.0';
+import { ChainablePromiseElement } from "webdriverio";
 
 /**
  * Page object representing a view container item in the activity bar
  */
-export class ViewControl extends ElementWithContextMenu {
-    // constructor(element: WebElement, bar: ActivityBar) {
-    //     super(element, bar);
-    // }
+export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators> { }
+@PluginDecorator(ViewControlLocators)
+export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocators> {
+    public locatorKey = 'ViewControl' as const
+
+    constructor(
+        locators: LocatorMap,
+        element: ChainablePromiseElement<WebdriverIO.Element>,
+        public bar: ActivityBar
+    ) {
+        super(locators, element, bar.elem);
+    }
 
     /**
      * Opens the associated view if not already open
      * @returns Promise resolving to SideBarView object representing the opened view
      */
-    async openView(): Promise<any /*SideBarView*/> {
-        // const klass = await this.getAttribute(ViewControl.locators.ViewControl.attribute);
-        // if (klass.indexOf(ViewControl.locators.ViewControl.klass) < 0) {
-        //     await this.click();
-        //     await ViewControl.driver.sleep(500);
-        // }
-        // const view = await new SideBarView().wait();
-        // if ((await view.findElements(ViewControl.locators.ViewControl.scmId)).length > 0) {
-        //     if (ViewControl.versionInfo.browser === 'vscode' && ViewControl.versionInfo.version >= '1.47.0') {
-        //         return new NewScmView().wait();
-        //     }
-        //     return new ScmView().wait();
-        // }
-        // if ((await view.findElements(ViewControl.locators.ViewControl.debugId)).length > 0) {
-        //     return new DebugView().wait();
-        // }
-        // return view;
+    async openView(): Promise<SideBarView<any> | NewScmView | ScmView | DebugView> {
+        const klass = await this.elem.getAttribute(this.locators.attribute);
+        if (klass.indexOf(this.locators.klass) < 0) {
+            await this.elem.click();
+            await browser.pause(500);
+        }
+        const view = await new SideBarView(this.locatorMap).wait();
+        if ((await view.elem.$$(this.locators.scmId)).length > 0) {
+            // @ts-expect-error
+            if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.47.0') {
+                return new NewScmView(this.locatorMap).wait();
+            }
+            return new ScmView(this.locatorMap).wait();
+        }
+        if ((await view.elem.$$(this.locators.debugId)).length > 0) {
+            return new DebugView(this.locatorMap).wait();
+        }
+        return view;
     }
 
     /**
@@ -36,17 +50,16 @@ export class ViewControl extends ElementWithContextMenu {
      * @returns Promise resolving when the view closes
      */
     async closeView(): Promise<void> {        
-        // const klass = await this.elem.getAttribute(ViewControl.locators.ViewControl.attribute);
-        // if (klass.indexOf(ViewControl.locators.ViewControl.klass) > -1) {
-        //     await this.click();
-        // }
+        const klass = await this.elem.getAttribute(this.locators.attribute);
+        if (klass.indexOf(this.locators.klass) > -1) {
+            await this.elem.click();
+        }
     }
 
     /**
      * Returns the title of the associated view
      */
-    async getTitle(): Promise<any /*string*/> {
-        // const badge = await this.findElement(ViewControl.locators.ViewControl.badge);
-        // return badge.getAttribute('aria-label');
+    async getTitle(): Promise<string> {
+        return this.badge$.getAttribute('aria-label');
     }
 }

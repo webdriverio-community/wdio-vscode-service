@@ -1,17 +1,18 @@
-import { SideBarView, PageLocators } from "../SideBarView";
-import { ContextMenu } from "../../menu/ContextMenu";
-import { ElementWithContextMenu } from "../../utils";
+import type { ChainablePromiseElement } from "webdriverio";
 
+import { SideBarView } from "../SideBarView";
+import { ContextMenu } from "../../menu/ContextMenu";
+import { ElementWithContextMenu, LocatorMap } from "../../utils";
 import { PluginDecorator, IPluginDecorator, BasePage } from '../../utils'
-import { sideBar } from 'locators/1.61.0';
-import { ChainablePromiseElement } from "webdriverio";
+import { ScmView as ScmViewLocators } from '../../../locators/1.61.0';
 
 /**
  * Page object representing the Source Control view
  */
-export interface ScmView extends IPluginDecorator<PageLocators> { }
-@PluginDecorator(sideBar.ScmView)
-export class ScmView extends SideBarView {
+export interface ScmView extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
+export class ScmView extends SideBarView<typeof ScmViewLocators> {
+    public locatorKey = 'ScmView' as const
 
     /**
      * Get SCM provider (repository) by title
@@ -36,7 +37,7 @@ export class ScmView extends SideBarView {
     async getProviders(): Promise<ScmProvider[]> {
         const headers = await this.providerHeader$$;
         const sections = await Promise.all(headers.map(async header => header.$(this.locators.providerRelative)));
-        return Promise.all(sections.map(async section => new ScmProvider(this.locatorMap.sideBar.ScmView, section as any, this)));
+        return Promise.all(sections.map(async section => new ScmProvider(this.locatorMap, section as any, this)));
     }
 
     /**
@@ -57,11 +58,12 @@ export class ScmView extends SideBarView {
  * Page object representing a repository in the source control view
  * Maps roughly to a view section of the source control view
  */
-export interface ScmProvider extends IPluginDecorator<typeof sideBar.ScmView> { }
-@PluginDecorator(sideBar.ScmView)
-export class ScmProvider extends BasePage {
+export interface ScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
+export class ScmProvider extends BasePage<typeof ScmViewLocators> {
+    public locatorKey = 'ScmView' as const
     constructor(
-        locators: typeof sideBar.ScmView,
+        locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ScmView
     ) {
@@ -113,10 +115,10 @@ export class ScmProvider extends BasePage {
     async openMoreActions(): Promise<ContextMenu> {
         const header = await this.providerHeader$;
         if ((await header.getAttribute('class')).indexOf('hidden') > -1) {
-            return new MoreAction(this.locators, this.view as ScmView).openContextMenu();
+            return new MoreAction(this.locatorMap, this.view as ScmView).openContextMenu();
         } else {
             await this.elem.moveTo();
-            return new MoreAction(this.locators, this).openContextMenu();
+            return new MoreAction(this.locatorMap, this).openContextMenu();
         }
     }
 
@@ -159,7 +161,7 @@ export class ScmProvider extends BasePage {
         }
         return Promise.all(
             elements.map(async element => (
-                new ScmChange(this.locators, element, this).wait()
+                new ScmChange(this.locatorMap, element, this).wait()
             ))
         );
     }
@@ -185,12 +187,13 @@ export class ScmProvider extends BasePage {
 /**
  * Page object representing a SCM change tree item
  */
-export interface ScmChange extends IPluginDecorator<PageLocators> { }
-@PluginDecorator(sideBar.ScmView)
-export class ScmChange extends ElementWithContextMenu {
+export interface ScmChange extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
+export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
+    public locatorKey = 'ScmView' as const
 
     constructor(
-        locators: typeof sideBar.ScmView,
+        locators: LocatorMap,
         row: ChainablePromiseElement<WebdriverIO.Element>,
         public provider: ScmProvider
     ) {
@@ -273,14 +276,16 @@ export class ScmChange extends ElementWithContextMenu {
     }
 }
 
-export interface MoreAction extends IPluginDecorator<PageLocators> { }
-@PluginDecorator(sideBar.ScmView)
-export class MoreAction extends ElementWithContextMenu {
+export interface MoreAction extends IPluginDecorator<typeof ScmViewLocators> { }
+@PluginDecorator(ScmViewLocators)
+export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
+    public locatorKey = 'ScmView' as const
+
     constructor(
-        locators: typeof sideBar.ScmView,
+        locators: LocatorMap,
         public scm: ScmProvider | ScmView
     ) {
-        super(locators, locators.more, scm.elem);
+        super(locators, locators['ScmView'].more as string, scm.elem);
     }
 
     async openContextMenu(): Promise<ContextMenu> {
@@ -293,7 +298,7 @@ export class MoreAction extends ElementWithContextMenu {
                 await this.elem.click();
             }
             const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]));
-            return new ContextMenu(this.locatorMap.menu.ContextMenu, shadowRoot).wait();
+            return new ContextMenu(this.locatorMap, shadowRoot).wait();
         }
         return super.openContextMenu();
     }

@@ -1,22 +1,23 @@
 import { WebView } from './WebView';
-import { Editor, EditorLocators } from './Editor';
-import { InputBox } from "../workbench/input/InputBox";
+import { Editor } from './Editor';
+import { InputBox } from "../workbench/Input";
 import { PluginDecorator, IPluginDecorator } from "../utils";
-import { editor } from '../../locators/1.61.0'
+import { Editor as EditorLocators } from '../../locators/1.61.0'
 
 /**
  * Page object for custom editors
  */
-export interface CustomEditor extends IPluginDecorator<EditorLocators> {}
-@PluginDecorator(editor.Editor)
-export class CustomEditor extends Editor {
+export interface CustomEditor extends IPluginDecorator<typeof EditorLocators> {}
+@PluginDecorator(EditorLocators)
+export class CustomEditor extends Editor<typeof EditorLocators> {
+    public locatorKey = 'Editor' as const
 
     /**
      * Get the WebView object contained in the editor
      * @returns WebView page object
      */
     getWebView(): WebView {
-        return new WebView(this.locatorMap.editor.WebView, undefined, this.view);
+        return new WebView(this.locatorMap);
     }
 
     /**
@@ -45,8 +46,8 @@ export class CustomEditor extends Editor {
     async saveAs(): Promise<InputBox> {
         const tab = await this.getTab();
         await tab.elem.addValue(['Control', 'Shift', 's']);
-        const inputBox = browser.$(this.locatorMap.input.InputBox.elem);
+        const inputBox = browser.$(this.locatorMap.InputBox.elem as string);
         await inputBox.waitForExist({ timeout: 5000 })
-        return new InputBox(this.locatorMap.input.InputBox);
+        return new InputBox(this.locatorMap);
     }
 }

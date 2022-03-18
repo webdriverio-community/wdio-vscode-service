@@ -4,20 +4,21 @@ import { CustomTreeItem } from "./CustomTreeItem";
 import { ViewSectionLocators } from '../../ViewSection'
 
 import { PluginDecorator, IPluginDecorator } from '../../../utils'
-import { sideBar } from 'locators/1.61.0';
+import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.61.0';
 
 /**
  * Custom tree view, e.g. contributed by an extension
  */
 export interface CustomTreeSection extends IPluginDecorator<ViewSectionLocators> { }
-@PluginDecorator(sideBar.CustomTreeSection)
+@PluginDecorator(CustomTreeSectionLocator)
 export class CustomTreeSection extends TreeSection {
+    public locatorKey = 'CustomTreeSection' as const
 
     async getVisibleItems(): Promise<TreeItem[]> {
         const items: TreeItem[] = [];
         const elements = await this.itemRow$$;
         for (const element of elements) {
-            items.push(await new CustomTreeItem(this.locatorMap.sideBar.CustomTreeItem, element as any, this).wait());
+            items.push(await new CustomTreeItem(this.locatorMap, element as any, this).wait());
         }
         return items;
     }
@@ -35,9 +36,9 @@ export class CustomTreeSection extends TreeSection {
         for (const element of elements) {
             const temp = await element.$$(this.locators.rowWithLabel(label));
             if (temp.length > 0) {
-                const level = +await temp[0].getAttribute(this.locatorMap.sideBar.ViewSection.level);
+                const level = +await temp[0].getAttribute(this.locatorMap.ViewSection.level as string);
                 if (maxLevel < 1 || level <= maxLevel) {
-                    item = await new CustomTreeItem(this.locatorMap.sideBar.CustomTreeItem, element as any, this).wait();
+                    item = await new CustomTreeItem(this.locatorMap, element as any, this).wait();
                 } 
             }
         }            

@@ -3,29 +3,29 @@ import clipboard from 'clipboardy';
 import { TextView, ChannelView } from "./AbstractViews";
 import { BottomBarPanel } from './BottomBarPanel'
 import { Workbench } from '../workbench/Workbench'
-import { ElementWithContextMenu, PluginDecorator, IPluginDecorator } from "../utils";
-import { bottomBar } from '../../locators/1.61.0'
-
-class ContentAssist {
-    constructor (a: any) {}
-    wait () { return this }
-}
+import { ContentAssist } from '../editor/ContentAssist'
+import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
+import {
+    OutputView as OutputViewLocators,
+    DebugConsoleView as DebugConsoleViewLocators,
+    TerminalView as TerminalViewLocators
+} from '../../locators/1.61.0'
 
 /**
  * Output view of the bottom panel
  */
-export interface OutputView extends IPluginDecorator<typeof bottomBar.OutputView> {}
-@PluginDecorator(bottomBar.OutputView)
-export class OutputView extends TextView {
-    public panel: BottomBarPanel;
+export interface OutputView extends IPluginDecorator<typeof OutputViewLocators> {}
+@PluginDecorator(OutputViewLocators)
+export class OutputView extends TextView<typeof OutputViewLocators> {
+    public locatorKey = 'OutputView' as const
 
     constructor(
-        locators: typeof bottomBar.OutputView,
-        panel?: BottomBarPanel
+        locators: LocatorMap,
+        public panel = new BottomBarPanel(locators)
     ) {
-        super(locators, locators.elem);
-        this.actionsLabel = locators.actionsLabel;
-        this.panel = panel || new BottomBarPanel(this.locatorMap.bottomBar.BottomBarPanel)
+        super(locators);
+        this.actionsLabel = locators['OutputView'].actionsLabel as string
+        this.setParentElement(panel.elem)
     }
 }
 
@@ -33,17 +33,17 @@ export class OutputView extends TextView {
  * Debug Console view on the bottom panel
  * Most functionality will only be available when a debug session is running
  */
-export interface DebugConsoleView extends IPluginDecorator<typeof bottomBar.DebugConsoleView> {}
-@PluginDecorator(bottomBar.DebugConsoleView)
-export class DebugConsoleView extends ElementWithContextMenu {
-    public panel: BottomBarPanel;
+export interface DebugConsoleView extends IPluginDecorator<typeof DebugConsoleViewLocators> {}
+@PluginDecorator(DebugConsoleViewLocators)
+export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsoleViewLocators> {
+    public locatorKey = 'DebugConsoleView' as const
 
     constructor(
-        locators: typeof bottomBar.DebugConsoleView,
-        panel: BottomBarPanel
+        locators: LocatorMap,
+        public panel: BottomBarPanel = new BottomBarPanel(locators)
     ) {
-        super(locators, locators.elem);
-        this.panel = panel || new BottomBarPanel(this.locatorMap.bottomBar.BottomBarPanel)
+        super(locators);
+        this.setParentElement(panel.elem)
     }
 
     /**
@@ -70,7 +70,7 @@ export class DebugConsoleView extends ElementWithContextMenu {
      * @param expression expression in form of a string
      */
     async setExpression(expression: string): Promise<void> {
-        const textarea = await this.elem.$(this.locatorMap.bottomBar.BottomBarViews.textArea);
+        const textarea = await this.elem.$(this.locatorMap.BottomBarViews.textArea as string);
         await textarea.setValue(expression);
     } 
 
@@ -93,25 +93,24 @@ export class DebugConsoleView extends ElementWithContextMenu {
      * @returns promise resolving to ContentAssist object
      */
     async getContentAssist(): Promise<ContentAssist> {
-        return new ContentAssist(this).wait();
+        return new ContentAssist(this.locatorMap, this).wait();
     }
 }
 
 /**
  * Terminal view on the bottom panel
  */
-export interface TerminalView extends IPluginDecorator<typeof bottomBar.TerminalView> {}
-@PluginDecorator(bottomBar.TerminalView)
-export class TerminalView extends ChannelView {
-    public panel: BottomBarPanel;
+export interface TerminalView extends IPluginDecorator<typeof TerminalViewLocators> {}
+@PluginDecorator(TerminalViewLocators)
+export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
+    public locatorKey = 'TerminalView' as const
 
     constructor(
-        locators: typeof bottomBar.TerminalView,
-        panel: BottomBarPanel
+        locators: LocatorMap,
+        public panel = new BottomBarPanel(locators)
     ) {
-        super(locators, locators.elem);
-        this.actionsLabel = locators.actionsLabel;
-        this.panel = panel || new BottomBarPanel(this.locatorMap.bottomBar.BottomBarPanel)
+        super(locators);
+        this.actionsLabel = locators['OutputView'].actionsLabel as string;
     }
 
     /**
@@ -121,7 +120,7 @@ export class TerminalView extends ChannelView {
      * @returns Promise resolving when the command is finished
      */
     async executeCommand(command: string, timeout: number = 0): Promise<void> {
-        const input = await this.elem.$(this.locators.textArea);
+        const input = await this.textArea$;
 
         try {
             await input.clearValue();
@@ -148,7 +147,7 @@ export class TerminalView extends ChannelView {
      * @returns Promise resolving to all terminal text
      */
     async getText(): Promise<string> {
-        const workbench = new Workbench(this.locatorMap.workbench.Workbench);
+        const workbench = new Workbench(this.locatorMap);
         await workbench.executeCommand('terminal select all');
         await browser.pause(500);
         await workbench.executeCommand('terminal copy selection');
@@ -163,7 +162,7 @@ export class TerminalView extends ChannelView {
      * @returns Promise resolving when Kill Terminal button is pressed
      */
     async killTerminal(): Promise<void> {
-        await new Workbench(this.locatorMap.workbench.Workbench)
+        await new Workbench(this.locatorMap)
             .executeCommand('terminal: kill the active terminal instance');
     }
 
@@ -172,19 +171,19 @@ export class TerminalView extends ChannelView {
      * @returns Promise resolving when New Terminal button is pressed
      */
     async newTerminal(): Promise<void> {
-        await new Workbench(this.locatorMap.workbench.Workbench)
+        await new Workbench(this.locatorMap)
             .executeCommand(this.locators.newCommand);
-        const combo = await this.panel.elem.$$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
+        const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string);
         if (combo.length < 1) {
             await browser.waitUntil(async () => {
-                const list = await this.elem.$$(this.locators.tabList);
+                const list = await this.tabList$$;
                 return list.length > 0;
             }, { timeout: 5000 });
         }
     }
 
     async getCurrentChannel(): Promise<string> {
-        const combo = await this.panel.elem.$$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
+        const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string);
         if (combo.length > 0) {
             return super.getCurrentChannel();
         }
@@ -192,7 +191,7 @@ export class TerminalView extends ChannelView {
         if (singleTerm.length > 0) {
             return singleTerm[0].getText();
         }
-        const list = await this.elem.$(this.locators.tabList);
+        const list = await this.tabList$;
         const row = await list.$(this.locators.selectedRow);
         const label = (await row.getAttribute('aria-label')).split(' ');
 
@@ -200,7 +199,7 @@ export class TerminalView extends ChannelView {
     }
 
     async selectChannel(name: string): Promise<void> {
-        const combo = await this.panel.elem.$$(this.locatorMap.bottomBar.BottomBarViews.channelCombo);
+        const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string);
         if (combo.length > 0) {
             return super.selectChannel(name);
         }
@@ -215,7 +214,7 @@ export class TerminalView extends ChannelView {
         }
         const channelNumber = matches[1];        
 
-        const list = await this.elem.$(this.locators.tabList);
+        const list = await this.tabList$;
         const rows = await list.$$(this.locators.row);
 
         for (const row of rows) {
