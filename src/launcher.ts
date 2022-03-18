@@ -138,7 +138,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      * @param desiredReleaseChannel either release channel (e.g. "stable" or "insiders") or a concrete version e.g. 1.66.0
      * @returns "main" if `desiredReleaseChannel` is "insiders" otherwise a concrete VSCode version
      */
-    private async _fetchVSCodeVersion (desiredReleaseChannel?: VSCodeChannel) {
+    private async _fetchVSCodeVersion (desiredReleaseChannel?: VSCodeChannel | string) {
         if (desiredReleaseChannel === 'insiders') {
             return 'main'
         }
@@ -152,9 +152,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 /**
                  * validate provided VSCode version
                  */
+                desiredReleaseChannel = desiredReleaseChannel === 'stable' ? availableVersions[0] : desiredReleaseChannel
                 if (!availableVersions.includes(desiredReleaseChannel)) {
                     throw new Error(
-                        `Desired version "${desiredReleaseChannel}" to existent, available versions:` +
+                        `Desired version "${desiredReleaseChannel}" is not existent, available versions:` +
                         `${availableVersions.slice(0, 5).join(', ')}..., see ${VSCODE_RELEASES}`)
                 }
 
