@@ -10,12 +10,21 @@ export interface ServiceDownloadOptions extends Omit<DownloadOptions, 'version'>
 
 export interface ServiceOptions extends ChromedriverServiceOptions {
     vscode?: ServiceDownloadOptions
+    cachePath?: string
     extensionPath: string
     userSettings?: Record<string, any>
 }
 
+export interface BundleInformation {
+    version: string
+    path: string
+}
+
+export interface ServiceCapability {
+    vscode: BundleInformation
+    chromedriver: BundleInformation
+}
+
 export interface ServiceCapabilities extends Capabilities.Capabilities {
-    'wdio:vscodeService': {
-        vscodePath: string
-    }
+    'wdio:vscodeService': ServiceCapability
 }

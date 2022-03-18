@@ -64,3 +64,7 @@ export async function getLocators (version: string): Promise<LocatorMap> {
     
     return import(`./locators/${version}`)
 }
+
+export function fileExist (path: string) {
+    return fs.access(path).then(() => true, () => false)
+}

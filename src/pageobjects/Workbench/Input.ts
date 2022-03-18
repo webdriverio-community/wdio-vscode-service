@@ -30,7 +30,7 @@ export abstract class Input extends BasePage<InputLocators> {
         const input = await this.inputBox$.$(this.locators.input as string);
         await this.clear();
         await new Promise(res => setTimeout(res, 200));
-        if ((await this.getText()).length > 0) {
+        if ((await this.getText())?.length > 0) {
             await input.addValue(['End', 'Shift', 'Home']);
         }
         await input.addValue(text);
@@ -81,7 +81,7 @@ export abstract class Input extends BasePage<InputLocators> {
         await input.addValue(['End'])
         await input.addValue(['Shift', 'Home'])
         await input.addValue(['Backspace'])
-        if ((await input.getAttribute('value')).length > 0) {
+        if ((await input.getAttribute('value'))?.length > 0) {
             await input.addValue(['End'])
             await input.addValue(['Shift', 'Home'])
             await input.addValue(['Backspace'])
