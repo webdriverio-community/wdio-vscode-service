@@ -56,13 +56,13 @@ export function validatePlatform() {
 
 export async function getLocators (version: string): Promise<LocatorMap> {
     const files = (await fs.readdir(path.join(__dirname, 'locators'), { encoding: 'utf-8' }))
+        .filter((filename) => filename.endsWith('.js') && !filename.endsWith('.d.ts'))
         .map((filename) => filename.slice(0, -3))
     
-    if (!files.includes(version)) {
-        throw new Error(`No locators for VSCode version "${version}" available, please choose between the following versions: ${files.join(', ')}`)
-    }
-    
-    return import(`./locators/${version}`)
+    const [major, minor] = version.split('.')
+    const sanitizedVersion = `${major}.${minor}.0`
+    const locatorFile = files.find((f) => f >= sanitizedVersion) || files[files.length - 1]
+    return import(`./locators/${locatorFile}`)
 }
 
 export function fileExist (path: string) {
