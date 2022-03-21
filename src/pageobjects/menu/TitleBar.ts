@@ -1,6 +1,5 @@
 import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
-import { WindowControls } from "./WindowControls";
-import { ContextMenu } from './ContextMenu'
+import { WindowControls, ContextMenu } from "..";
 import { Menu } from "./Menu";
 import { MenuItem } from "./MenuItem";
 import { TitleBar as TitleBarLocators } from '../../locators/1.61.0'

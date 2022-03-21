@@ -1,7 +1,6 @@
 import type { ChainablePromiseElement } from 'webdriverio';
 
-import { Menu } from "./Menu";
-import { MenuItem } from './MenuItem'
+import { Menu, MenuItem } from "..";
 import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
 import { ContextMenu as ContextMenuLocators } from '../../locators/1.61.0'
 

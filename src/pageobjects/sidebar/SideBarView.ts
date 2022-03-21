@@ -1,5 +1,4 @@
-import { ViewTitlePart } from "./ViewTitlePart";
-import { ViewContent } from './ViewContent';
+import { ViewContent, ViewTitlePart } from '..';
 import { PluginDecorator, IPluginDecorator, BasePage, LocatorComponents } from '../utils'
 import { SideBarView as SideBarViewLocators } from '../../locators/1.61.0';
 

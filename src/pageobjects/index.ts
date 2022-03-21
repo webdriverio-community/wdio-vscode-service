@@ -1,3 +1,9 @@
+export * from './workbench/Workbench';
+export { Notification, NotificationType } from './workbench/Notification';
+export * from './workbench/NotificationsCenter';
+export * from './workbench/Input';
+export * from './workbench/DebugToolbar';
+
 export * from './menu/Menu';
 export * from './menu/MenuItem';
 export * from './menu/TitleBar';
@@ -39,11 +45,5 @@ export * from './editor/DiffEditor';
 export * from './editor/WebView';
 export * from './editor/ContentAssist';
 export * from './editor/CustomEditor';
-
-export { Notification, NotificationType } from './workbench/Notification';
-export * from './workbench/NotificationsCenter';
-export * from './workbench/Input';
-export * from './workbench/Workbench';
-export * from './workbench/DebugToolbar';
 
 export * from './dialog/ModalDialog';

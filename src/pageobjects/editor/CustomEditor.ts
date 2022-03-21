@@ -1,6 +1,4 @@
-import { WebView } from './WebView';
-import { Editor } from './Editor';
-import { InputBox } from "../workbench/Input";
+import { Editor, InputBox, WebView } from "../";
 import { PluginDecorator, IPluginDecorator } from "../utils";
 import { Editor as EditorLocators } from '../../locators/1.61.0'
 

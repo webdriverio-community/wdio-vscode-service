@@ -1,5 +1,5 @@
 import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
-import { SideBarView } from './SideBarView'
+import { SideBarView } from '..'
 import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0';
 
 export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }

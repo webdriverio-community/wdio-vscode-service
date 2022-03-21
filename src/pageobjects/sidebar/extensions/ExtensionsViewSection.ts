@@ -1,6 +1,5 @@
-import { ViewSection, ViewSectionLocators } from "../ViewSection";
-import { ExtensionsViewItem } from "./ExtensionsViewItem";
-
+import { ViewSection } from '../ViewSection'
+import { ExtensionsViewItem, ViewSectionLocators } from "../..";
 import { PluginDecorator, IPluginDecorator } from '../../utils'
 import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0';
 

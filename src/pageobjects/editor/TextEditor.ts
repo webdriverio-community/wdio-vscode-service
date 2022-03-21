@@ -2,9 +2,7 @@ import { fileURLToPath } from "url";
 import clipboard from 'clipboardy';
 import type { ChainablePromiseElement } from "webdriverio";
 
-import { InputBox } from "../workbench/Input";
-import { ContextMenu } from '../menu/ContextMenu'
-import { ContentAssist } from './ContentAssist';
+import { ContentAssist, ContextMenu, InputBox } from '../'
 import { StatusBar } from "../statusBar/StatusBar";
 import { Editor, EditorLocators } from "./Editor";
 

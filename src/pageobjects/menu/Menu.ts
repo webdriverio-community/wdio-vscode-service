@@ -1,5 +1,5 @@
-import { MenuItem } from "./MenuItem";
 import { BasePage } from '../utils'
+import type { MenuItem } from "..";
 
 /**
  * Abstract element representing a menu

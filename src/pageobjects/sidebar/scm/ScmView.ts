@@ -1,9 +1,8 @@
 import type { ChainablePromiseElement } from "webdriverio";
 
-import { SideBarView } from "../SideBarView";
-import { ContextMenu } from "../../menu/ContextMenu";
-import { ElementWithContextMenu, LocatorMap } from "../../utils";
-import { PluginDecorator, IPluginDecorator, BasePage } from '../../utils'
+import { SideBarView } from '../SideBarView'
+import { ContextMenu } from "../..";
+import { ElementWithContextMenu, LocatorMap, PluginDecorator, IPluginDecorator, BasePage  } from "../../utils";
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0';
 
 export interface ScmView extends IPluginDecorator<typeof ScmViewLocators> { }

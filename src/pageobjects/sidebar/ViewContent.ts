@@ -1,5 +1,4 @@
-import { SideBarView } from "./SideBarView";
-import { ViewSection } from './ViewSection';
+import { SideBarView, ViewSection } from "..";
 import { DefaultTreeSection } from "./tree/default/DefaultTreeSection";
 import { CustomTreeSection } from "./tree/custom/CustomTreeSection";
 import { ExtensionsViewSection } from "./extensions/ExtensionsViewSection";

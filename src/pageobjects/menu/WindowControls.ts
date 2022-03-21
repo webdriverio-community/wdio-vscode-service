@@ -1,4 +1,7 @@
-import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
+import type { ChainablePromiseElement } from 'webdriverio';
+
+import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
+import { TitleBar } from "../..";
 import { WindowControls as WindowControlsLocators } from '../../locators/1.61.0'
 
 export interface WindowControls extends IPluginDecorator<typeof WindowControlsLocators> {}
@@ -13,6 +16,15 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
      * @private
      */
     public locatorKey = 'WindowControls' as const
+
+    constructor(
+        locators: LocatorMap,
+        element?: ChainablePromiseElement<WebdriverIO.Element> | string,
+        public bar: TitleBar = new TitleBar(locators)
+    ) {
+        super(locators, element);
+        this.setParentElement(this.bar.elem)
+    }
 
     /**
      * Use the minimize window button

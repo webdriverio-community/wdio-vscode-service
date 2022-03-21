@@ -1,6 +1,6 @@
 import type { ChainablePromiseElement } from "webdriverio";
 
-import { BottomBarPanel } from "./BottomBarPanel";
+import { BottomBarPanel } from "..";
 import { BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
 import { ProblemsView as ProblemsViewLocators } from '../../locators/1.61.0'
 

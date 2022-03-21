@@ -1,6 +1,5 @@
 import { TreeSection } from "../TreeSection";
-import { TreeItem } from "../../ViewItem";
-import { ViewSectionLocators } from '../../ViewSection'
+import { TreeItem, ViewSectionLocators } from "../../..";
 import { DefaultTreeItem } from "./DefaultTreeItem";
 
 import { PluginDecorator, IPluginDecorator } from '../../../utils'

@@ -1,6 +1,5 @@
+import { ViewControl, ActionsControl } from '..'
 import { PluginDecorator, IPluginDecorator, ElementWithContextMenu } from '../utils'
-import { ViewControl } from './ViewControl'
-import { ActionsControl } from './ActionsControl'
 import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
 
 export interface ActivityBar extends IPluginDecorator<typeof ActivityBarLocators> {}

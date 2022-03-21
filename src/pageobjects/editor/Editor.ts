@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { EditorView, EditorGroup, EditorTab } from './EditorView'
+import { EditorView, EditorGroup, EditorTab } from '..'
 import { ElementWithContextMenu, LocatorMap } from '../utils'
 import {
     Editor as EditorLocators,

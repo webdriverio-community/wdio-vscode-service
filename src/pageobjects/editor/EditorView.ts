@@ -1,9 +1,6 @@
 import type { ChainablePromiseElement } from 'webdriverio';
 
-import { TextEditor } from "./TextEditor";
-import { SettingsEditor } from "./SettingsEditor";
-import { WebView } from "./WebView";
-import { DiffEditor } from './DiffEditor';
+import { TextEditor, DiffEditor, SettingsEditor, WebView } from "..";
 import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap } from "../utils";
 import {
     EditorView as EditorViewLocators,

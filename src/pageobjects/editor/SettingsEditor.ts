@@ -1,6 +1,6 @@
 import { Editor, EditorLocators } from "./Editor";
 import { ContextMenu } from "../menu/ContextMenu";
-import { EditorView, EditorGroup } from "./EditorView";
+import { EditorView, EditorGroup } from "..";
 
 import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from "../utils";
 import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.61.0'

@@ -1,6 +1,6 @@
 import { ElementWithContextMenu } from '../utils'
-import type { ContextMenu } from "../menu/ContextMenu";
 import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
+import type { ContextMenu } from "../menu/ContextMenu";
 
 /**
  * Page object representing the global action controls on the bottom of the action bar.

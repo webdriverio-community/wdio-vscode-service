@@ -1,5 +1,5 @@
 import { ScmView, ScmProvider, MoreAction, ScmChange } from "./ScmView";
-import { ContextMenu } from "../../menu/ContextMenu";
+import { ContextMenu } from "../..";
 import { PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0';
 

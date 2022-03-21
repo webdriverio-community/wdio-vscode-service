@@ -1,9 +1,7 @@
 import clipboard from 'clipboardy';
 
+import { Workbench, BottomBarPanel, ContentAssist } from '../..'
 import { TextView, ChannelView } from "./AbstractViews";
-import { BottomBarPanel } from './BottomBarPanel'
-import { Workbench } from '../workbench/Workbench'
-import { ContentAssist } from '../editor/ContentAssist'
 import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
 import {
     OutputView as OutputViewLocators,

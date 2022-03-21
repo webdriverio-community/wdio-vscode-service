@@ -1,7 +1,4 @@
-import { TitleBar } from "../menu/TitleBar";
-import { ProblemsView } from './ProblemsView'
-import { EditorView } from '../editor/EditorView'
-import { DebugConsoleView, OutputView, TerminalView } from '../bottomBar/Views'
+import { DebugConsoleView, OutputView, TerminalView, ProblemsView, EditorView, TitleBar } from '..'
 import { BasePage, PluginDecorator, IPluginDecorator } from "../utils";
 import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.61.0'
 

@@ -1,9 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { TextEditor } from './TextEditor'
-import { Menu } from '../menu/Menu'
-import { MenuItem } from '../menu/MenuItem'
-import { DebugConsoleView } from "../bottomBar/Views";
+import { TextEditor, Menu, MenuItem, DebugConsoleView } from '..'
 import { PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
 import { ContentAssist as ContentAssistLocators } from '../../locators/1.61.0'
 

@@ -1,7 +1,4 @@
-import { ViewContent } from './ViewContent';
-import { ViewItem } from './ViewItem';
-import { ContextMenu } from '../menu/ContextMenu'
-import { WelcomeContentSection } from './WelcomeContent';
+import { ContextMenu, ViewContent, ViewItem, WelcomeContentSection } from '..';
 import { PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap } from '../utils'
 import {
     ViewSection as ViewSectionLocators,

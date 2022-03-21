@@ -1,4 +1,4 @@
-import { ViewSection } from './ViewSection'
+import { ViewSection } from '..'
 import { BasePage, PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
 import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.61.0'
 import { ChainablePromiseElement } from "webdriverio";
