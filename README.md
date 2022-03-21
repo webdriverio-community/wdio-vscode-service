@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="https://webdriver.io/">
+        <img alt="WebdriverIO loves VSCode" src="/.github/assets/banner.png">
+    </a>
+</p>
+
 # WDIO VSCode Service [![CI](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml/badge.svg)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
 
 > WebdriverIO service for testing VSCode extensions.
