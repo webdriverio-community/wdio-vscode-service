@@ -18,7 +18,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
-      - run: npm i -g yarn
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
       - name: Build
