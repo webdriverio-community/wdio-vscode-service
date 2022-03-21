@@ -124,7 +124,9 @@ export const SettingsEditor = {
     tabs: '.settings-tabs-widget',
     actions: '.actions-container',
     action: (label: string) => `.//a[@title='${label}']`,
-    settingConstructor: (title: string, category: string) => `.//div[@class='monaco-tl-row' and .//span/text()='${title}' and .//span/text()='${category}: ']`,
+    settingConstructor: (title: string, category: string) => (
+        `.//div[@class='monaco-tl-row' and .//span/text()='${title}' and .//span/text()='${category}: ']`
+    ),
     settingDesctiption: '.setting-item-description',
     comboSetting: 'select',
     comboOption: '.option-text',
@@ -193,7 +195,9 @@ export const ViewSection = {
     header: '.panel-header',
     headerExpanded: 'aria-expanded',
     actions: '.actions',
-    actionConstructor: (label: string) => `.//a[contains(@class, 'action-label') and @role='button' and @title='${label}']`,
+    actionConstructor: (label: string) => (
+        `.//a[contains(@class, 'action-label') and @role='button' and @title='${label}']`
+    ),
     button: './/a[@role=\'button\']',
     buttonLabel: 'title',
     level: 'aria-level',
