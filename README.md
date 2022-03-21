@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://webdriver.io/">
-        <img alt="WebdriverIO loves VSCode" src="/.github/assets/banner.png">
+        <img alt="WebdriverIO loves VSCode" src="https://raw.githubusercontent.com/webdriverio-community/wdio-vscode-service/main/.github/assets/banner.png">
     </a>
 </p>
 
