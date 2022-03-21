@@ -17,6 +17,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
   }
 
   async beforeSession(_: Options.Testrunner, capabilities: ServiceCapabilities) {
+    const customArgs: string[] = []
     const storagePath = await tmp.dir()
     const userSettings = path.join(storagePath.path, 'settings', 'User')
     
@@ -35,14 +36,24 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
       'utf-8'
     )
     
+    if (this._options.workspacePath) {
+      customArgs.push(`--folder-uri=${this._options.workspacePath}`)
+    }
+
+    if (this._options.filePath) {
+      customArgs.push(`--file-uri=${this._options.filePath}`)
+    }
+    
     capabilities.browserName = 'chrome';
     capabilities['goog:chromeOptions'] = {
       binary: capabilities['wdio:vscodeService'].vscode.path,
       args: [
         ...VSCODE_APPLICATION_ARGS,
         `--extensionDevelopmentPath=${this._options.extensionPath}`,
-        `--user-data-dir=${path.join(storagePath.path, 'settings')}`
-      ],
+        `--user-data-dir=${path.join(storagePath.path, 'settings')}`,
+        ...customArgs,
+        ...(this._options.args || [])
+      ].filter(Boolean),
       windowTypes: ['webview'],
     };
   }
