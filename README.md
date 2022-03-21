@@ -14,19 +14,15 @@ This project was highly inspired by the [vscode-extension-tester](https://www.np
 
 ## Installation
 
-```bash
-npm i -D wdio-vscode-service
-```
+To initiate a new WebdriverIO project, run:
 
 ```bash
-yarn i -D wdio-vscode-service
+npm create wdio ./
 ```
 
-```bash
-pnpm i -D wdio-vscode-service
-```
+An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed.
 
-Instructions on how to install `WebdriverIO` can be found [here.](https://webdriver.io/docs/gettingstarted)
+For more information on how to install `WebdriverIO`, please check the [project docs](https://webdriver.io/docs/gettingstarted).
 
 ## Example Configuration
 
