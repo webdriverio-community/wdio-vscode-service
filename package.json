@@ -14,6 +14,7 @@
     "build": "tsc -b .",
     "ci": "run-s lint build test",
     "clean": "rimraf ./node_modules yarn-lock.yaml ./dist",
+    "docs": "typedoc",
     "postinstall": "cd node_modules && ln -s ../ wdio-vscode-service && cd ..",
     "prepare": "husky install",
     "release": "release-it --github.release",

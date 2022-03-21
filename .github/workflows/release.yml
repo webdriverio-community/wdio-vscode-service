@@ -53,3 +53,33 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.25.0
+          run_install: true
+      - name: Git Setup
+        run: |
+          git config --global user.email "christian+webdriverio-release@saucelabs.com"
+          git config --global user.name "WebdriverIO Release Bot"
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build Docs
+        run: pnpm docs
+      - name: Update Branch
+        run: |
+          git checkout -b docs
+          rm -rf ./.gitignore /node_modules ./.github ./.husky ./coverage ./dist ./example ./src ./test ./.eslintignore ./.eslintrc.json ./jest.config.js ./package.json ./README.md ./tsconfig.json ./typedoc.json ./yarn.lock
+          git add docs
+          git commit -m "Update docs"
+          git push origin docs --force
+
