@@ -60,7 +60,7 @@ describe('WDIO VSCode Service', () => {
 })
 ```
 
-For the full page object documentation, check out the [docs](/).
+For the full page object documentation, check out the [docs](https://webdriverio-community.github.io/wdio-vscode-service/modules.html).
 
 ## Configuration
 
