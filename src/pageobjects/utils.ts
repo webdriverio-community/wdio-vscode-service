@@ -1,7 +1,7 @@
-import * as allLocatorsTypes from '../locators/1.61.0'
-
-import type { ContextMenu } from '..'
 import type { ChainablePromiseElement, ChainablePromiseArray } from 'webdriverio'
+
+import * as allLocatorsTypes from '../locators/1.61.0'
+import { ContextMenu } from '..'
 
 type ClassWithFunctionLocatorsAsString<T> = {
     [key in keyof T as T[key] extends Function | undefined ? key : never]: T[key]
@@ -9,19 +9,29 @@ type ClassWithFunctionLocatorsAsString<T> = {
 
 type ClassWithFunctionLocators$<T> = {
     // @ts-expect-error this fails compiling here but works when applied to a class
-    [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$`]: (...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>) => ChainablePromiseElement<WebdriverIO.Element>
+    [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$`]: (
+        // @ts-expect-error this fails compiling here but works when applied to a class
+        ...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>
+    ) => ChainablePromiseElement<WebdriverIO.Element>
 }
 
 type ClassWithFunctionLocators$$<T> = {
     // @ts-expect-error this fails compiling here but works when applied to a class
-    [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$$`]: (...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>) => ChainablePromiseArray<WebdriverIO.Element[]>
+    [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$$`]: (
+        // @ts-expect-error this fails compiling here but works when applied to a class
+        ...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>
+    ) => ChainablePromiseArray<WebdriverIO.Element[]>
 }
 
 type ClassWithLocators$<T> = {
-    [key in keyof T & string as T[key] extends String | undefined ? `${key}$` : never]: ChainablePromiseElement<WebdriverIO.Element>
+    [key in keyof T & string as T[key] extends String | undefined
+        ? `${key}$`
+        : never]: ChainablePromiseElement<WebdriverIO.Element>
 }
 type ClassWithLocators$$<T> = {
-    [key in keyof T & string as T[key] extends String | undefined ? `${key}$$` : never]: ChainablePromiseArray<WebdriverIO.Element[]>
+    [key in keyof T & string as T[key] extends String | undefined
+        ? `${key}$$`
+        : never]: ChainablePromiseArray<WebdriverIO.Element[]>
 }
 
 type LocatorProperties<T> = {
@@ -38,20 +48,22 @@ export type IPluginDecorator<T> = (
     ClassWithFunctionLocators$<T> & ClassWithFunctionLocators$$<T>
 )
 
-export function PluginDecorator<T extends { new(...args: any[]): any }>(locators: Locators) {
+export function PluginDecorator<T extends { new(...args: any[]): any }> (locators: Locators) {
     return (ctor: T) => {
         for (const [prop, globalLocator] of Object.entries(locators)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ctor.prototype.__defineGetter__(`${prop}$`, function (this: LocatorProperties<any> & BasePage<any>) {
-                const locator = this.locators[prop] || globalLocator
+                const locator: Locators[string] = this.locators[prop] || globalLocator
                 if (typeof locator === 'function') {
-                    return (...args: string[]) => this.elem.$(locator(...args))
+                    return (...args: string[]) => this.elem.$(locator(...args) as string)
                 }
                 return this.elem.$(locator)
             })
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ctor.prototype.__defineGetter__(`${prop}$$`, function (this: LocatorProperties<any> & BasePage<any>) {
-                const locator = this.locators[prop] || globalLocator
+                const locator: Locators[string] = this.locators[prop] || globalLocator
                 if (typeof locator === 'function') {
-                    return (...args: string[]) => this.elem.$$(locator(...args))
+                    return (...args: string[]) => this.elem.$$(locator(...args) as string)
                 }
                 return this.elem.$$(locator)
             })
@@ -78,7 +90,7 @@ export abstract class BasePage<T> {
 
     /**
      * Get the locator map of given page object
-     * 
+     *
      */
     get locators () {
         if (Array.isArray(this.locatorKey)) {
@@ -96,11 +108,12 @@ export abstract class BasePage<T> {
     get baseElem () {
         return this._baseElem
     }
+
     /**
      * @private
      */
     get locatorMap () {
-        return this._locators as LocatorMap
+        return this._locators
     }
 
     /**
@@ -112,7 +125,9 @@ export abstract class BasePage<T> {
             return typeof this._baseElem === 'string'
                 ? browser.$(this._baseElem)
                 : this._baseElem
-        } else if (typeof baseLocator === 'string') {
+        }
+
+        if (typeof baseLocator === 'string') {
             return browser.$(baseLocator)
         }
 
@@ -143,12 +158,11 @@ export abstract class BasePage<T> {
      * @param timeout custom timeout for the wait
      * @returns thenable self reference
      */
-    async wait(timeout: number = 5000): Promise<this> {
-        await this.elem.waitForDisplayed({ timeout });
+    async wait (timeout = 5000): Promise<this> {
+        await this.elem.waitForDisplayed({ timeout })
         return this
     }
 }
-
 
 /**
  * Abstract element that has a context menu
@@ -157,21 +171,23 @@ export abstract class ElementWithContextMenu<T> extends BasePage<T> {
     /**
      * Open context menu on the element
      */
-    async openContextMenu(): Promise<ContextMenu> {
-        const ContextMenu = require('..')
+    async openContextMenu (): Promise<ContextMenu> {
         const contextMenuLocators = this.locatorMap.ContextMenu as AllLocatorType['ContextMenu']
         const workbench = browser.$((this.locatorMap.Workbench as AllLocatorType['Workbench']).elem)
-        const menus = await browser.$$(contextMenuLocators.contextView);
+        const menus = await browser.$$(contextMenuLocators.contextView)
 
         if (menus.length < 1) {
             await this.elem.click({ button: 2 })
             await browser.$(contextMenuLocators.contextView).waitForExist({ timeout: 2000 })
-            return new ContextMenu(this.locatorMap, workbench).wait();
-        } else if (await workbench.$$(contextMenuLocators.viewBlock).length > 0) {
+            return new ContextMenu(this.locatorMap, workbench).wait()
+        }
+
+        if (await workbench.$$(contextMenuLocators.viewBlock).length > 0) {
             await this.elem.click({ button: 2 })
             await this.elem.waitForDisplayed({ reverse: true, timeout: 1000 })
         }
+
         await this.elem.click({ button: 2 })
-        return new ContextMenu(this.locatorMap).wait();
+        return new ContextMenu(this.locatorMap).wait()
     }
 }

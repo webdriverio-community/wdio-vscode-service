@@ -1,7 +1,9 @@
-import type { ChainablePromiseElement } from 'webdriverio';
+import type { ChainablePromiseElement } from 'webdriverio'
 
-import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
-import { TitleBar } from "../..";
+import {
+    PluginDecorator, IPluginDecorator, BasePage, LocatorMap
+} from '../utils'
+import { TitleBar } from '../..'
 import { WindowControls as WindowControlsLocators } from '../../locators/1.61.0'
 
 export interface WindowControls extends IPluginDecorator<typeof WindowControlsLocators> {}
@@ -17,12 +19,12 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
      */
     public locatorKey = 'WindowControls' as const
 
-    constructor(
+    constructor (
         locators: LocatorMap,
         element?: ChainablePromiseElement<WebdriverIO.Element> | string,
         public bar: TitleBar = new TitleBar(locators)
     ) {
-        super(locators, element);
+        super(locators, element)
         this.setParentElement(this.bar.elem)
     }
 
@@ -30,19 +32,19 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
      * Use the minimize window button
      * @returns Promise resolving when minimize button is pressed
      */
-    async minimize(): Promise<void> {
-        await this.minimize$.click();
+    async minimize (): Promise<void> {
+        await this.minimize$.click()
     }
 
     /**
      * Use the maximize window button if the window is not maximized
      * @returns Promise resolving when maximize button is pressed
      */
-    async maximize(): Promise<void> {
+    async maximize (): Promise<void> {
         try {
-            await this.maximize$.click();
+            await this.maximize$.click()
         } catch (err) {
-            console.log('Window is already maximized');
+            console.log('Window is already maximized')
         }
     }
 
@@ -50,11 +52,11 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
      * Use the restore window button if the window is maximized
      * @returns Promise resolving when restore button is pressed
      */
-    async restore(): Promise<void> {
+    async restore (): Promise<void> {
         try {
-            await this.restore$.click();
+            await this.restore$.click()
         } catch (err) {
-            console.log('Window is not maximized');
+            console.log('Window is not maximized')
         }
     }
 
@@ -62,7 +64,7 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
      * Use the window close button. Use at your own risk.
      * @returns Promise resolving when close button is pressed
      */
-    async close(): Promise<void> {
-        await this.close$.click();
+    async close (): Promise<void> {
+        await this.close$.click()
     }
 }

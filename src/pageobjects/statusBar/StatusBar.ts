@@ -1,5 +1,6 @@
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
 import { StatusBar as StatusBarLocators } from '../../locators/1.61.0'
+import { NotificationsCenter } from '..'
 
 export interface StatusBar extends IPluginDecorator<typeof StatusBarLocators> {}
 /**
@@ -18,8 +19,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Retrieve all status bar items currently displayed
      * @returns Promise resolving to an array of WebElement
      */
-    async getItems() {
-        return this.item$$;
+    async getItems () {
+        return this.item$$
     }
 
     /**
@@ -27,31 +28,31 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * @param title title of the item
      * @returns Promise resolving to a WebElement if item is found, to undefined otherwise
      */
-    async getItem(title: string) {
-        const items = await this.getItems();
+    async getItem (title: string) {
+        const items = await this.getItems()
         for (const item of items) {
             if (await item.getAttribute(this.locators.itemTitle) === title) {
-                return item;
+                return item
             }
         }
-        return undefined;
+        return undefined
     }
 
     /**
      * Open the notifications center
      * @returns Promise resolving to NotificationsCenter object
      */
-    async openNotificationsCenter(): Promise<any /*NotificationsCenter*/> {
-        await this.toggleNotificationsCentre(true);
-        // return new NotificationsCenter();
+    async openNotificationsCenter (): Promise<NotificationsCenter> {
+        await this.toggleNotificationsCentre(true)
+        return new NotificationsCenter(this.locatorMap)
     }
 
     /**
      * Close the notifications center
      * @returns Promise resolving when the notifications center is closed
      */
-    async closeNotificationsCenter(): Promise<void> {
-        await this.toggleNotificationsCentre(false);
+    async closeNotificationsCenter (): Promise<void> {
+        await this.toggleNotificationsCentre(false)
     }
 
     /**
@@ -59,8 +60,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving when the language selection is opened
      */
-    async openLanguageSelection(): Promise<void> {
-        await this.language$.click();
+    async openLanguageSelection (): Promise<void> {
+        await this.language$.click()
     }
 
     /**
@@ -68,8 +69,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving to string representation of current language
      */
-    async getCurrentLanguage(): Promise<string> {
-        return this.getPartText(this.locators.language);
+    async getCurrentLanguage (): Promise<string> {
+        return this.getPartText(this.locators.language)
     }
 
     /**
@@ -77,8 +78,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving when the line ending selection is opened
      */
-    async openLineEndingSelection(): Promise<void> {
-        await this.lines$.click();
+    async openLineEndingSelection (): Promise<void> {
+        await this.lines$.click()
     }
 
     /**
@@ -86,8 +87,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving to string representation of current line ending
      */
-    async getCurrentLineEnding(): Promise<string> {
-        return this.getPartText(this.locators.lines);
+    async getCurrentLineEnding (): Promise<string> {
+        return this.getPartText(this.locators.lines)
     }
 
     /**
@@ -95,8 +96,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving when the encoding selection is opened
      */
-    async openEncodingSelection(): Promise<void> {
-        await this.encoding$.click();
+    async openEncodingSelection (): Promise<void> {
+        await this.encoding$.click()
     }
 
     /**
@@ -104,8 +105,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving to string representation of current encoding
      */
-    async getCurrentEncoding(): Promise<string> {
-        return this.getPartText(this.locators.encoding);
+    async getCurrentEncoding (): Promise<string> {
+        return this.getPartText(this.locators.encoding)
     }
 
     /**
@@ -113,8 +114,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving when the indentation selection is opened
      */
-    async openIndentationSelection(): Promise<void> {
-        await this.indent$.click();
+    async openIndentationSelection (): Promise<void> {
+        await this.indent$.click()
     }
 
     /**
@@ -122,8 +123,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving to string representation of current indentation
      */
-    async getCurrentIndentation(): Promise<string> {
-        return this.getPartText(this.locators.indent);
+    async getCurrentIndentation (): Promise<string> {
+        return this.getPartText(this.locators.indent)
     }
 
     /**
@@ -131,8 +132,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving when the line selection is opened
      */
-    async openLineSelection(): Promise<void> {
-        await this.selection$.click();
+    async openLineSelection (): Promise<void> {
+        await this.selection$.click()
     }
 
     /**
@@ -140,31 +141,31 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * Only works with an open editor
      * @returns Promise resolving to string representation of current position in the editor
      */
-    async getCurrentPosition(): Promise<string> {
-        return this.getPartText(this.locators.selection);
+    async getCurrentPosition (): Promise<string> {
+        return this.getPartText(this.locators.selection)
     }
 
     /**
      * Open/Close notification centre
      * @param open true to open, false to close
      */
-    private async toggleNotificationsCentre(open: boolean): Promise<void> {
-        let visible = false;
+    private async toggleNotificationsCentre (open: boolean): Promise<void> {
+        let visible = false
         try {
             const klass = await browser
                 .$(this.locatorMap.Workbench.elem as string)
                 .$(this.locators.notifications)
-                .getAttribute('class');
-            visible = klass.indexOf('visible') > -1;
+                .getAttribute('class')
+            visible = klass.indexOf('visible') > -1
         } catch (err) {
             // element doesn't exist until the button is first clicked
         }
         if (visible !== open) {
-            await this.bell$.click();
+            await this.bell$.click()
         }
     }
 
-    private async getPartText(locator: string): Promise<string> {
-        return this.elem.$(locator).$('a').getAttribute('innerHTML');
+    private async getPartText (locator: string): Promise<string> {
+        return this.elem.$(locator).$('a').getAttribute('innerHTML')
     }
 }

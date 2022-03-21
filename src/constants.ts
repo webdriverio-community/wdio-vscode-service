@@ -11,14 +11,14 @@ export const VSCODE_APPLICATION_ARGS = [
     '--disable-workspace-trust',
     '--disable-extensions'
 ]
-export const DEFAULT_VSCODE_SETTINGS = { 
-    "window.titleBarStyle": "custom",
-    "workbench.editor.enablePreview": false,
-    "window.restoreFullscreen": true,
-    "window.newWindowDimensions": "maximized",
-    "security.workspace.trust.enabled": false,
-    "window.dialogStyle": "custom",
-    "files.simpleDialog.enable": true
+export const DEFAULT_VSCODE_SETTINGS = {
+    'window.titleBarStyle': 'custom',
+    'workbench.editor.enablePreview': false,
+    'window.restoreFullscreen': true,
+    'window.newWindowDimensions': 'maximized',
+    'security.workspace.trust.enabled': false,
+    'window.dialogStyle': 'custom',
+    'files.simpleDialog.enable': true
 }
 export const VSCODE_RELEASES = 'https://update.code.visualstudio.com/api/releases/stable'
 export const VSCODE_MANIFEST_URL = 'https://raw.githubusercontent.com/microsoft/vscode/%s/cgmanifest.json'

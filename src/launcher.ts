@@ -15,11 +15,24 @@ import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, CHROMEDRIVER_RELEASES,
     CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH
 } from './constants'
-import type { ServiceOptions, ServiceCapability, ServiceCapabilities, VSCodeChannel } from './types'
+import type {
+    ServiceOptions, ServiceCapability, ServiceCapabilities, VSCodeChannel
+} from './types'
 
 interface BundeInformation {
     chromedriver: string
     vscode: string
+}
+interface Manifest {
+    registrations: Registration[]
+}
+interface Registration {
+    version: string
+    component: {
+        git: {
+            name: string
+        }
+    }
 }
 type Versions = { [desiredVersion: string]: BundeInformation | undefined }
 
@@ -37,10 +50,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
     }
 
-    // @ts-expect-error
-    async onPrepare(_: never, capabilities: ServiceCapabilities[]) {
+    // @ts-expect-error parent class has different structure
+    async onPrepare (_: never, capabilities: ServiceCapabilities[]) {
         const version = this._options.vscode?.version || DEFAULT_CHANNEL
-        
+
         /**
          * check if for given version we already have all bundles
          * and continue without download if possible
@@ -48,33 +61,42 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         const versionsFilePath = path.join(this._cachePath, VERSIONS_TXT)
         const versionsFileExist = await fileExist(versionsFilePath)
         if (versionsFileExist) {
-            const content: Versions = JSON.parse((await fs.readFile(versionsFilePath)).toString())
+            const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
             const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
             const vscodePath = path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
-            
-            if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
-                log.info(`Skipping download, bundles for VSCode v${content[version]!.vscode} and Chromedriver v${content[version]!.chromedriver} already exist`)
 
-                // @ts-expect-error
+            if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
+                log.info(
+                    `Skipping download, bundles for VSCode v${content[version]?.vscode} `
+                    + `and Chromedriver v${content[version]?.chromedriver} already exist`
+                )
+
+                // @ts-expect-error `chromedriverCustomPath` is not defined in parent class
                 this.chromedriverCustomPath = chromedriverPath
                 this._populateCaps(capabilities, {
                     chromedriver: { version: content[version]!.chromedriver, path: chromedriverPath },
-                    vscode: { version: content[version]!.vscode, path: await this._setupVSCode(content[version]!.vscode) }
+                    vscode: {
+                        version: content[version]!.vscode,
+                        path: await this._setupVSCode(content[version]!.vscode)
+                    }
                 })
                 return super.onPrepare()
             }
         }
 
         const [vscodeVersion, chromedriverVersion] = await this._setupChromedriver(version)
-        // @ts-expect-error
-        const chromedriverPath = this.chromedriverCustomPath = path.join(this._cachePath, `chromedriver-${chromedriverVersion}`)
+        // @ts-expect-error `chromedriverCustomPath` is not defined
+        const chromedriverPath = this.chromedriverCustomPath = path.join(
+            this._cachePath,
+            `chromedriver-${chromedriverVersion}`
+        )
         const serviceArgs: ServiceCapability = {
             chromedriver: { version: chromedriverVersion, path: chromedriverPath },
             vscode: { version: vscodeVersion, path: await this._setupVSCode(vscodeVersion) }
         }
-        
+
         this._populateCaps(capabilities, serviceArgs)
-        this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
+        await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
         return super.onPrepare()
     }
 
@@ -86,7 +108,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
     /**
      * Downloads Chromedriver bundle for given VSCode version
-     * @param desiredReleaseChannel either release channel (e.g. "stable" or "insiders") or a concrete version e.g. 1.66.0
+     * @param desiredReleaseChannel either release channel (e.g. "stable" or "insiders")
+     *                              or a concrete version e.g. 1.66.0
      * @returns "insiders" if `desiredReleaseChannel` is set to this otherwise a concrete version
      */
     private async _setupChromedriver (desiredReleaseChannel?: VSCodeChannel) {
@@ -123,10 +146,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      */
     private async _setupVSCode (version: string) {
         try {
-            log.info(`Download VSCode (stable)`)
+            log.info('Download VSCode (stable)')
             return await download({
                 cachePath: this._cachePath,
-                version: version
+                version
             })
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't set up VSCode: ${err.message}`)
@@ -135,7 +158,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
     /**
      * Get VSCode version based on desired channel or validate version if provided
-     * @param desiredReleaseChannel either release channel (e.g. "stable" or "insiders") or a concrete version e.g. 1.66.0
+     * @param desiredReleaseChannel either release channel (e.g. "stable" or "insiders")
+     *                              or a concrete version e.g. 1.66.0
      * @returns "main" if `desiredReleaseChannel` is "insiders" otherwise a concrete VSCode version
      */
     private async _fetchVSCodeVersion (desiredReleaseChannel?: VSCodeChannel | string) {
@@ -152,17 +176,20 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 /**
                  * validate provided VSCode version
                  */
-                desiredReleaseChannel = desiredReleaseChannel === 'stable' ? availableVersions[0] : desiredReleaseChannel
-                if (!availableVersions.includes(desiredReleaseChannel)) {
+                const newDesiredReleaseChannel = desiredReleaseChannel === 'stable'
+                    ? availableVersions[0]
+                    : desiredReleaseChannel
+                if (!availableVersions.includes(newDesiredReleaseChannel)) {
                     throw new Error(
-                        `Desired version "${desiredReleaseChannel}" is not existent, available versions:` +
-                        `${availableVersions.slice(0, 5).join(', ')}..., see ${VSCODE_RELEASES}`)
+                        `Desired version "${newDesiredReleaseChannel}" is not existent, available versions:`
+                        + `${availableVersions.slice(0, 5).join(', ')}..., see ${VSCODE_RELEASES}`
+                    )
                 }
 
-                return desiredReleaseChannel
+                return newDesiredReleaseChannel
             }
 
-            return availableVersions[0] as string
+            return availableVersions[0]
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't fetch latest VSCode: ${err.message}`)
         }
@@ -176,11 +203,14 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     private async _fetchChromedriverVersion (vscodeVersion: string) {
         try {
             const { body } = await request(format(VSCODE_MANIFEST_URL, vscodeVersion), {})
-            const manifest = await body.json()
+            const manifest: Manifest = await body.json()
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
-            
-            const { body: chromedriverVersion } = await request(format(CHROMEDRIVER_RELEASES, chromium.version.split('.')[0]), {})
-            return chromedriverVersion.text()
+
+            const { body: chromedriverVersion } = await request(
+                format(CHROMEDRIVER_RELEASES, chromium!.version.split('.')[0]),
+                {}
+            )
+            return await chromedriverVersion.text()
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't fetch Chromedriver version: ${err.message}`)
         }

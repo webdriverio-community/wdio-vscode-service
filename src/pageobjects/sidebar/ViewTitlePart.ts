@@ -1,6 +1,8 @@
-import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
+import {
+    ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, LocatorMap
+} from '../utils'
 import { SideBarView } from '..'
-import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0';
+import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0'
 
 export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
 /**
@@ -15,33 +17,33 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
      */
     public locatorKey = 'ViewTitlePart' as const
 
-    constructor(
+    constructor (
         locators: LocatorMap,
         public view: SideBarView<any> = new SideBarView(locators)
     ) {
-        super(locators);
+        super(locators)
     }
 
     /**
      * Returns the displayed title of the view
      * @returns Promise resolving to displayed title
      */
-    async getTitle(): Promise<string> {
-        return await this.title$.getText();
+    async getTitle (): Promise<string> {
+        return this.title$.getText()
     }
 
     /**
      * Finds action buttons inside the view title part
      * @returns Promise resolving to array of TitleActionButton objects
      */
-    async getActions(): Promise<TitleActionButton[]> {
-        const actions: TitleActionButton[] = [];
-        const elements = await this.action$$;
+    async getActions (): Promise<TitleActionButton[]> {
+        const actions: TitleActionButton[] = []
+        const elements = await this.action$$
         for (const element of elements) {
-            const title = await element.getAttribute(this.locators.actionLabel);
-            actions.push(await new TitleActionButton(this.locatorMap, title, this).wait());
+            const title = await element.getAttribute(this.locators.actionLabel)
+            actions.push(await new TitleActionButton(this.locatorMap, title, this).wait())
         }
-        return actions;
+        return actions
     }
 
     /**
@@ -49,8 +51,8 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
      * @param title title of the button to search for
      * @returns Promise resolving to TitleActionButton object
      */
-    async getAction(title: string): Promise<TitleActionButton> {
-        return new TitleActionButton(this.locatorMap, title, this);
+    async getAction (title: string): Promise<TitleActionButton> {
+        return new TitleActionButton(this.locatorMap, title, this).wait()
     }
 }
 
@@ -67,15 +69,15 @@ export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
      */
     public locatorKey = 'ViewTitlePart' as const
 
-    constructor(locators: LocatorMap, private title: string, viewTitle: ViewTitlePart) {
-        super(locators, (locators['ViewTitlePart'].actionContstructor as Function)(title), viewTitle.elem);
-        this.title = title;
+    constructor (locators: LocatorMap, private title: string, viewTitle: ViewTitlePart) {
+        super(locators, (locators.ViewTitlePart.actionContstructor as Function)(title) as string, viewTitle.elem)
+        this.title = title
     }
 
     /**
      * Get title of the button
      */
-    getTitle(): string {
-        return this.title;
+    getTitle (): string {
+        return this.title
     }
 }

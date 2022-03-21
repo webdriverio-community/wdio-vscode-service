@@ -1,7 +1,10 @@
+import { ChainablePromiseElement } from 'webdriverio'
+
 import { ViewSection } from '..'
-import { BasePage, PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
+import {
+    BasePage, PluginDecorator, IPluginDecorator, LocatorMap
+} from '../utils'
 import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.61.0'
-import { ChainablePromiseElement } from "webdriverio";
 
 export interface WelcomeContentButton extends IPluginDecorator<typeof WelcomeContentLocators> {}
 /**
@@ -22,17 +25,17 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
      * @param panel  The panel containing the button in the welcome section
      * @param welcomeSection  The enclosing welcome section
      */
-    constructor(
+    constructor (
         locators: LocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public welcomeSection: WelcomeContentSection
     ) {
-        super(locators, panel);
+        super(locators, panel)
     }
 
     /** Return the title displayed on this button */
-    public getTitle(): Promise<string> {
-        return this.elem.getText();
+    public getTitle (): Promise<string> {
+        return this.elem.getText()
     }
 }
 
@@ -62,39 +65,42 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
      * @param panel  The panel containing the welcome content.
      * @param parent  The webelement in which the welcome content is embedded.
      */
-    constructor(
+    constructor (
         locators: LocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         parent: ViewSection
     ) {
-        super(locators, panel, parent.elem);
+        super(locators, panel, parent.elem)
     }
 
     /**
-     * Combination of [[getButtons]] and [[getTextSections]]: returns all entries in the welcome view in the order that they appear.
+     * Combination of [[getButtons]] and [[getTextSections]]: returns all entries in the welcome
+     * view in the order that they appear.
      */
-    public async getContents(): Promise<(WelcomeContentButton|string)[]> {
-        const elements = await this.buttonOrText$$;
+    public async getContents (): Promise<(WelcomeContentButton | string)[]> {
+        const elements = await this.buttonOrText$$
         return Promise.all(elements.map(async (e) => {
-            const tagName = await e.getTagName();
-            if (tagName === "p") {
-                return e.getText();
-            } else {
-                return new WelcomeContentButton(this.locatorMap, e as any, this);
+            const tagName = await e.getTagName()
+            if (tagName === 'p') {
+                return e.getText()
             }
-        }));
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            return new WelcomeContentButton(this.locatorMap, e as any, this)
+        }))
     }
 
     /** Finds all buttons in the welcome content */
-    public getButtons(): Promise<WelcomeContentButton[]> {
-        return this.button$$.map((elem) => new WelcomeContentButton(this.locatorMap, elem as any, this));
+    public getButtons (): Promise<WelcomeContentButton[]> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        return this.button$$.map((elem) => new WelcomeContentButton(this.locatorMap, elem as any, this))
     }
 
     /**
      * Finds all text entries in the welcome content and returns each line as an
      * element in an array.
      */
-    public getTextSections(): Promise<string[]> {
+    public getTextSections (): Promise<string[]> {
         return this.text$$.map((elem) => elem.getText())
     }
 }

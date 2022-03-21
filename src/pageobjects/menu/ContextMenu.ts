@@ -1,9 +1,8 @@
-import type { ChainablePromiseElement } from 'webdriverio';
+import type { ChainablePromiseElement } from 'webdriverio'
 
-import { Menu, MenuItem } from "..";
+import { Menu, MenuItem } from '..'
 import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
 import { ContextMenu as ContextMenuLocators } from '../../locators/1.61.0'
-
 
 export interface ContextMenu extends IPluginDecorator<typeof ContextMenuLocators> {}
 /**
@@ -23,18 +22,18 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
      * @param name name of the item to search by
      * @returns Promise resolving to ContextMenuItem object
      */
-    async getItem(name: string): Promise<MenuItem<typeof ContextMenuLocators> | undefined> {
+    async getItem (name: string): Promise<MenuItem<typeof ContextMenuLocators> | undefined> {
         try {
-            const items = await this.getItems();
+            const items = await this.getItems()
             for (const item of items) {
                 if (await item.getLabel() === name) {
-                    return item;
+                    return item
                 }
             }
 
             return undefined
         } catch (err) {
-            return undefined;
+            return undefined
         }
     }
 
@@ -42,31 +41,32 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
      * Get all context menu items
      * @returns Promise resolving to array of ContextMenuItem objects
      */
-    async getItems(): Promise<ContextMenuItem[]> {
-        const items: ContextMenuItem[] = [];
+    async getItems (): Promise<ContextMenuItem[]> {
+        const items: ContextMenuItem[] = []
         const elements = await this.itemElement$$
 
         for (const element of elements) {
-            const classProperty = await element.getAttribute('class');
+            const classProperty = await element.getAttribute('class')
             if (classProperty.indexOf('disabled') < 0) {
                 const item = new ContextMenuItem(
                     this.locatorMap,
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     element as any,
                     this
                 )
                 await item.wait()
-                items.push(item);
+                items.push(item)
             }
         }
-        return items;
+        return items
     }
 
     /**
      * Close the context menu
      * @returns Promise resolving when the menu is closed
      */
-    async close(): Promise<void> {
-        await browser.keys('Escape');
+    async close (): Promise<void> {
+        await browser.keys('Escape')
         await this.elem.waitForDisplayed({ reverse: true })
         // Todo(Christian): maybe handle stale element exception
     }
@@ -74,19 +74,18 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
     /**
      * Wait for the menu to appear and load all its items
      */
-    async wait(timeout: number = 5000): Promise<this> {
+    async wait (timeout = 5000): Promise<this> {
         await (await this.elem).waitForDisplayed({ timeout })
-        let items = (await this.getItems()).length;
+        let items = (await this.getItems()).length
         await browser.waitUntil(async () => {
-            const temp = (await this.getItems()).length;
+            const temp = (await this.getItems()).length
             if (temp === items) {
-                return true;
-            } else {
-                items = temp;
-                return false;
+                return true
             }
-        }, { timeout: 1000 });
-        return this;
+            items = temp
+            return false
+        }, { timeout: 1000 })
+        return this
     }
 }
 
@@ -104,34 +103,34 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
     public locatorKey = 'ContextMenu' as const
     public label = ''
 
-    constructor(
+    constructor (
         locators: LocatorMap,
         base: ChainablePromiseElement<WebdriverIO.Element>,
         public parentMenu: Menu<typeof ContextMenuLocators>
     ) {
-        super(locators, base, parentMenu.elem);
+        super(locators, base, parentMenu.elem)
     }
 
-    async select() {
-        await this.elem.click();
-        await new Promise(res => setTimeout(res, 500));
+    async select () {
+        await this.elem.click()
+        await new Promise((res) => setTimeout(res, 500))
         if (await this.isNesting()) {
-            await new ContextMenu(this.locatorMap, this.elem).wait();
+            await new ContextMenu(this.locatorMap, this.elem).wait()
         }
-        return undefined;
+        return undefined
     }
 
-    async getLabel(): Promise<string> {
-        const labelItem = await this.itemLabel$;
-        return labelItem.getAttribute(this.locators.itemText as string);
+    async getLabel (): Promise<string> {
+        const labelItem = await this.itemLabel$
+        return labelItem.getAttribute(this.locators.itemText)
     }
 
-    private async isNesting(): Promise<boolean> {
+    private async isNesting (): Promise<boolean> {
         try {
             await this.itemNesting$.waitForDisplayed()
             return true
         } catch (err) {
-            return false;
+            return false
         }
     }
 }

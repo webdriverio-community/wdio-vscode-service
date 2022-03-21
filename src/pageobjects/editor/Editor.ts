@@ -1,9 +1,9 @@
-import { ChainablePromiseElement } from 'webdriverio';
+import { ChainablePromiseElement } from 'webdriverio'
 
 import { EditorView, EditorGroup, EditorTab } from '..'
 import { ElementWithContextMenu, LocatorMap } from '../utils'
 import {
-    Editor as EditorLocators,
+    Editor as EditorLocatorsMap,
     SettingsEditor as SettingsEditorLocators,
     TextEditor as TextEditorLocators,
     DiffEditor as DiffEditorLocators,
@@ -15,7 +15,7 @@ import {
  * @hidden
  */
 export type EditorLocators = (
-    typeof EditorLocators &
+    typeof EditorLocatorsMap &
     typeof SettingsEditorLocators &
     typeof TextEditorLocators &
     typeof DiffEditorLocators &
@@ -29,28 +29,28 @@ export type EditorLocators = (
  * @category Editor
  */
 export abstract class Editor<T> extends ElementWithContextMenu<T> {
-    constructor(
+    constructor (
         locators: LocatorMap,
         element?: ChainablePromiseElement<WebdriverIO.Element> | string,
         public view: EditorView | EditorGroup = new EditorView(locators)
     ) {
-        super(locators, element);
+        super(locators, element)
         this.setParentElement(this.view.elem)
     }
 
     /**
      * Get title/name of the open editor
      */
-    async getTitle(): Promise<string> {
-        const tab = await this.getTab();
-        return tab.getTitle();
+    async getTitle (): Promise<string> {
+        const tab = await this.getTab()
+        return tab.getTitle()
     }
 
     /**
      * Get the corresponding editor tab
      */
-    async getTab(): Promise<EditorTab> {
-        const element = this.view as EditorView | EditorGroup;
-        return element.getActiveTab() as Promise<EditorTab>;
+    async getTab (): Promise<EditorTab> {
+        const element = this.view
+        return element.getActiveTab() as Promise<EditorTab>
     }
 }

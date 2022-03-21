@@ -1,7 +1,7 @@
 import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
-import { WindowControls, ContextMenu } from "..";
-import { Menu } from "./Menu";
-import { MenuItem } from "./MenuItem";
+import { WindowControls, ContextMenu } from '..'
+import { Menu } from './Menu'
+import { MenuItem } from './MenuItem'
 import { TitleBar as TitleBarLocators } from '../../locators/1.61.0'
 
 export interface TitleBar extends IPluginDecorator<typeof TitleBarLocators> {}
@@ -22,17 +22,17 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      * @param name name of the item to search by
      * @returns Promise resolving to TitleBarItem object
      */
-    async getItem(name: string): Promise<TitleBarItem | undefined> {
+    async getItem (name: string): Promise<TitleBarItem | undefined> {
         try {
             const titleBar = new TitleBarItem(
                 this.locatorMap,
                 this.locators.itemConstructor(name),
                 this
             )
-            await titleBar.wait();
+            await titleBar.wait()
             return titleBar
         } catch (err) {
-            return undefined;
+            return undefined
         }
     }
 
@@ -40,9 +40,9 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      * Get all title bar items
      * @returns Promise resolving to array of TitleBarItem objects
      */
-    async getItems(): Promise<TitleBarItem[]> {
-        const items: TitleBarItem[] = [];
-        const elements = await this.itemElement$$;
+    async getItems (): Promise<TitleBarItem[]> {
+        const items: TitleBarItem[] = []
+        const elements = await this.itemElement$$
 
         for (const element of elements) {
             const isDisplayed = await element.isDisplayed()
@@ -56,24 +56,24 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
                 this
             )
             await item.wait()
-            items.push(item);
+            items.push(item)
         }
-        return items;
+        return items
     }
 
     /**
      * Get the window title
      * @returns Promise resolving to the window title
      */
-    async getTitle(): Promise<string> {
-        return this.title$.getText();
+    async getTitle (): Promise<string> {
+        return this.title$.getText()
     }
 
     /**
      * Get a reference to the WindowControls
      */
-    getWindowControls(): WindowControls {
-        return new WindowControls(this.locatorMap, this.elem);
+    getWindowControls (): WindowControls {
+        return new WindowControls(this.locatorMap, this.elem)
     }
 }
 
@@ -90,25 +90,25 @@ export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
      */
     public locatorKey = 'TitleBar' as const
 
-    constructor(
+    constructor (
         locators: LocatorMap,
         public label: string,
         public parentMenu: Menu<typeof TitleBarLocators>
     ) {
-        super(locators, (locators['TitleBar'].itemConstructor as Function)(label));
-        this.parentMenu = parentMenu;
-        this.label = label;
+        super(locators, (locators.TitleBar.itemConstructor as Function)(label) as string)
+        this.parentMenu = parentMenu
+        this.label = label
     }
 
-    async select() {
+    async select () {
         const openMenus = await browser.$$(this.locatorMap.ContextMenu.elem as string)
         if (openMenus.length > 0 && await openMenus[0].isDisplayed()) {
-            await browser.keys('Escape');
+            await browser.keys('Escape')
         }
-        await this.elem.click();
+        await this.elem.click()
 
         const menu = new ContextMenu(this.locatorMap, this.elem)
         await menu.wait()
-        return menu;
+        return menu
     }
 }

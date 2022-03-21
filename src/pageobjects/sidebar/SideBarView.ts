@@ -1,6 +1,8 @@
-import { ViewContent, ViewTitlePart } from '..';
-import { PluginDecorator, IPluginDecorator, BasePage, LocatorComponents } from '../utils'
-import { SideBarView as SideBarViewLocators } from '../../locators/1.61.0';
+import { ViewContent, ViewTitlePart } from '..'
+import {
+    PluginDecorator, IPluginDecorator, BasePage, LocatorComponents
+} from '../utils'
+import { SideBarView as SideBarViewLocators } from '../../locators/1.61.0'
 
 export interface SideBarView<T> extends IPluginDecorator<typeof SideBarViewLocators> { }
 /**
@@ -19,15 +21,15 @@ export class SideBarView<T> extends BasePage<T> {
      * Get the top part of the open view (contains title and possibly some buttons)
      * @returns ViewTitlePart object
      */
-    getTitlePart(): ViewTitlePart {
-        return new ViewTitlePart(this.locatorMap, this);
+    getTitlePart (): ViewTitlePart {
+        return new ViewTitlePart(this.locatorMap, this)
     }
 
     /**
      * Get the content part of the open view
      * @returns ViewContent object
      */
-    getContent(): ViewContent {
-        return new ViewContent(this.locatorMap, this);
+    getContent (): ViewContent {
+        return new ViewContent(this.locatorMap, this)
     }
 }

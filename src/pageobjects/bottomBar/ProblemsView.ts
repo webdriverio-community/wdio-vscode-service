@@ -1,19 +1,21 @@
-import type { ChainablePromiseElement } from "webdriverio";
+import type { ChainablePromiseElement } from 'webdriverio'
 
-import { BottomBarPanel } from "..";
-import { BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
+import { BottomBarPanel } from '..'
+import {
+    BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap
+} from '../utils'
 import { ProblemsView as ProblemsViewLocators } from '../../locators/1.61.0'
 
 export interface ProblemsView extends IPluginDecorator<typeof ProblemsViewLocators> {}
 /**
  * Problems view in the bottom panel.
- * 
+ *
  * ```ts
  * const bottomBar = workbench.getBottomBar()
  * const outputView = await bottomBar.openProblemsView()
- * console.log(await outputView.setFilter('Error'));
+ * console.log(await outputView.setFilter('Error'))
  * ```
- * 
+ *
  * @category BottomBar
  */
 @PluginDecorator(ProblemsViewLocators)
@@ -23,11 +25,11 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
      */
     public locatorKey = 'ProblemsView' as const
 
-    constructor(
+    constructor (
         locators: LocatorMap,
         public panel = new BottomBarPanel(locators)
     ) {
-        super(locators);
+        super(locators)
         this.setParentElement(this.panel.elem)
     }
 
@@ -36,33 +38,33 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
      * @param pattern filter to use, prefferably a glob pattern
      * @returns Promise resolving when the filter pattern is filled in
      */
-    async setFilter(pattern: string): Promise<void> {
-        const filterField = await this.clearFilter();
-        await filterField.setValue(pattern);
+    async setFilter (pattern: string): Promise<void> {
+        const filterField = await this.clearFilter()
+        await filterField.setValue(pattern)
     }
 
     /**
      * Clear all filters
-     * @returns Promise resolving to the filter field WebElement 
+     * @returns Promise resolving to the filter field WebElement
      */
-    async clearFilter() {
+    async clearFilter () {
         const filterField = await this.panel.elem
             .$(this.locatorMap.BottomBarPanel.actions as string)
             .$(this.locators.markersFilter)
-            .$(this.locators.input);
-        await filterField.clearValue();
-        return filterField;
+            .$(this.locators.input)
+        await filterField.clearValue()
+        return filterField
     }
 
     /**
      * Collapse all collapsible markers in the problems view
      * @returns Promise resolving when the collapse all button is pressed
      */
-    async collapseAll(): Promise<void> {
+    async collapseAll (): Promise<void> {
         const button = await this.panel.elem
             .$(this.locatorMap.BottomBarPanel.actions as string)
-            .$(this.locators.collapseAll);
-        await button.click();
+            .$(this.locators.collapseAll)
+        await button.click()
     }
 
     /**
@@ -71,23 +73,24 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
      * @param type type of markers to retrieve
      * @returns Promise resolving to array of Marker objects
      */
-    async getAllMarkers(type: MarkerType): Promise<Marker[]> {
-        const markers: Marker[] = [];
-        const elements = await this.markerRow$$;
+    async getAllMarkers (type: MarkerType): Promise<Marker[]> {
+        const markers: Marker[] = []
+        const elements = await this.markerRow$$
         for (const element of elements) {
-            const marker = await new Marker(this.locatorMap, element as any, this).wait();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            const marker = await new Marker(this.locatorMap, element as any, this).wait()
             if (type === MarkerType.Any || type === await marker.getType()) {
-                markers.push(marker);
+                markers.push(marker)
             }
         }
-        return markers;
+        return markers
     }
 }
 
 export interface Marker extends IPluginDecorator<typeof ProblemsViewLocators> {}
 /**
  * Page object for marker in problems view
- * 
+ *
  * @category BottomBar
  */
 @PluginDecorator(ProblemsViewLocators)
@@ -97,12 +100,12 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
      */
     public locatorKey = 'ProblemsView' as const
 
-    constructor(
+    constructor (
         locators: LocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ProblemsView
     ) {
-        super(locators, element, view.elem);
+        super(locators, element, view.elem)
     }
 
     /**
@@ -110,25 +113,24 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
      * Possible types are: File, Error, Warning
      * @returns Promise resolving to a MarkerType
      */
-    async getType(): Promise<MarkerType> {
-        const twist = await this.markerTwistie$;
+    async getType (): Promise<MarkerType> {
+        const twist = await this.markerTwistie$
         if ((await twist.getAttribute('class')).indexOf('collapsible') > -1) {
-            return MarkerType.File;            
+            return MarkerType.File
         }
-        const text = await this.getText();
+        const text = await this.getText()
         if (text.startsWith('Error')) {
-            return MarkerType.Error;
-        } else {
-            return MarkerType.Warning;
+            return MarkerType.Error
         }
+        return MarkerType.Warning
     }
 
     /**
      * Get the full text of the marker
      * @returns Promise resolving to marker text
      */
-    async getText(): Promise<string> {
-        return await this.elem.getAttribute(this.locators.rowLabel);
+    async getText (): Promise<string> {
+        return this.elem.getAttribute(this.locators.rowLabel)
     }
 
     /**
@@ -136,11 +138,11 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
      * @param expand true to expand, false to collapse
      * @returns Promise resolving when the expand/collapse twistie is clicked
      */
-    async toggleExpand(expand: boolean): Promise<void> {
+    async toggleExpand (expand: boolean): Promise<void> {
         if (await this.getType() === MarkerType.File) {
-            const klass = await this.markerTwistie$.getAttribute('class');
+            const klass = await this.markerTwistie$.getAttribute('class')
             if ((klass.indexOf('collapsed') > -1) === expand) {
-                await this.elem.click();
+                await this.elem.click()
             }
         }
     }
@@ -152,7 +154,7 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
  *  - Error = an error marker
  *  - Warning = a warning marker
  *  - Any = any of the above
- * 
+ *
  * @hidden
  */
 export enum MarkerType {

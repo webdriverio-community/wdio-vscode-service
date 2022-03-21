@@ -1,12 +1,12 @@
-import { TreeSection } from "../TreeSection";
-import { TreeItem } from "../../ViewItem";
-import { CustomTreeItem } from "./CustomTreeItem";
-import { ViewSectionLocators } from '../../ViewSection'
+import { TreeSection } from '../TreeSection'
+import { TreeItem } from '../../ViewItem'
+import { CustomTreeItem } from './CustomTreeItem'
+import { AllViewSectionLocators } from '../../ViewSection'
 
 import { PluginDecorator, IPluginDecorator } from '../../../utils'
-import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.61.0';
+import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.61.0'
 
-export interface CustomTreeSection extends IPluginDecorator<ViewSectionLocators> { }
+export interface CustomTreeSection extends IPluginDecorator<AllViewSectionLocators> { }
 /**
  * Custom tree view, e.g. contributed by an extension
  *
@@ -19,34 +19,36 @@ export class CustomTreeSection extends TreeSection {
      */
     public locatorKey = 'CustomTreeSection' as const
 
-    async getVisibleItems(): Promise<TreeItem[]> {
-        const items: TreeItem[] = [];
-        const elements = await this.itemRow$$;
+    async getVisibleItems (): Promise<TreeItem[]> {
+        const items: TreeItem[] = []
+        const elements = await this.itemRow$$
         for (const element of elements) {
-            items.push(await new CustomTreeItem(this.locatorMap, element as any, this).wait());
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            items.push(await new CustomTreeItem(this.locatorMap, element as any, this).wait())
         }
-        return items;
+        return items
     }
 
-    async findItem(label: string, maxLevel: number = 0): Promise<TreeItem | undefined> {
-        await this.expand();
-        
+    async findItem (label: string, maxLevel = 0): Promise<TreeItem | undefined> {
+        await this.expand()
+
         const container = await this.rowContainer$
         await container.waitForExist({ timeout: 5000 })
-        
-        await container.addValue(['Home']);
-        let item: TreeItem | undefined = undefined;
-        
-        const elements = await container.$$(this.locators.itemRow);
+
+        await container.addValue(['Home'])
+        let item: TreeItem | undefined
+
+        const elements = await container.$$(this.locators.itemRow)
         for (const element of elements) {
-            const temp = await element.$$(this.locators.rowWithLabel(label));
+            const temp = await element.$$(this.locators.rowWithLabel(label))
             if (temp.length > 0) {
-                const level = +await temp[0].getAttribute(this.locatorMap.ViewSection.level as string);
+                const level = +await temp[0].getAttribute(this.locatorMap.ViewSection.level as string)
                 if (maxLevel < 1 || level <= maxLevel) {
-                    item = await new CustomTreeItem(this.locatorMap, element as any, this).wait();
-                } 
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                    item = await new CustomTreeItem(this.locatorMap, element as any, this).wait()
+                }
             }
-        }            
-        return item;
+        }
+        return item
     }
 }

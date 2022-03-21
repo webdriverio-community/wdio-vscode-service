@@ -1,7 +1,7 @@
-import { Editor, EditorLocators } from './Editor';
-import { TextEditor } from './TextEditor';
-import { EditorView } from './EditorView';
-import { PluginDecorator, IPluginDecorator } from "../utils";
+import { Editor, EditorLocators } from './Editor'
+import { TextEditor } from './TextEditor'
+import { EditorView } from './EditorView'
+import { PluginDecorator, IPluginDecorator } from '../utils'
 import { DiffEditor as DiffEditorLocators } from '../../locators/1.61.0'
 
 export interface DiffEditor extends IPluginDecorator<EditorLocators> {}
@@ -22,13 +22,13 @@ export class DiffEditor extends Editor<EditorLocators> {
      * (The left side of the diff editor)
      * @returns Promise resolving to TextEditor object
      */
-    async getOriginalEditor(): Promise<TextEditor> {
-        const element = this.view.elem.$(this.locators.originalEditor);
+    getOriginalEditor (): Promise<TextEditor> {
+        const element = this.view.elem.$(this.locators.originalEditor)
         return new TextEditor(
             this.locatorMap,
             element,
-            new EditorView(this.locatorMap),
-        );
+            new EditorView(this.locatorMap)
+        ).wait()
     }
 
     /**
@@ -36,12 +36,12 @@ export class DiffEditor extends Editor<EditorLocators> {
      * (The right side of the diff editor)
      * @returns Promise resolving to TextEditor object
      */
-    async getModifiedEditor(): Promise<TextEditor> {
-        const element = this.view.elem.$(this.locators.modifiedEditor);
+    async getModifiedEditor (): Promise<TextEditor> {
+        const element = this.view.elem.$(this.locators.modifiedEditor)
         return new TextEditor(
             this.locatorMap,
             element,
-            new EditorView(this.locatorMap),
-        );
+            new EditorView(this.locatorMap)
+        ).wait()
     }
 }

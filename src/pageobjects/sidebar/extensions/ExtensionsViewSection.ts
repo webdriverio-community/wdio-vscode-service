@@ -1,7 +1,7 @@
 import { ViewSection } from '../ViewSection'
-import { ExtensionsViewItem, ViewSectionLocators } from "../..";
+import { ExtensionsViewItem, AllViewSectionLocators } from '../..'
 import { PluginDecorator, IPluginDecorator } from '../../utils'
-import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0';
+import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0'
 
 /**
  * Categories of extensions to search for
@@ -14,7 +14,7 @@ enum ExtensionCategory {
     Recommended = '@recommended'
 }
 
-export interface ExtensionsViewSection extends IPluginDecorator<ViewSectionLocators> { }
+export interface ExtensionsViewSection extends IPluginDecorator<AllViewSectionLocators> { }
 /**
  * View section containing extensions
  *
@@ -27,13 +27,14 @@ export class ExtensionsViewSection extends ViewSection {
      */
     public locatorKey = 'ExtensionsViewSection' as const
 
-    async getVisibleItems(): Promise<ExtensionsViewItem[]> {
-        const extensionRows = await this.items$.$$(this.locators.itemRow);
+    async getVisibleItems (): Promise<ExtensionsViewItem[]> {
+        const extensionRows = await this.items$.$$(this.locators.itemRow)
         return Promise.all(
-            extensionRows.map(async row => (
+            extensionRows.map(async (row) => (
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 new ExtensionsViewItem(this.locatorMap, row as any, this).wait()
             ))
-        );
+        )
     }
 
     /**
@@ -42,48 +43,48 @@ export class ExtensionsViewSection extends ViewSection {
      * section representing the chosen category and temporarily hides all other sections.
      * If you wish to continue working with the initial view section
      * (i.e. Enabled), use the clearSearch method to reset it back to default
-     * 
+     *
      * @param title title to search for in '@category name' format,
      * e.g '@installed extension'. If no @category is present, marketplace will be searched
-     * 
+     *
      * @returns Promise resolving to ExtensionsViewItem if such item exists, undefined otherwise
      */
-    async findItem(title: string): Promise<ExtensionsViewItem | undefined> {
-        await this.clearSearch();
-        const progress = await this.content.progress$;
-        const searchField = await this.content.elem.$(this.locators.searchBox);
-        await searchField.addValue(title);
+    async findItem (title: string): Promise<ExtensionsViewItem | undefined> {
+        await this.clearSearch()
+        const progress = await this.content.progress$
+        const searchField = await this.content.elem.$(this.locators.searchBox)
+        await searchField.addValue(title)
 
-        await progress.waitForDisplayed();
-        await progress.waitForDisplayed({ reverse: true });
+        await progress.waitForDisplayed()
+        await progress.waitForDisplayed({ reverse: true })
 
-        const sectionTitle = this.getSectionForCategory(title);
-        const section = await this.content.getSection(sectionTitle) as ExtensionsViewSection;
-        
-        const titleParts = title.split(' ');
+        const sectionTitle = this.getSectionForCategory(title)
+        const section = await this.content.getSection(sectionTitle) as ExtensionsViewSection
+
+        const titleParts = title.split(' ')
         if (titleParts[0].startsWith('@')) {
-            title = titleParts.slice(1).join(' ');
+            title = titleParts.slice(1).join(' ')
         }
 
-        const extensions = await section.getVisibleItems();
+        const extensions = await section.getVisibleItems()
 
         for (const extension of extensions) {
             if (await extension.getTitle() === title) {
-                return extension;
+                return extension
             }
         }
 
-        return undefined;
+        return undefined
     }
 
     /**
      * Clears the search bar on top of the view
      * @returns Promise resolving when the search box is cleared
      */
-    async clearSearch(): Promise<void> {
-        const progress = await this.content.progress$;
-        const searchField = await this.content.elem.$(this.locators.searchBox);
-        const textField = await this.content.elem.$(this.locators.textContainer);
+    async clearSearch (): Promise<void> {
+        const progress = await this.content.progress$
+        const searchField = await this.content.elem.$(this.locators.searchBox)
+        const textField = await this.content.elem.$(this.locators.textContainer)
 
         try {
             await textField.$(this.locators.textField)
@@ -101,29 +102,29 @@ export class ExtensionsViewSection extends ViewSection {
      * @param title title of the extension
      * @returns Promise resolving when the item is clicked
      */
-    async openItem(title: string): Promise<never[]> {
-        const item = await this.findItem(title);
+    async openItem (title: string): Promise<never[]> {
+        const item = await this.findItem(title)
         if (item) {
-            await item.elem.click();
+            await item.elem.click()
         }
-        return [];
+        return []
     }
 
-    private getSectionForCategory(title: string): string {
-        const category = title.split(' ')[0].toLowerCase();
-        switch(category) {
+    private getSectionForCategory (title: string): string {
+        const category = title.split(' ')[0].toLowerCase()
+        switch (category) {
             case ExtensionCategory.Disabled:
-                return 'Disabled';
+                return 'Disabled'
             case ExtensionCategory.Enabled:
-                return 'Enabled';
+                return 'Enabled'
             case ExtensionCategory.Installed:
-                return 'Installed';
+                return 'Installed'
             case ExtensionCategory.Outdated:
-                return 'Outdated';
+                return 'Outdated'
             case ExtensionCategory.Recommended:
-                return 'Other Recommendations';
+                return 'Other Recommendations'
             default:
-                return 'Marketplace';
+                return 'Marketplace'
         }
     }
 }

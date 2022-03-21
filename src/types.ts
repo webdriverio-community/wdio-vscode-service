@@ -27,7 +27,7 @@ export interface ServiceOptions extends ChromedriverServiceOptions {
     /**
      * Define custom user settings to be applied to VSCode
      */
-    userSettings?: Record<string, any>
+    userSettings?: Record<string, number | string | object | boolean>
     /**
      * Opens VSCode for a specific workspace
      */
