@@ -3,9 +3,21 @@ import type { ContextMenu } from "../menu/ContextMenu";
 import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
 
 /**
- * Page object representing the global action controls on the bottom of the action bar
+ * Page object representing the global action controls on the bottom of the action bar.
+ * 
+ * ```ts
+ * const workbench = await browser.getWorkbench()
+ * const actionControl = await workbench.getActivityBar().getGlobalActions()
+ * console.log(await Promise.all(actionControl.map(ac => ac.getTitle())))
+ * // returns: [ 'Accounts', 'Manage' ]
+ * ```
+ * 
+ * @category ActivityBar
  */
 export class ActionsControl extends ElementWithContextMenu<typeof ActivityBarLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ActivityBar' as const;
 
     /**

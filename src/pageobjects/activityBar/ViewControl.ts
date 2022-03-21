@@ -5,12 +5,30 @@ import { PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap }
 import { ViewControl as ViewControlLocators } from '../../locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
+export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators> { }
 /**
  * Page object representing a view container item in the activity bar
+ * 
+ * ```ts
+ * const workbench = await browser.getWorkbench()
+ * const viewControls = await workbench.getActivityBar().getViewControls()
+ * console.log(await Promise.all(viewControls.map((vc) => vc.getTitle())))
+ * // returns: [
+ * //    'Explorer (⇧⌘E)', 
+ * //    'Search (⇧⌘F)',
+ * //    'Source Control (⌃⇧G)',
+ * //    'Run and Debug (⇧⌘D)',
+ * //    'Extensions (⇧⌘X)'
+ * // ]
+ * ```
+ * 
+ * @category ActivityBar
  */
-export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators> { }
-@PluginDecorator(ViewControlLocators)
+ @PluginDecorator(ViewControlLocators)
 export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ViewControl' as const
 
     constructor(

@@ -9,6 +9,7 @@ import {
 
 /**
  * Abstract representation of a row in the tree inside a view content section
+ * @hidden
  */
 export type ViewItemLocators = (
     typeof ViewSectionLocators &
@@ -18,11 +19,13 @@ export type ViewItemLocators = (
     typeof ExtensionsViewItemLocators
 )
 
+export interface ViewItem extends IPluginDecorator<ViewItemLocators> { }
 /**
  * Arbitrary item in the side bar view
+ *
+ * @category Sidebar
  */
-export interface ViewItem extends IPluginDecorator<ViewItemLocators> { }
-export abstract class ViewItem extends ElementWithContextMenu<ViewItemLocators> {
+ export abstract class ViewItem extends ElementWithContextMenu<ViewItemLocators> {
     /**
      * Select the item in the view.
      * Note that selecting the item will toggle its expand state when applicable.
@@ -34,6 +37,11 @@ export abstract class ViewItem extends ElementWithContextMenu<ViewItemLocators> 
 }
 
 export interface TreeItem extends IPluginDecorator<ViewItemLocators> { }
+/**
+ * TreeItem abstract class
+ *
+ * @category Sidebar
+ */
 export abstract class TreeItem extends ViewItem {
     /**
      * Retrieves the label of this view item
@@ -187,12 +195,17 @@ export abstract class TreeItem extends ViewItem {
     }
 }
 
+export interface ViewItemAction extends IPluginDecorator<typeof ViewSectionLocators> { }
 /**
  * Action button bound to a view item
+ *
+ * @category Sidebar
  */
-export interface ViewItemAction extends IPluginDecorator<typeof ViewSectionLocators> { }
 @PluginDecorator(ViewSectionLocators)
 export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ViewSection' as const
     private label: string;
 

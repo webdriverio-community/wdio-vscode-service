@@ -6,12 +6,17 @@ import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../utils'
 import { ExtensionsViewItem as ExtensionsViewItemLocators } from '../../../locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
+export interface ExtensionsViewItem extends IPluginDecorator<ViewItemLocators> { }
 /**
  * Page object representing an extension in the extensions view
+ *
+ * @category Sidebar
  */
-export interface ExtensionsViewItem extends IPluginDecorator<ViewItemLocators> { }
 @PluginDecorator(ExtensionsViewItemLocators)
 export class ExtensionsViewItem extends ViewItem {
+    /**
+     * @private
+     */
     public locatorKey = 'ExtensionsViewItem' as const
 
     constructor(

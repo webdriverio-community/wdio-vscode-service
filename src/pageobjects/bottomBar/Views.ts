@@ -11,12 +11,36 @@ import {
     TerminalView as TerminalViewLocators
 } from '../../locators/1.61.0'
 
+export interface OutputView extends IPluginDecorator<typeof OutputViewLocators> {}
 /**
  * Output view of the bottom panel
+ *
+ * ```ts
+ * const bottomBar = workbench.getBottomBar()
+ * const outputView = await bottomBar.openOutputView()
+ * console.log(await outputView.getChannelNames());
+ * // returns
+ * // [
+ * //   'Tasks',
+ * //   'Extensions',
+ * //   'Microsoft Authentication',
+ * //   'Git',
+ * //   'GitHub Authentication',
+ * //   'Log (Window)',
+ * //   'Log (Main)',
+ * //   'Log (Extension Host)',
+ * //   'Log (Settings Sync)',
+ * //   'Log (Shared)'
+ * // ]
+ * ```
+ *
+ * @category BottomBar
  */
-export interface OutputView extends IPluginDecorator<typeof OutputViewLocators> {}
 @PluginDecorator(OutputViewLocators)
 export class OutputView extends TextView<typeof OutputViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'OutputView' as const
 
     constructor(
@@ -29,13 +53,18 @@ export class OutputView extends TextView<typeof OutputViewLocators> {
     }
 }
 
+export interface DebugConsoleView extends IPluginDecorator<typeof DebugConsoleViewLocators> {}
 /**
  * Debug Console view on the bottom panel
  * Most functionality will only be available when a debug session is running
+ * 
+ * @category BottomBar
  */
-export interface DebugConsoleView extends IPluginDecorator<typeof DebugConsoleViewLocators> {}
 @PluginDecorator(DebugConsoleViewLocators)
 export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsoleViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'DebugConsoleView' as const
 
     constructor(
@@ -97,12 +126,17 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
     }
 }
 
+export interface TerminalView extends IPluginDecorator<typeof TerminalViewLocators> {}
 /**
  * Terminal view on the bottom panel
+ * 
+ * @category BottomBar
  */
-export interface TerminalView extends IPluginDecorator<typeof TerminalViewLocators> {}
 @PluginDecorator(TerminalViewLocators)
 export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'TerminalView' as const
 
     constructor(

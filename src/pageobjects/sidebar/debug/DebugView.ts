@@ -2,12 +2,17 @@ import { SideBarView } from "../SideBarView";
 import { PluginDecorator, IPluginDecorator } from '../../utils'
 import { DebugView as DebugViewLocators } from '../../../locators/1.61.0';
 
+export interface DebugView extends IPluginDecorator<typeof DebugViewLocators> { }
 /**
  * Page object representing the Run/Debug view in the side bar
+ *
+ * @category Sidebar
  */
-export interface DebugView extends IPluginDecorator<typeof DebugViewLocators> { }
 @PluginDecorator(DebugViewLocators)
 export class DebugView extends SideBarView<typeof DebugViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'DebugView' as const
     
     /**

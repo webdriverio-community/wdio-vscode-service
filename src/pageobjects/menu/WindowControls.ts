@@ -1,12 +1,17 @@
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
 import { WindowControls as WindowControlsLocators } from '../../locators/1.61.0'
 
+export interface WindowControls extends IPluginDecorator<typeof WindowControlsLocators> {}
 /**
  * Page object for the windows controls part of the title bar
+ *
+ * @category Menu
  */
-export interface WindowControls extends IPluginDecorator<typeof WindowControlsLocators> {}
 @PluginDecorator(WindowControlsLocators)
 export class WindowControls extends BasePage<typeof WindowControlsLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'WindowControls' as const
 
     /**

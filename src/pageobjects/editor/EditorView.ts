@@ -10,12 +10,17 @@ import {
     Editor as EditorLocatorsObj
 } from '../../locators/1.61.0'
 
+export interface EditorView extends IPluginDecorator<typeof EditorViewLocators> {}
 /**
  * View handling the open editors
+ *
+ * @category Editor
  */
-export interface EditorView extends IPluginDecorator<typeof EditorViewLocators> {}
 @PluginDecorator(EditorViewLocators)
 export class EditorView extends BasePage<typeof EditorViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'EditorView' as const
 
     /**
@@ -172,12 +177,17 @@ export class EditorView extends BasePage<typeof EditorViewLocators> {
     }
 }
 
+export interface EditorGroup extends IPluginDecorator<typeof EditorViewLocators> {}
 /**
  * Page object representing an editor group
+ *
+ * @category Editor
  */
-export interface EditorGroup extends IPluginDecorator<typeof EditorViewLocators> {}
 @PluginDecorator(EditorViewLocators)
 export class EditorGroup extends BasePage<typeof EditorViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'EditorView' as const
 
     constructor(
@@ -340,12 +350,17 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
     }
 }
 
+export interface EditorTab extends IPluginDecorator<typeof EditorLocatorsObj> {}
 /**
  * Page object for editor view tab
+ *
+ * @category Editor
  */
-export interface EditorTab extends IPluginDecorator<typeof EditorLocatorsObj> {}
 @PluginDecorator(EditorLocatorsObj)
 export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> {
+    /**
+     * @private
+     */
     public locatorKey = 'Editor' as const
 
     constructor(

@@ -11,6 +11,9 @@ import {
     WebView as WebViewLocators
 } from '../../locators/1.61.0'
 
+/**
+ * @hidden
+ */
 export type EditorLocators = (
     typeof EditorLocators &
     typeof SettingsEditorLocators &
@@ -22,6 +25,8 @@ export type EditorLocators = (
 
 /**
  * Abstract representation of an editor tab
+ *
+ * @category Editor
  */
 export abstract class Editor<T> extends ElementWithContextMenu<T> {
     constructor(

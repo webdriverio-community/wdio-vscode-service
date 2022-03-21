@@ -6,12 +6,17 @@ import { ExtensionsViewSection } from "./extensions/ExtensionsViewSection";
 import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from '../utils'
 import { ViewContent as ViewContentLocators } from '../../locators/1.61.0';
 
+export interface ViewContent extends IPluginDecorator<typeof ViewContentLocators> { }
 /**
  * Page object representing the view container of a side bar view
+ *
+ * @category Sidebar
  */
-export interface ViewContent extends IPluginDecorator<typeof ViewContentLocators> { }
 @PluginDecorator(ViewContentLocators)
 export class ViewContent extends BasePage<typeof ViewContentLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ViewContent' as const
     
     constructor(

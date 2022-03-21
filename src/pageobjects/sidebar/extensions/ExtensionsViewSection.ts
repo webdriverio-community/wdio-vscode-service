@@ -15,12 +15,17 @@ enum ExtensionCategory {
     Recommended = '@recommended'
 }
 
+export interface ExtensionsViewSection extends IPluginDecorator<ViewSectionLocators> { }
 /**
  * View section containing extensions
+ *
+ * @category Sidebar
  */
-export interface ExtensionsViewSection extends IPluginDecorator<ViewSectionLocators> { }
 @PluginDecorator(ExtensionsViewSectionLocators)
 export class ExtensionsViewSection extends ViewSection {
+    /**
+     * @private
+     */
     public locatorKey = 'ExtensionsViewSection' as const
 
     async getVisibleItems(): Promise<ExtensionsViewItem[]> {
@@ -83,7 +88,7 @@ export class ExtensionsViewSection extends ViewSection {
 
         try {
             await textField.$(this.locators.textField)
-            await searchField.addValue(['Control', 'a'])
+            await searchField.addValue(['Meta', 'a'])
             await searchField.addValue(['Backspace'])
             await progress.waitForDisplayed()
             await progress.waitForDisplayed({ reverse: true })

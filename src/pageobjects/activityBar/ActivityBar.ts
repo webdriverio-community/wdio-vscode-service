@@ -3,12 +3,17 @@ import { ViewControl } from './ViewControl'
 import { ActionsControl } from './ActionsControl'
 import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
 
+export interface ActivityBar extends IPluginDecorator<typeof ActivityBarLocators> {}
 /**
  * Page object representing the left side activity bar in VS Code
+ * 
+ * @category ActivityBar
  */
-export interface ActivityBar extends IPluginDecorator<typeof ActivityBarLocators> {}
 @PluginDecorator(ActivityBarLocators)
 export class ActivityBar extends ElementWithContextMenu<typeof ActivityBarLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ActivityBar' as const;
 
     /**

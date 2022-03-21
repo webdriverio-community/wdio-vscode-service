@@ -106,3 +106,4 @@ dist
 # project ignore
 example/.vscode-test
 example/.wdio-vscode-service
+docs

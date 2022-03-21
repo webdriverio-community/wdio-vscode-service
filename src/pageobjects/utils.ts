@@ -62,14 +62,24 @@ export function PluginDecorator<T extends { new(...args: any[]): any }>(locators
 }
 
 export abstract class BasePage<T> {
+    /**
+     * @private
+     */
     abstract locatorKey: LocatorComponents
 
+    /**
+     * @private
+     */
     constructor (
         protected _locators: LocatorMap,
         private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
         private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
     ) {}
 
+    /**
+     * Get the locator map of given page object
+     * 
+     */
     get locators () {
         if (Array.isArray(this.locatorKey)) {
             return this.locatorKey.reduce((prev, locatorKey) => ({
@@ -79,13 +89,23 @@ export abstract class BasePage<T> {
         }
         return this._locators[this.locatorKey] as any as T
     }
+
+    /**
+     * @private
+     */
     get baseElem () {
         return this._baseElem
     }
+    /**
+     * @private
+     */
     get locatorMap () {
         return this._locators as LocatorMap
     }
 
+    /**
+     * Base element of given page object
+     */
     get elem () {
         const baseLocator = (this.locators as any as Locators).elem
         if (this._baseElem) {
@@ -99,6 +119,9 @@ export abstract class BasePage<T> {
         return browser.$('html')
     }
 
+    /**
+     * Parent element of given page object
+     */
     get parent () {
         if (this._parentElem) {
             return typeof this._parentElem === 'string'
@@ -108,6 +131,9 @@ export abstract class BasePage<T> {
         return browser.$('html')
     }
 
+    /**
+     * @private
+     */
     setParentElement (parentElem: string | ChainablePromiseElement<WebdriverIO.Element>) {
         this._parentElem = parentElem
     }

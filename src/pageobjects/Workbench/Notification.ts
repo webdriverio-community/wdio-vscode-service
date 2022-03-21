@@ -4,6 +4,7 @@ import { ChainablePromiseElement } from 'webdriverio';
 
 /**
  * Available types of notifications
+ * @hidden
  */
 export enum NotificationType {
     Info = 'info',
@@ -12,10 +13,12 @@ export enum NotificationType {
     Any = 'any'
 }
 
+export interface Notification extends IPluginDecorator<typeof NotificationLocators> {}
 /**
  * Abstract element representing a notification
+ *
+ * @category Workbench
  */
-export interface Notification extends IPluginDecorator<typeof NotificationLocators> {}
 export abstract class Notification extends BasePage<typeof NotificationLocators> {
     /**
      * Get the message of the notification
@@ -113,8 +116,13 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
 
 /**
  * Notification displayed on its own in the notifications-toasts container
+ *
+ * @category Workbench
  */
 export class StandaloneNotification extends Notification {
+    /**
+     * @private
+     */
     public locatorKey = 'Notification' as const
 
     constructor(
@@ -127,8 +135,13 @@ export class StandaloneNotification extends Notification {
 
 /**
  * Notification displayed within the notifications center
+ *
+ * @category Workbench
  */
 export class CenterNotification extends Notification {
+    /**
+     * @private
+     */
     public locatorKey = 'Notification' as const
 
     constructor(
@@ -139,11 +152,16 @@ export class CenterNotification extends Notification {
     }
 }
 
+interface NotificationButton extends IPluginDecorator<typeof NotificationLocators> {}
 /**
  * Notification button
+ *
+ * @category Workbench
  */
-interface NotificationButton extends IPluginDecorator<typeof NotificationLocators> {}
-class NotificationButton extends BasePage<typeof NotificationLocators> {
+ class NotificationButton extends BasePage<typeof NotificationLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'Notification' as const
     private title: string;
 

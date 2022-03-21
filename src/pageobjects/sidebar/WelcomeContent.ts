@@ -3,14 +3,19 @@ import { BasePage, PluginDecorator, IPluginDecorator, LocatorMap } from '../util
 import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.61.0'
 import { ChainablePromiseElement } from "webdriverio";
 
+export interface WelcomeContentButton extends IPluginDecorator<typeof WelcomeContentLocators> {}
 /**
  * A button that appears in the welcome content and can be clicked to execute a command.
  *
  * To execute the command bound to this button simply run: `await button.click();`.
+ *
+ * @category Sidebar
  */
-export interface WelcomeContentButton extends IPluginDecorator<typeof WelcomeContentLocators> {}
 @PluginDecorator(WelcomeContentLocators)
 export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'WelcomeContent' as const
 
     /**
@@ -31,6 +36,7 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
     }
 }
 
+export interface WelcomeContentSection extends IPluginDecorator<typeof WelcomeContentLocators> {}
 /**
  * A section in an empty custom view, see:
  * https://code.visualstudio.com/api/extension-guides/tree-view#welcome-content
@@ -42,10 +48,14 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
  * with respect to each other. This can be remedied by using [[getContents]],
  * which returns both in the order that they are found (at the expense, that you
  * now must use typechecks to find out what you got).
+ *
+ * @category Sidebar
  */
-export interface WelcomeContentSection extends IPluginDecorator<typeof WelcomeContentLocators> {}
 @PluginDecorator(WelcomeContentLocators)
 export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'WelcomeContent' as const
 
     /**

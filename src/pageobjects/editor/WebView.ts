@@ -4,12 +4,17 @@ import { WebView as WebViewLocators } from '../../locators/1.61.0'
 
 let handle: string | undefined;
 
+export interface WebView extends IPluginDecorator<EditorLocators> {}
 /**
  * Page object representing an open editor containing a web view
+ *
+ * @category Editor
  */
-export interface WebView extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(WebViewLocators)
 export class WebView extends Editor<EditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'WebView' as const
 
     /**

@@ -2,12 +2,17 @@ import { Notification, CenterNotification, NotificationType } from './Notificati
 import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
 import { NotificationsCenter as NotificationsCenterLocator } from '../../locators/1.61.0'
 
+export interface NotificationsCenter extends IPluginDecorator<typeof NotificationsCenterLocator> {}
 /**
  * Notifications center page object
+ *
+ * @category Workbench
  */
-export interface NotificationsCenter extends IPluginDecorator<typeof NotificationsCenterLocator> {}
 @PluginDecorator(NotificationsCenterLocator)
 export class NotificationsCenter extends BasePage<typeof NotificationsCenterLocator> {
+    /**
+     * @private
+     */
     public locatorKey = 'NotificationsCenter' as const
     /**
      * Close the notifications center

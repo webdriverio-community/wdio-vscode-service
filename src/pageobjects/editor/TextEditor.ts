@@ -14,12 +14,17 @@ import {
     FindWidget as FindWidgetLocators
 } from '../../locators/1.61.0'
 
+export interface TextEditor extends IPluginDecorator<EditorLocators> {}
 /**
  * Page object representing the active text editor
+ *
+ * @category Editor
  */
-export interface TextEditor extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(TextEditorLocators)
 export class TextEditor extends Editor<EditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'TextEditor' as const
 
     /**
@@ -37,7 +42,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async save(): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
-        await inputarea.addValue(['Control', 's']);
+        await inputarea.addValue(['Meta', 's']);
     }
 
     /**
@@ -47,7 +52,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async saveAs(): Promise<InputBox> {
         const tab = await this.getTab();
-        await tab.elem.addValue(['Control', 'Shift', 's']);
+        await tab.elem.addValue(['Meta', 'Shift', 's']);
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string);
         await inputBox.waitForExist({ timeout: 5000 })
         return new InputBox(this.locatorMap, inputBox);
@@ -90,7 +95,7 @@ export class TextEditor extends Editor<EditorLocators> {
 
         if (open) {
             if (isHidden) {
-                await inputarea.addValue(['Control', 'Space']);
+                await inputarea.addValue(['Meta', 'Space']);
                 await browser.$(this.locatorMap.ContentAssist.elem as string)
                     .waitForExist({ timeout: 2000 });
             }
@@ -110,7 +115,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getText(): Promise<string> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
-        await inputarea.addValue(['Control', 'a', 'Control', 'c']);
+        await inputarea.addValue(['Meta', 'a', 'Meta', 'c']);
         const text = clipboard.readSync();
         await inputarea.addValue(['ArrowUp']);
         clipboard.writeSync('');
@@ -126,7 +131,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async setText(text: string, formatText: boolean = false): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
         clipboard.writeSync(text);
-        await inputarea.sendKeys(['Control', 'a', 'Control', 'v']);
+        await inputarea.sendKeys(['Meta', 'a', 'Meta', 'v']);
         clipboard.writeSync('');
         if (formatText) {
             await this.formatDocument();
@@ -139,7 +144,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async clearText(): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string);
-        await inputarea.addValue(['Control', 'a']);
+        await inputarea.addValue(['Meta', 'a']);
         await inputarea.addValue(['Backspace']);
     }
 
@@ -251,7 +256,7 @@ export class TextEditor extends Editor<EditorLocators> {
     }
 
     async openFindWidget(): Promise<FindWidget> {
-        await browser.keys(['Control', 'f']);
+        await browser.keys(['Meta', 'f']);
         const widget = await browser.$(this.locators.findWidget)
         await widget.waitForDisplayed({ timeout: 2000 })
 
@@ -431,12 +436,17 @@ export class TextEditor extends Editor<EditorLocators> {
     }
 }
 
+interface Selection extends IPluginDecorator<typeof TextEditorLocators> {}
 /**
  * Text selection block
+ *
+ * @category Editor
  */
-interface Selection extends IPluginDecorator<typeof TextEditorLocators> {}
 @PluginDecorator(TextEditorLocators)
 class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'TextEditor' as const
 
     constructor(
@@ -459,12 +469,17 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
     }
 }
 
+export interface CodeLens extends IPluginDecorator<typeof TextEditorLocators> {}
 /**
  * Page object for Code Lens inside a text editor
+ *
+ * @category Editor
  */
-export interface CodeLens extends IPluginDecorator<typeof TextEditorLocators> {}
 @PluginDecorator(TextEditorLocators)
 export class CodeLens extends BasePage<typeof TextEditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'TextEditor' as const
 
     constructor(
@@ -494,12 +509,17 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
     }
 }
 
+export interface FindWidget extends IPluginDecorator<typeof FindWidgetLocators> {}
 /**
  * Text Editor's Find Widget
+ *
+ * @category Editor
  */
-export interface FindWidget extends IPluginDecorator<typeof FindWidgetLocators> {}
 @PluginDecorator(FindWidgetLocators)
 export class FindWidget extends BasePage<typeof FindWidgetLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'FindWidget' as const
 
     constructor(

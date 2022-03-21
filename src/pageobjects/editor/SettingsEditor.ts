@@ -5,12 +5,17 @@ import { EditorView, EditorGroup } from "./EditorView";
 import { PluginDecorator, IPluginDecorator, BasePage, LocatorMap } from "../utils";
 import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.61.0'
 
+export interface SettingsEditor extends IPluginDecorator<EditorLocators> {}
 /**
  * Page object representing the internal VSCode settings editor
+ *
+ * @category Editor
  */
-export interface SettingsEditor extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(SettingsEditorLocators)
 export class SettingsEditor extends Editor<EditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'SettingsEditor' as const
     public view: EditorView | EditorGroup
 
@@ -37,7 +42,7 @@ export class SettingsEditor extends Editor<EditorLocators> {
     async findSetting(title: string, ...categories: string[]): Promise<Setting> {
         const category = categories.join(' › ');
         const searchBox = await this.elem.$(this.locatorMap.Editor.inputArea as string);
-        await searchBox.addValue(['Control', 'a', `${category}: ${title}`]);
+        await searchBox.addValue(['Meta', 'a', `${category}: ${title}`]);
 
         const count = await this.itemCount$;
         let textCount = await count.getText();
@@ -112,12 +117,14 @@ export class SettingsEditor extends Editor<EditorLocators> {
     }
 }
 
+export interface Setting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 /**
  * Abstract item representing a Setting with title, description and
  * an input element (combo/textbox/checkbox/link)
+ *
+ * @category Editor
  */
-export interface Setting extends IPluginDecorator<typeof SettingsEditorLocators> {}
-export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
+ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
     private title: string;
     private category: string;
 
@@ -170,9 +177,14 @@ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
 }
 
 /**
- * Setting with a combo box 
+ * Setting with a combo box
+ *
+ * @category Editor
  */
 export class ComboSetting extends Setting {
+    /**
+     * @private
+     */
     public locatorKey = 'SettingsEditor' as const
 
     async getValue(): Promise<string> {
@@ -230,12 +242,17 @@ export class ComboSetting extends Setting {
     }
 }
 
+export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 /**
  * Setting with a text box input
+ *
+ * @category Editor
  */
-export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 @PluginDecorator(SettingsEditorLocators)
 export class TextSetting extends Setting {
+    /**
+     * @private
+     */
     public locatorKey = 'SettingsEditor' as const
 
     async getValue(): Promise<string> {
@@ -248,12 +265,17 @@ export class TextSetting extends Setting {
     } 
 }
 
+export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 /**
  * Setting with a checkbox
+ *
+ * @category Editor
  */
-export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 @PluginDecorator(SettingsEditorLocators)
 export class CheckboxSetting extends Setting {
+    /**
+     * @private
+     */
     public locatorKey = 'SettingsEditor' as const
 
     async getValue(): Promise<boolean> {
@@ -271,12 +293,17 @@ export class CheckboxSetting extends Setting {
     } 
 }
 
+export interface LinkSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 /**
  * Setting with no value, with a link to settings.json instead
+ *
+ * @category Editor
  */
-export interface LinkSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
 @PluginDecorator(SettingsEditorLocators)
 export class LinkSetting extends Setting {
+    /**
+     * @private
+     */
     public locatorKey = 'SettingsEditor' as const
 
     async getValue(): Promise<string> {

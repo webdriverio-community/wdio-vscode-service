@@ -3,6 +3,8 @@ import type { Menu } from "./Menu";
 
 /**
  * Abstract element representing a menu item
+ *
+ * @category Menu
  */
 export abstract class MenuItem<T> extends BasePage<T> {
     abstract parentMenu: Menu<T>;

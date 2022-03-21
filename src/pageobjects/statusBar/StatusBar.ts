@@ -1,12 +1,17 @@
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
 import { StatusBar as StatusBarLocators } from '../../locators/1.61.0'
 
+export interface StatusBar extends IPluginDecorator<typeof StatusBarLocators> {}
 /**
  * Page object for the status bar at the bottom
+ *
+ * @category Statusbar
  */
-export interface StatusBar extends IPluginDecorator<typeof StatusBarLocators> {}
 @PluginDecorator(StatusBarLocators)
 export class StatusBar extends BasePage<typeof StatusBarLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'StatusBar' as const
 
     /**

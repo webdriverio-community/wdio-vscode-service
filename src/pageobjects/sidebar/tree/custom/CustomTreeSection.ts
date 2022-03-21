@@ -6,12 +6,17 @@ import { ViewSectionLocators } from '../../ViewSection'
 import { PluginDecorator, IPluginDecorator } from '../../../utils'
 import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.61.0';
 
+export interface CustomTreeSection extends IPluginDecorator<ViewSectionLocators> { }
 /**
  * Custom tree view, e.g. contributed by an extension
+ *
+ * @category Sidebar
  */
-export interface CustomTreeSection extends IPluginDecorator<ViewSectionLocators> { }
 @PluginDecorator(CustomTreeSectionLocator)
 export class CustomTreeSection extends TreeSection {
+    /**
+     * @private
+     */
     public locatorKey = 'CustomTreeSection' as const
 
     async getVisibleItems(): Promise<TreeItem[]> {

@@ -5,12 +5,17 @@ import { Menu } from "./Menu";
 import { MenuItem } from "./MenuItem";
 import { TitleBar as TitleBarLocators } from '../../locators/1.61.0'
 
+export interface TitleBar extends IPluginDecorator<typeof TitleBarLocators> {}
 /**
  * Page object representing the custom VSCode title bar
+ *
+ * @category Menu
  */
-export interface TitleBar extends IPluginDecorator<typeof TitleBarLocators> {}
 @PluginDecorator(TitleBarLocators)
 export class TitleBar extends Menu<typeof TitleBarLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'TitleBar' as const
 
     /**
@@ -73,12 +78,17 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
     }
 }
 
+export interface TitleBarItem extends IPluginDecorator<typeof TitleBarLocators> {}
 /**
  * Page object representing an item of the custom VSCode title bar
+ *
+ * @category Menu
  */
-export interface TitleBarItem extends IPluginDecorator<typeof TitleBarLocators> {}
 @PluginDecorator(TitleBarLocators)
 export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'TitleBar' as const
 
     constructor(

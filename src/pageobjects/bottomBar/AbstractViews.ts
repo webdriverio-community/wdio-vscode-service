@@ -3,7 +3,9 @@ import clipboard from 'clipboardy';
 import { ElementWithContextMenu } from "../utils";
 
 /**
- * View with channel selector
+ * View with channel selector/**
+ * 
+ * @category BottomBar
  */
 export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
     protected actionsLabel!: string;

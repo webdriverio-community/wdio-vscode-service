@@ -1,7 +1,9 @@
 import { execSync } from "child_process";
 
 /**
- * Handler object for macOS based title bar 
+ * Handler object for macOS based title bar
+ *
+ * @category Menu
  */
 export class MacTitleBar {
 

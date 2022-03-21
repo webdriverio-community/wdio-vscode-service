@@ -5,12 +5,17 @@ import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../../utils'
 import { DefaultTreeItem as DefaultTreeItemLocators } from '../../../../locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
+export interface DefaultTreeItem extends IPluginDecorator<ViewItemLocators> { }
 /**
  * Default tree item base on the items in explorer view
+ *
+ * @category Sidebar
  */
-export interface DefaultTreeItem extends IPluginDecorator<ViewItemLocators> { }
 @PluginDecorator(DefaultTreeItemLocators)
 export class DefaultTreeItem extends TreeItem {
+    /**
+     * @private
+     */
     public locatorKey = 'DefaultTreeItem' as const
 
     constructor(

@@ -6,11 +6,13 @@ import {
     QuickOpenBox as QuickOpenBoxLocators
 } from '../../locators/1.61.0'
 
-/**
- * Abstract page object for input fields
- */
 type InputLocators = typeof InputLocators & typeof InputBoxLocators & typeof QuickOpenBoxLocators
 export interface Input extends IPluginDecorator<InputLocators> {}
+/**
+ * Abstract page object for input fields
+ *
+ * @category Workbench
+ */
 export abstract class Input extends BasePage<InputLocators> {
     /**
      * Get current text of the input field
@@ -40,7 +42,7 @@ export abstract class Input extends BasePage<InputLocators> {
             await clipboard.write(text);
             await input.addValue(['End'])
             await input.addValue(['Shift', 'Home']);
-            await input.addValue(['Control', 'v']);
+            await input.addValue(['Meta', 'v']);
             await clipboard.write('');
         }
     }
@@ -212,12 +214,17 @@ export abstract class Input extends BasePage<InputLocators> {
     }
 }
 
+export interface QuickPickItem extends IPluginDecorator<typeof InputLocators> {}
 /**
  * Page object representing a quick pick option in the input box
+ *
+ * @category Workbench
  */
-export interface QuickPickItem extends IPluginDecorator<typeof InputLocators> {}
 @PluginDecorator(InputLocators)
 export class QuickPickItem extends BasePage<typeof InputLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'Input' as const
     private index: number;
     public input: Input
@@ -264,12 +271,17 @@ export class QuickPickItem extends BasePage<typeof InputLocators> {
     }
 }
 
+export interface InputBox extends IPluginDecorator<typeof InputBoxLocators> {}
 /**
  * Plain input box variation of the input page object
+ *
+ * @category Workbench
  */
-export interface InputBox extends IPluginDecorator<typeof InputBoxLocators> {}
 @PluginDecorator({ ...InputLocators, ...InputBoxLocators})
 export class InputBox extends Input {
+    /**
+     * @private
+     */
     public locatorKey = ['Input' as const, 'InputBox' as const]
 
     /**
@@ -316,17 +328,22 @@ export class InputBox extends Input {
      * @returns Promise resolving to notification message
      */
     async isPassword(): Promise<boolean> {
-        return await this.input$.getAttribute('type') === 'password';
+        return (await this.input$.getAttribute('type')) === 'password';
     }
 }
 
+export interface QuickOpenBox extends IPluginDecorator<InputLocators> {}
 /**
  * @deprecated as of VS Code 1.44.0, quick open box has been replaced with input box
  * The quick open box variation of the input
+ *
+ * @category Workbench
  */
-export interface QuickOpenBox extends IPluginDecorator<InputLocators> {}
 @PluginDecorator({ ...InputLocators, ...QuickOpenBoxLocators })
 export class QuickOpenBox extends Input {
+    /**
+     * @private
+     */
     public locatorKey = ['Input' as const, 'QuickOpenBox' as const]
 
     async hasProgress(): Promise<boolean> {

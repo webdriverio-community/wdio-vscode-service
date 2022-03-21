@@ -1,0 +1,9 @@
+{
+    "entryPoints": ["./src/pageobjects"],
+    "out": "docs",
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "includeVersion": true,
+    "categorizeByGroup": true,
+    "name": "WebdriverIO VSCode Service"
+}

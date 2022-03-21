@@ -3,6 +3,8 @@ import { BasePage } from '../utils'
 
 /**
  * Abstract element representing a menu
+ *
+ * @category Menu
  */
 export abstract class Menu<T> extends BasePage<T> {
     /**

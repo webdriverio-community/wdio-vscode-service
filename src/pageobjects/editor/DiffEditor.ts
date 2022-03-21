@@ -4,12 +4,17 @@ import { EditorView } from './EditorView';
 import { PluginDecorator, IPluginDecorator } from "../utils";
 import { DiffEditor as DiffEditorLocators } from '../../locators/1.61.0'
 
+export interface DiffEditor extends IPluginDecorator<EditorLocators> {}
 /**
  * Page object representing a diff editor
+ *
+ * @category Editor
  */
-export interface DiffEditor extends IPluginDecorator<EditorLocators> {}
 @PluginDecorator(DiffEditorLocators)
 export class DiffEditor extends Editor<EditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'DiffEditor' as const
 
     /**

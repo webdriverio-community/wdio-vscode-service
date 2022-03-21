@@ -6,12 +6,17 @@ import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
 import { ContextMenu as ContextMenuLocators } from '../../locators/1.61.0'
 
 
+export interface ContextMenu extends IPluginDecorator<typeof ContextMenuLocators> {}
 /**
  * Object representing a context menu
+ *
+ * @category Menu
  */
-export interface ContextMenu extends IPluginDecorator<typeof ContextMenuLocators> {}
 @PluginDecorator(ContextMenuLocators)
 export class ContextMenu extends Menu<typeof ContextMenuLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ContextMenu' as const
 
     /**
@@ -86,12 +91,17 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
     }
 }
 
+export interface ContextMenuItem extends IPluginDecorator<typeof ContextMenuLocators> {}
 /**
  * Object representing an item of a context menu
+ *
+ * @category Menu
  */
-export interface ContextMenuItem extends IPluginDecorator<typeof ContextMenuLocators> {}
 @PluginDecorator(ContextMenuLocators)
 export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ContextMenu' as const
     public label = ''
 

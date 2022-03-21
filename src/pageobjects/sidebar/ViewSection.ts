@@ -11,6 +11,9 @@ import {
 } from '../../locators/1.61.0';
 import { ChainablePromiseElement } from "webdriverio";
 
+/**
+ * @hidden
+ */
 export type ViewSectionLocators = (
     typeof ViewSectionLocators &
     typeof ExtensionsViewSectionLocators &
@@ -18,10 +21,12 @@ export type ViewSectionLocators = (
     typeof DefaultTreeSectionLocators
 )
 
+export interface ViewSection extends IPluginDecorator<ViewSectionLocators> { }
 /**
  * Page object representing a collapsible content section of the side bar view
+ *
+ * @category Sidebar
  */
-export interface ViewSection extends IPluginDecorator<ViewSectionLocators> { }
 export abstract class ViewSection extends BasePage<ViewSectionLocators> {
     constructor(
         locators: LocatorMap,
@@ -207,12 +212,17 @@ export abstract class ViewSection extends BasePage<ViewSectionLocators> {
     }
 }
 
+export interface ViewPanelAction extends IPluginDecorator<typeof ViewSectionLocators> { }
 /**
  * Action button on the header of a view section
+ *
+ * @category Sidebar
  */
-export interface ViewPanelAction extends IPluginDecorator<typeof ViewSectionLocators> { }
 @PluginDecorator(ViewSectionLocators)
 export class ViewPanelAction extends BasePage<typeof ViewSectionLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ViewSection' as const
 
     constructor(

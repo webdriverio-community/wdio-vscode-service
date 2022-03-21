@@ -3,10 +3,12 @@ import { ContextMenu } from "../../menu/ContextMenu";
 import { PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0';
 
+export interface NewScmView extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
  * New SCM view for code 1.47 onwards
+ *
+ * @category Sidebar
  */
-export interface NewScmView extends IPluginDecorator<typeof ScmViewLocators> { }
 @PluginDecorator(ScmViewLocators)
 export class NewScmView extends ScmView {
     async getProviders(): Promise<ScmProvider[]> {
@@ -29,10 +31,12 @@ export class NewScmView extends ScmView {
     }
 }
 
+export interface SingleScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
  * Implementation for a single SCM provider
+ *
+ * @category Sidebar
  */
-export interface SingleScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
 @PluginDecorator(ScmViewLocators)
 export class SingleScmProvider extends ScmProvider {
 
@@ -95,10 +99,12 @@ export class SingleScmProvider extends ScmProvider {
     }
 }
 
+export interface MultiScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
  * Implementation of an SCM provider when multiple providers are available
+ *
+ * @category Sidebar
  */
-export interface MultiScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
 @PluginDecorator(ScmViewLocators)
 export class MultiScmProvider extends ScmProvider {
 
@@ -123,7 +129,7 @@ export class MultiScmProvider extends ScmProvider {
         const input = await this.view.itemIndex$(index);
         await input.clearValue();
         await input.addValue(message);
-        await input.addValue(['Control', 'Enter']);
+        await input.addValue(['Meta', 'Enter']);
     }
 
     async getChanges(staged: boolean = false): Promise<ScmChange[]> {
@@ -180,8 +186,16 @@ export class MultiScmProvider extends ScmProvider {
 }
 
 interface MultiMoreAction extends IPluginDecorator<typeof ScmViewLocators> { }
+/**
+ * Multi More Action
+ *
+ * @category Sidebar
+ */
 @PluginDecorator(ScmViewLocators)
 class MultiMoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ScmView' as const
     constructor(
         locators: LocatorMap,

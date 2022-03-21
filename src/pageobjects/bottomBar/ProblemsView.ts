@@ -4,12 +4,23 @@ import { BottomBarPanel } from "./BottomBarPanel";
 import { BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
 import { ProblemsView as ProblemsViewLocators } from '../../locators/1.61.0'
 
-/**
- * Problems view in the bottom panel
- */
 export interface ProblemsView extends IPluginDecorator<typeof ProblemsViewLocators> {}
+/**
+ * Problems view in the bottom panel.
+ * 
+ * ```ts
+ * const bottomBar = workbench.getBottomBar()
+ * const outputView = await bottomBar.openProblemsView()
+ * console.log(await outputView.setFilter('Error'));
+ * ```
+ * 
+ * @category BottomBar
+ */
 @PluginDecorator(ProblemsViewLocators)
 export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ProblemsView' as const
 
     constructor(
@@ -73,12 +84,17 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
     }
 }
 
+export interface Marker extends IPluginDecorator<typeof ProblemsViewLocators> {}
 /**
  * Page object for marker in problems view
+ * 
+ * @category BottomBar
  */
-export interface Marker extends IPluginDecorator<typeof ProblemsViewLocators> {}
 @PluginDecorator(ProblemsViewLocators)
 export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ProblemsView' as const
 
     constructor(
@@ -136,6 +152,8 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
  *  - Error = an error marker
  *  - Warning = a warning marker
  *  - Any = any of the above
+ * 
+ * @hidden
  */
 export enum MarkerType {
     File = 'file',

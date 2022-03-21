@@ -6,12 +6,17 @@ import { DefaultTreeItem } from "./DefaultTreeItem";
 import { PluginDecorator, IPluginDecorator } from '../../../utils'
 import { DefaultTreeSection as DefaultTreeSectionLocators } from '../../../../locators/1.61.0';
 
+export interface DefaultTreeSection extends IPluginDecorator<ViewSectionLocators> { }
 /**
  * Default view section
+ *
+ * @category Sidebar
  */
-export interface DefaultTreeSection extends IPluginDecorator<ViewSectionLocators> { }
 @PluginDecorator(DefaultTreeSectionLocators)
 export class DefaultTreeSection extends TreeSection {
+    /**
+     * @private
+     */
     public locatorKey = 'DefaultTreeSection' as const
     
     async getVisibleItems(): Promise<TreeItem[]> {

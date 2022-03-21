@@ -1,5 +1,5 @@
 export const ActivityBar = {
-    elem: '.part.activitybar',
+    elem: 'div[id="workbench.parts.activitybar"]',
     viewContainer: './/ul[@aria-label=\'Active View Switcher\']',
     label: 'aria-label',
     actionsContainer: './/ul[@aria-label=\'Manage\']',
@@ -8,13 +8,13 @@ export const ActivityBar = {
 export const ViewControl = {
     attribute: 'class',
     klass: 'checked',
-    scmId: '#workbench.view.scm',
-    debugId: '#workbench.view.debug',
+    scmId: 'div[id="workbench.view.scm"]',
+    debugId: 'div[id="workbench.view.debug"]',
     badge: '.badge'
 }
 
 export const BottomBarPanel = {
-    elem: '.part.panel',
+    elem: 'div[id="workbench.parts.panel"]',
     problemsTab: 'Problems',
     outputTab: 'Output',
     debugTab: 'Debug Console',
@@ -37,7 +37,7 @@ export const BottomBarViews = {
     clearText: '.clear-output'
 }
 export const ProblemsView = {
-    elem: '#workbench.panel.markers',
+    elem: 'div[id="workbench.panel.markers"]',
     markersFilter: '.markers-panel-action-filter',
     input: 'input',
     collapseAll: '.collapse-all',
@@ -46,7 +46,7 @@ export const ProblemsView = {
     markerTwistie: '.monaco-tl-twistie'
 }
 export const TerminalView = {
-    elem: '#workbench.panel.terminal',
+    elem: 'div[id="workbench.panel.terminal"]',
     actionsLabel: 'Terminal actions',
     textArea: '.xterm-helper-textarea',
     killTerminal: './/a[@title=\'Kill Terminal\']',
@@ -58,17 +58,17 @@ export const TerminalView = {
     newCommand: 'terminal: create new integrated terminal'
 }
 export const DebugConsoleView = {
-    elem: '#workbench.panel.repl'
+    elem: 'div[id="workbench.panel.repl"]'
 }
 export const OutputView = {
-    elem: '#workbench.panel.output',
+    elem: 'div[id="workbench.panel.output"]',
     actionsLabel: 'Output actions'
 }
 
 export const EditorView = {
-    elem: '.part.editor',
+    elem: 'div[id="workbench.parts.editor"]',
     editorGroup: '.editor-group-container',
-    settingsEditor: '#workbench.editor.settings2',
+    settingsEditor: 'div[id="workbench.editor.settings2"]',
     webView: '#WebviewEditor',
     diffEditor: '.monaco-diff-editor',
     tab: '.tab',
@@ -154,7 +154,7 @@ export const ContextMenu = {
     viewBlock: '.context-view-block'
 }
 export const TitleBar = {
-    elem: '.part.titlebar',
+    elem: 'div[id="workbench.parts.titlebar"]',
     itemConstructor: (label: string) => `.//div[@aria-label="${label}"]`,
     itemElement: '.menubar-menu-button',
     itemLabel: 'aria-label',
@@ -169,10 +169,10 @@ export const WindowControls = {
 }
 
 export const SideBarView = {
-    elem: '.part.sidebar'
+    elem: 'div[id="workbench.parts.sidebar"]'
 }
 export const ViewTitlePart = {
-    elem: '.composite title',
+    elem: '.composite.title',
     title: 'h2',
     action: '.action-label',
     actionLabel: 'title',
@@ -280,7 +280,7 @@ export const DebugView = {
 }
 
 export const StatusBar = {
-    elem: '.part.statusbar',
+    elem: 'div[id="workbench.parts.statusbar"]',
     language: '#status.editor.mode',
     lines: '#status.editor.eol',
     encoding: '#status.editor.encoding',

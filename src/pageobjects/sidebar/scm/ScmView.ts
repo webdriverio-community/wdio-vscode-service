@@ -6,12 +6,17 @@ import { ElementWithContextMenu, LocatorMap } from "../../utils";
 import { PluginDecorator, IPluginDecorator, BasePage } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0';
 
+export interface ScmView extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
  * Page object representing the Source Control view
+ *
+ * @category Sidebar
  */
-export interface ScmView extends IPluginDecorator<typeof ScmViewLocators> { }
 @PluginDecorator(ScmViewLocators)
 export class ScmView extends SideBarView<typeof ScmViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ScmView' as const
 
     /**
@@ -54,13 +59,18 @@ export class ScmView extends SideBarView<typeof ScmViewLocators> {
     }
 }
 
+export interface ScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
  * Page object representing a repository in the source control view
  * Maps roughly to a view section of the source control view
+ *
+ * @category Sidebar
  */
-export interface ScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
 @PluginDecorator(ScmViewLocators)
 export class ScmProvider extends BasePage<typeof ScmViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ScmView' as const
     constructor(
         locators: LocatorMap,
@@ -131,7 +141,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         const input = await this.inputField$;
         await input.clearValue();
         await input.addValue(message);
-        await input.addValue(['Control', 'Enter']);
+        await input.addValue(['Meta', 'Enter']);
     }
 
     /**
@@ -184,12 +194,17 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     }
 }
 
+export interface ScmChange extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
  * Page object representing a SCM change tree item
+ *
+ * @category Sidebar
  */
-export interface ScmChange extends IPluginDecorator<typeof ScmViewLocators> { }
 @PluginDecorator(ScmViewLocators)
 export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ScmView' as const
 
     constructor(
@@ -277,8 +292,16 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
 }
 
 export interface MoreAction extends IPluginDecorator<typeof ScmViewLocators> { }
+/**
+ * More Action
+ *
+ * @category Sidebar
+ */
 @PluginDecorator(ScmViewLocators)
 export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ScmView' as const
 
     constructor(

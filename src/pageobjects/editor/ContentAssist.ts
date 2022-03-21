@@ -7,12 +7,17 @@ import { DebugConsoleView } from "../bottomBar/Views";
 import { PluginDecorator, IPluginDecorator, LocatorMap } from "../utils";
 import { ContentAssist as ContentAssistLocators } from '../../locators/1.61.0'
 
+export interface ContentAssist extends IPluginDecorator<typeof ContentAssistLocators> {}
 /**
  * Page object representing the content assistant
+ *
+ * @category Editor
  */
-export interface ContentAssist extends IPluginDecorator<typeof ContentAssistLocators> {}
 @PluginDecorator(ContentAssistLocators)
 export class ContentAssist extends Menu<typeof ContentAssistLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ContentAssist' as const
 
     constructor(
@@ -95,12 +100,17 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
     }
 }
 
+export interface ContentAssistItem extends IPluginDecorator<typeof ContentAssistLocators> {}
 /**
  * Page object for a content assist item
+ *
+ * @category Editor
  */
-export interface ContentAssistItem extends IPluginDecorator<typeof ContentAssistLocators> {}
 @PluginDecorator(ContentAssistLocators)
 export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ContentAssist' as const
     public parentMenu: ContentAssist
     public label = ''

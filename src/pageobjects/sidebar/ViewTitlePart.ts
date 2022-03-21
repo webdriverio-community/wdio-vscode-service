@@ -2,12 +2,17 @@ import { ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, Lo
 import { SideBarView } from './SideBarView'
 import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0';
 
+export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
 /**
  * Page object representing the top (title) part of a side bar view
+ *
+ * @category Sidebar
  */
-export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
 @PluginDecorator(ViewTitlePartLocators)
 export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ViewTitlePart' as const
 
     constructor(
@@ -49,12 +54,17 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
     }
 }
 
+export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
 /**
  * Page object representing a button inside the view title part
+ *
+ * @category Sidebar
  */
-export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
 @PluginDecorator(ViewTitlePartLocators)
 export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'ViewTitlePart' as const
 
     constructor(locators: LocatorMap, private title: string, viewTitle: ViewTitlePart) {

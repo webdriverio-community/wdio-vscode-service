@@ -12,12 +12,17 @@ import { SettingsEditor } from "../editor/SettingsEditor";
 import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
 import { Workbench as WorkbenchLocators } from '../../locators/1.61.0'
 
+export interface Workbench extends IPluginDecorator<typeof WorkbenchLocators> {}
 /**
  * Page object representing the custom VSCode title bar
+ *
+ * @category Workbench
  */
-export interface Workbench extends IPluginDecorator<typeof WorkbenchLocators> {}
 @PluginDecorator(WorkbenchLocators)
 export class Workbench extends BasePage<typeof WorkbenchLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'Workbench' as const
 
     /**

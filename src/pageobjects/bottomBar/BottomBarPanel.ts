@@ -5,12 +5,22 @@ import { DebugConsoleView, OutputView, TerminalView } from '../bottomBar/Views'
 import { BasePage, PluginDecorator, IPluginDecorator } from "../utils";
 import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.61.0'
 
+export interface BottomBarPanel extends IPluginDecorator<typeof BottomBarPanelLocators> {}
 /**
  * Page object for the bottom view panel
+ * 
+ * ```ts
+ * const bottomBar = workbench.getBottomBar()
+ * await bottomBar.toggle(true)
+ * ```
+ * 
+ * @category BottomBar
  */
-export interface BottomBarPanel extends IPluginDecorator<typeof BottomBarPanelLocators> {}
 @PluginDecorator(BottomBarPanelLocators)
 export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'BottomBarPanel' as const
 
     /**
@@ -26,8 +36,9 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
             // ignore and move on
         }
         const height = await this.elem.getSize('height');
-        if ((open && height === 0) || !open && height > 0) {
-            await browser.keys(['Control', 'j']);
+
+        if ((open && height === 0) || (!open && height > 0)) {
+            await browser.keys(['Meta', 'j']);
             if (open) {
                 await this.wait();
             } else {

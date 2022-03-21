@@ -4,12 +4,17 @@ import { InputBox } from "../workbench/Input";
 import { PluginDecorator, IPluginDecorator } from "../utils";
 import { Editor as EditorLocators } from '../../locators/1.61.0'
 
+export interface CustomEditor extends IPluginDecorator<typeof EditorLocators> {}
 /**
  * Page object for custom editors
+ *
+ * @category Editor
  */
-export interface CustomEditor extends IPluginDecorator<typeof EditorLocators> {}
 @PluginDecorator(EditorLocators)
 export class CustomEditor extends Editor<typeof EditorLocators> {
+    /**
+     * @private
+     */
     public locatorKey = 'Editor' as const
 
     /**
@@ -35,7 +40,7 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      */
     async save(): Promise<void> {
         const tab = await this.getTab();
-        await tab.elem.addValue(['Control', 's']);
+        await tab.elem.addValue(['Meta', 's']);
     }
 
     /**
@@ -45,7 +50,7 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      */
     async saveAs(): Promise<InputBox> {
         const tab = await this.getTab();
-        await tab.elem.addValue(['Control', 'Shift', 's']);
+        await tab.elem.addValue(['Meta', 'Shift', 's']);
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string);
         await inputBox.waitForExist({ timeout: 5000 })
         return new InputBox(this.locatorMap);

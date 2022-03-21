@@ -5,12 +5,17 @@ import { TreeItem, ViewItemLocators } from "../../ViewItem";
 import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../../utils'
 import { CustomTreeItem as CustomTreeItemLocator } from '../../../../locators/1.61.0';
 
+export interface CustomTreeItem extends IPluginDecorator<ViewItemLocators> { }
 /**
  * View item in a custom-made content section (e.g. an extension tree view)
+ *
+ * @category Sidebar
  */
-export interface CustomTreeItem extends IPluginDecorator<ViewItemLocators> { }
 @PluginDecorator(CustomTreeItemLocator)
 export class CustomTreeItem extends TreeItem {
+    /**
+     * @private
+     */
     public locatorKey = 'CustomTreeItem' as const
 
     constructor(
