@@ -162,10 +162,9 @@ export const config: Options.Testrunner = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ['spec'],
-    services: [[
-        'vscode',
-        {
-            extensionPath: '/Users/christianbromann/Sites/Stateful/projects/vscode-marquee',
+    services: [
+        ['vscode', {
+            extensionPath: process.env.VSCODE_EXTENSION_PATH,
             vscode: { version: '1.61.0' },
             userSettings: {
                 'marquee.configuration.colorScheme': {
@@ -175,8 +174,8 @@ export const config: Options.Testrunner = {
                     a: 0.5
                 }
             }
-        }
-    ]],
+        }]
+    ],
 
     //
     // Options to be passed to Mocha.
