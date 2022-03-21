@@ -595,8 +595,6 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Next match'
      */
     async nextMatch (): Promise<void> {
-        // @ts-expect-error Todo(Christian): define custom commands in TypeScript
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Next match' : 'Next Match'
         await this.clickButton(name, 'find')
     }
@@ -605,8 +603,6 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Previous match'
      */
     async previousMatch (): Promise<void> {
-        // @ts-expect-error Todo(Christian): define custom commands in TypeScript
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Previous match' : 'Previous Match'
         await this.clickButton(name, 'find')
     }

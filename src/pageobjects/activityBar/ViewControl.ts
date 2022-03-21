@@ -57,8 +57,6 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
         }
         const view = await new SideBarView(this.locatorMap).wait()
         if ((await view.elem.$$(this.locators.scmId)).length > 0) {
-            // @ts-expect-error commands not defined yet
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.47.0') {
                 return new NewScmView(this.locatorMap).wait()
             }

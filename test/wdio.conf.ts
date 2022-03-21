@@ -1,6 +1,7 @@
 import path from 'path'
+import type { Options } from '@wdio/types'
 
-export const config: WebdriverIO.Config = {
+export const config: Options.Testrunner = {
     //
     // ====================
     // Runner Configuration
@@ -25,13 +26,13 @@ export const config: WebdriverIO.Config = {
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            project: path.join(__dirname, '..', 'tsconfig.json')
+            project: path.join(__dirname, '..', 'tsconfig-test.json')
         }
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
-        //tsConfigPathsOpts: {
-        //    baseUrl: './'
-        //}
+        // tsConfigPathsOpts: {
+        //     baseUrl: './'
+        // }
     },
     //
     // ==================
@@ -79,7 +80,7 @@ export const config: WebdriverIO.Config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome',
+        browserName: 'chrome'
     }],
     //
     // ===================
@@ -133,7 +134,7 @@ export const config: WebdriverIO.Config = {
         workspacePath: path.join(__dirname, '..'),
         filePath: path.join(__dirname, '..', 'README.md')
     }]],
-    
+
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
@@ -161,7 +162,7 @@ export const config: WebdriverIO.Config = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000
-    },
+    }
     //
     // =====
     // Hooks
@@ -258,8 +259,6 @@ export const config: WebdriverIO.Config = {
      */
     // afterTest: function(test, context, { error, result, duration, passed, retries }) {
     // },
-
-
     /**
      * Hook that gets executed after the suite has ended
      * @param {Object} suite suite details
@@ -307,6 +306,6 @@ export const config: WebdriverIO.Config = {
     * @param {String} oldSessionId session ID of the old session
     * @param {String} newSessionId session ID of the new session
     */
-    //onReload: function(oldSessionId, newSessionId) {
-    //}
+    // onReload: function(oldSessionId, newSessionId) {
+    // }
 }

@@ -68,3 +68,13 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         return workbenchPO.elem.waitForExist()
     }
 }
+
+declare global {
+    namespace WebdriverIO {
+        interface Browser {
+            getWorkbench: () => Promise<Workbench>
+            getVSCodeVersion: () => Promise<string>
+            getVSCodeChannel: () => Promise<string>
+        }
+    }
+}

@@ -130,9 +130,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
             }
         }
         await browser.keys(['F1'])
-        // @ts-expect-error Todo(Christian): define commands
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        if (await browser.getVSCodeChannel() === 'vscode' && browser.getVSCodeVersion() >= '1.44.0') {
+        if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.44.0') {
             return new InputBox(this.locatorMap).wait()
         }
         return new QuickOpenBox(this.locatorMap).wait()
