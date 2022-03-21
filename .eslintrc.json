@@ -17,6 +17,7 @@
   },
   "rules": {
     "no-unused-vars": "off",
+    "import/export": 0,
     "import/prefer-default-export": "off",
     "node/no-unpublished-import": "error",
     "node/no-missing-import": "off", // duped by import
@@ -24,7 +25,10 @@
     "import/no-extraneous-dependencies": "off",
     "node/no-extraneous-import": "off",
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["capabilities"] }],
-    "class-methods-use-this": ["error", { "exceptMethods": ["afterTest"] }]
+    "class-methods-use-this": ["error", { "exceptMethods": ["afterTest"] }],
+    "@typescript-eslint/indent": [2, 4],
+    "@typescript-eslint/semi": [2, "never"],
+    "@typescript-eslint/comma-dangle": [2, "never"]
   },
   "parserOptions": {
     "ecmaVersion": 2020,

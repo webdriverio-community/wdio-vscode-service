@@ -10,5 +10,5 @@ export const ViewSection = {
 }
 export const ScmView = {
     ...ScmViewImport,
-    providerHeader: `.div[class*='pane-header scm-provider']`
+    providerHeader: '.div[class*=\'pane-header scm-provider\']'
 }

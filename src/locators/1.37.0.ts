@@ -266,7 +266,7 @@ export const ScmView = {
     more: '.toolbar-toggle-more',
     multiMore: '.codicon-toolbar-more',
     multiScmProvider: '.scm-provider',
-    singleScmProvider: `.scm-view`,
+    singleScmProvider: '.scm-view',
     multiProviderItem: './/div[@role=\'treeitem\' and @aria-level=\'1\']',
     itemLevel: (level: number) => `.//div[@role='treeitem' and @aria-level='${level}']`,
     itemIndex: (index: number) => `.//div[@role='treeitem' and @data-index='${index}']`
@@ -360,7 +360,7 @@ export const Dialog = {
 }
 
 export const welcomeContentButtonSelector = ".//a[@class='monaco-button monaco-text-button']"
-export const welcomeContentTextSelector = ".//p"
+export const welcomeContentTextSelector = './/p'
 
 export const WelcomeContent = {
     button: welcomeContentButtonSelector,
