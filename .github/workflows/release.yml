@@ -43,7 +43,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
       - name: Build
-        run: npm build
+        run: yarn build
       - name: Release
         run: npm run release:ci -- ${{github.event.inputs.releaseType}}
         env:
