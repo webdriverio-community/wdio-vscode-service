@@ -18,6 +18,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
+      - run: npm i -g yarn
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
       - name: Build
