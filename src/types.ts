@@ -33,7 +33,7 @@ export interface ServiceOptions extends ChromedriverServiceOptions {
      */
     workspacePath?: string
     /**
-     * Opens VSCode for with a specific file opened
+     * Opens VSCode with a specific file opened
      */
     filePath?: string
     /**
