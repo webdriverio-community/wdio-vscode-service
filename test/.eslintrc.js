@@ -2,7 +2,8 @@ const config = require('../.eslintrc');
 
 module.exports = {
   ...config,
-  env: {
-    jest: true,
-  }
+  extends: [
+    ...config.extends,
+    'plugin:wdio/recommended'
+  ]
 };

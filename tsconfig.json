@@ -24,7 +24,12 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "checkJs": true,
-    "types": ["node", "jest", "webdriverio/async"]
+    "types": [
+      "node",
+      "webdriverio/async",
+      "@wdio/mocha-framework",
+      "expect-webdriverio"
+    ]
   },
   "include": ["src/**/*"],
   "ignore": ["node_modules", "dist"]
