@@ -1,6 +1,6 @@
 {
   "name": "wdio-vscode-service",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A service to test VSCode extensions from end to end",
   "author": "Christian Bromann <mail@bromann.dev>",
   "homepage": "https://github.com/webdriverio-community/wdio-vscode-service",
