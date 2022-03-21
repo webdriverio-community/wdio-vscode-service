@@ -26,7 +26,7 @@ export const config: Options.Testrunner = {
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            project: path.join(__dirname, '..', 'tsconfig-test.json')
+            project: path.join(__dirname, 'tsconfig.json')
         }
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
