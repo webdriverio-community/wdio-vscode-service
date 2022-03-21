@@ -30,26 +30,22 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.25.0
-          run_install: true
+          node-version: 16.x
       - name: NPM Setup
         run: |
-          pnpm set registry "https://registry.npmjs.org/"
-          pnpm set //registry.npmjs.org/:_authToken $NPM_TOKEN
-          pnpm whoami
+          npm set registry "https://registry.npmjs.org/"
+          npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
+          npm whoami
       - name: Git Setup
         run: |
           git config --global user.email "christian+webdriverio-release@saucelabs.com"
           git config --global user.name "WebdriverIO Release Bot"
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --frozen-lockfile
       - name: Build
-        run: pnpm build
+        run: npm build
       - name: Release
-        run: pnpm run release:ci -- ${{github.event.inputs.releaseType}}
+        run: npm run release:ci -- ${{github.event.inputs.releaseType}}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,19 +59,15 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.25.0
-          run_install: true
+          node-version: 16.x
       - name: Git Setup
         run: |
           git config --global user.email "christian+webdriverio-release@saucelabs.com"
           git config --global user.name "WebdriverIO Release Bot"
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --frozen-lockfile
       - name: Build Docs
-        run: pnpm docs
+        run: yarn docs
       - name: Update Branch
         run: |
           git checkout -b docs
