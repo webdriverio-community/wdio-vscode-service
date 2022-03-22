@@ -69,7 +69,7 @@ In your `tsconfig.json` make sure to add `wdio-vscode-service` to your list of t
         ],
         "target": "es2019",
         "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
+        "esModuleInterop": true
     }
 }
 ```
