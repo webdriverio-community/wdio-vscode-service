@@ -73,17 +73,17 @@ export function PluginDecorator<T extends { new(...args: any[]): any }> (locator
     }
 }
 
-export abstract class BasePage<T> {
+export abstract class BasePage<T, F extends Record<string, Locators> = LocatorMap> {
     /**
      * @private
      */
-    abstract locatorKey: LocatorComponents
+    abstract locatorKey: keyof F | (keyof F)[]
 
     /**
      * @private
      */
     constructor (
-        protected _locators: LocatorMap,
+        protected _locators: F,
         private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
         private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
     ) {}
@@ -96,10 +96,10 @@ export abstract class BasePage<T> {
         if (Array.isArray(this.locatorKey)) {
             return this.locatorKey.reduce((prev, locatorKey) => ({
                 ...prev,
-                ...this._locators[locatorKey]
-            }), {} as Locators) as any as T
+                ...this._locators[locatorKey as keyof LocatorMap]
+            } as Locators), {} as Locators) as any as T
         }
-        return this._locators[this.locatorKey] as any as T
+        return this._locators[this.locatorKey as keyof LocatorMap] as any as T
     }
 
     /**

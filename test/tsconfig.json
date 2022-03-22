@@ -9,6 +9,7 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
     "allowJs": true,
     "types": [
       "node",
