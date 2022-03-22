@@ -6,7 +6,7 @@ import {
 import { NewScmView } from '../sidebar/scm/NewScmView'
 
 import {
-    PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap
+    PluginDecorator, IPluginDecorator, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import { ViewControl as ViewControlLocators } from '../../locators/1.61.0'
 
@@ -37,7 +37,7 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
     public locatorKey = 'ViewControl' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public bar: ActivityBar
     ) {

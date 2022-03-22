@@ -3,7 +3,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 import {
     TextEditor, Menu, MenuItem, DebugConsoleView
 } from '..'
-import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
+import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../utils'
 import { ContentAssist as ContentAssistLocators } from '../../locators/1.61.0'
 
 export interface ContentAssist extends IPluginDecorator<typeof ContentAssistLocators> {}
@@ -20,7 +20,7 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
     public locatorKey = 'ContentAssist' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         parent: TextEditor | DebugConsoleView
     ) {
         super(locators)
@@ -114,7 +114,7 @@ export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
     public label = ''
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         item: string | ChainablePromiseElement<WebdriverIO.Element>,
         contentAssist: ContentAssist
     ) {

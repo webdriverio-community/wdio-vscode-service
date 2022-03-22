@@ -1,7 +1,7 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
 import { Menu, MenuItem } from '..'
-import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
+import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../utils'
 import { ContextMenu as ContextMenuLocators } from '../../locators/1.61.0'
 
 export interface ContextMenu extends IPluginDecorator<typeof ContextMenuLocators> {}
@@ -104,7 +104,7 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
     public label = ''
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         base: ChainablePromiseElement<WebdriverIO.Element>,
         public parentMenu: Menu<typeof ContextMenuLocators>
     ) {

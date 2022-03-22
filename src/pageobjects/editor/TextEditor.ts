@@ -7,7 +7,7 @@ import { StatusBar } from '../statusBar/StatusBar'
 import { Editor, EditorLocators } from './Editor'
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap
+    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     TextEditor as TextEditorLocators,
@@ -454,7 +454,7 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
     public locatorKey = 'TextEditor' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public editor: TextEditor
     ) {
@@ -487,7 +487,7 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
     public locatorKey = 'TextEditor' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public editor: TextEditor
     ) {
@@ -527,7 +527,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
     public locatorKey = 'FindWidget' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public textEditor: TextEditor
     ) {

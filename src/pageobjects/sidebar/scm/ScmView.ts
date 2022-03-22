@@ -3,7 +3,7 @@ import type { ChainablePromiseElement } from 'webdriverio'
 import { SideBarView } from '../SideBarView'
 import { ContextMenu } from '../..'
 import {
-    ElementWithContextMenu, LocatorMap, PluginDecorator, IPluginDecorator, BasePage
+    ElementWithContextMenu, VSCodeLocatorMap, PluginDecorator, IPluginDecorator, BasePage
 } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0'
 
@@ -75,7 +75,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
      */
     public locatorKey = 'ScmView' as const
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ScmView
     ) {
@@ -209,7 +209,7 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         row: ChainablePromiseElement<WebdriverIO.Element>,
         public provider: ScmProvider
     ) {
@@ -306,7 +306,7 @@ export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public scm: ScmProvider | ScmView
     ) {
         super(locators, locators.ScmView.more as string, scm.elem)

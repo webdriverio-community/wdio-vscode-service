@@ -4,7 +4,7 @@ import {
     TextEditor, DiffEditor, SettingsEditor, WebView
 } from '..'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap
+    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     EditorView as EditorViewLocators,
@@ -194,7 +194,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
     public locatorKey = 'EditorView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view = new EditorView(locators)
     ) {
@@ -370,7 +370,7 @@ export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> 
     public locatorKey = 'Editor' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: EditorView
     ) {

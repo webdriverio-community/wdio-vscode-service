@@ -1,7 +1,7 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, LocatorMap
+    PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { TitleBar } from '../..'
 import { WindowControls as WindowControlsLocators } from '../../locators/1.61.0'
@@ -20,7 +20,7 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
     public locatorKey = 'WindowControls' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element?: ChainablePromiseElement<WebdriverIO.Element> | string,
         public bar: TitleBar = new TitleBar(locators)
     ) {

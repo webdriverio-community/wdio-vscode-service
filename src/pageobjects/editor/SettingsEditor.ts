@@ -3,7 +3,7 @@ import { ContextMenu } from '../menu/ContextMenu'
 import { EditorView, EditorGroup } from '..'
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, LocatorMap
+    PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.61.0'
 
@@ -22,7 +22,7 @@ export class SettingsEditor extends Editor<EditorLocators> {
     public view: EditorView | EditorGroup
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         view?: EditorView | EditorGroup
     ) {
         super(locators, view?.elem)
@@ -132,7 +132,7 @@ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
     private category: string
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         title: string, category: string,
         public settings: SettingsEditor
     ) {

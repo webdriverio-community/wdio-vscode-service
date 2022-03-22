@@ -1,5 +1,5 @@
 import {
-    ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, LocatorMap
+    ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { SideBarView } from '..'
 import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0'
@@ -18,7 +18,7 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
     public locatorKey = 'ViewTitlePart' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public view: SideBarView<any> = new SideBarView(locators)
     ) {
         super(locators)
@@ -69,7 +69,7 @@ export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
      */
     public locatorKey = 'ViewTitlePart' as const
 
-    constructor (locators: LocatorMap, private title: string, viewTitle: ViewTitlePart) {
+    constructor (locators: VSCodeLocatorMap, private title: string, viewTitle: ViewTitlePart) {
         super(locators, (locators.ViewTitlePart.actionContstructor as Function)(title) as string, viewTitle.elem)
         this.title = title
     }

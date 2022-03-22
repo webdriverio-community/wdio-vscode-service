@@ -2,7 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 
 import { TreeItem, ViewItemLocators } from '../../ViewItem'
 import { TreeSection } from '../TreeSection'
-import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../../utils'
+import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../../../utils'
 import { DefaultTreeItem as DefaultTreeItemLocators } from '../../../../locators/1.61.0'
 
 export interface DefaultTreeItem extends IPluginDecorator<ViewItemLocators> { }
@@ -19,7 +19,7 @@ export class DefaultTreeItem extends TreeItem {
     public locatorKey = 'DefaultTreeItem' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public viewPart: TreeSection
     ) {

@@ -3,7 +3,7 @@ import {
 } from './ScmView'
 import { ContextMenu } from '../..'
 import {
-    PluginDecorator, IPluginDecorator, ElementWithContextMenu, LocatorMap
+    PluginDecorator, IPluginDecorator, ElementWithContextMenu, VSCodeLocatorMap
 } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0'
 
@@ -203,7 +203,7 @@ class MultiMoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
      */
     public locatorKey = 'ScmView' as const
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public scm: ScmProvider
     ) {
         super(locators, locators.ScmView.multiMore as string, scm.elem)

@@ -3,7 +3,7 @@ import { DefaultTreeSection } from './tree/default/DefaultTreeSection'
 import { CustomTreeSection } from './tree/custom/CustomTreeSection'
 import { ExtensionsViewSection } from './extensions/ExtensionsViewSection'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, LocatorMap
+    PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { ViewContent as ViewContentLocators } from '../../locators/1.61.0'
 
@@ -21,7 +21,7 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
     public locatorKey = 'ViewContent' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public view: SideBarView<any> = new SideBarView(locators)
     ) {
         super(locators, locators.ViewContent.elem as string)

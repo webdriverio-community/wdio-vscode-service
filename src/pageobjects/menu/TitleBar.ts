@@ -1,4 +1,4 @@
-import { PluginDecorator, IPluginDecorator, LocatorMap } from '../utils'
+import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../utils'
 import { WindowControls, ContextMenu } from '..'
 import { Menu } from './Menu'
 import { MenuItem } from './MenuItem'
@@ -91,7 +91,7 @@ export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
     public locatorKey = 'TitleBar' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public label: string,
         public parentMenu: Menu<typeof TitleBarLocators>
     ) {

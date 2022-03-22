@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio'
 
 import { EditorView, EditorGroup, EditorTab } from '..'
-import { ElementWithContextMenu, LocatorMap } from '../utils'
+import { ElementWithContextMenu, VSCodeLocatorMap } from '../utils'
 import {
     Editor as EditorLocatorsMap,
     SettingsEditor as SettingsEditorLocators,
@@ -30,7 +30,7 @@ export type EditorLocators = (
  */
 export abstract class Editor<T> extends ElementWithContextMenu<T> {
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element?: ChainablePromiseElement<WebdriverIO.Element> | string,
         public view: EditorView | EditorGroup = new EditorView(locators)
     ) {

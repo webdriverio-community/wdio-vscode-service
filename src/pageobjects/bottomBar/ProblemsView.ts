@@ -2,7 +2,7 @@ import type { ChainablePromiseElement } from 'webdriverio'
 
 import { BottomBarPanel } from '..'
 import {
-    BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap
+    BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
 } from '../utils'
 import { ProblemsView as ProblemsViewLocators } from '../../locators/1.61.0'
 
@@ -26,7 +26,7 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
     public locatorKey = 'ProblemsView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public panel = new BottomBarPanel(locators)
     ) {
         super(locators)
@@ -101,7 +101,7 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
     public locatorKey = 'ProblemsView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ProblemsView
     ) {

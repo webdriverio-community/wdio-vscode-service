@@ -1,6 +1,6 @@
 import clipboard from 'clipboardy'
 import {
-    IPluginDecorator, BasePage, PluginDecorator, LocatorMap
+    IPluginDecorator, BasePage, PluginDecorator, VSCodeLocatorMap
 } from '../utils'
 import {
     Input as InputLocators,
@@ -233,7 +233,7 @@ export class QuickPickItem extends BasePage<typeof InputLocators> {
     private index: number
     public input: Input
 
-    constructor (locators: LocatorMap, index: number, inputField: Input) {
+    constructor (locators: VSCodeLocatorMap, index: number, inputField: Input) {
         const quickPickPositionFn = locators.Input.quickPickPosition as Function
         const quickPickIndexFn = locators.Input.quickPickIndex as Function
         const baseParam = inputField instanceof QuickOpenBox

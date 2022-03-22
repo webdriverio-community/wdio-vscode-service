@@ -2,7 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 
 import { ViewSection } from '..'
 import {
-    BasePage, PluginDecorator, IPluginDecorator, LocatorMap
+    BasePage, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
 } from '../utils'
 import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.61.0'
 
@@ -26,7 +26,7 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
      * @param welcomeSection  The enclosing welcome section
      */
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public welcomeSection: WelcomeContentSection
     ) {
@@ -66,7 +66,7 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
      * @param parent  The webelement in which the welcome content is embedded.
      */
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         parent: ViewSection
     ) {

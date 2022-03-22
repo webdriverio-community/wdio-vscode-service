@@ -4,7 +4,7 @@ import { ViewItem, ViewItemLocators } from '../ViewItem'
 import { ContextMenu } from '../../menu/ContextMenu'
 import { ExtensionsViewSection } from './ExtensionsViewSection'
 
-import { PluginDecorator, IPluginDecorator, LocatorMap } from '../../utils'
+import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../../utils'
 import { ExtensionsViewItem as ExtensionsViewItemLocators } from '../../../locators/1.61.0'
 
 export interface ExtensionsViewItem extends IPluginDecorator<ViewItemLocators> { }
@@ -21,7 +21,7 @@ export class ExtensionsViewItem extends ViewItem {
     public locatorKey = 'ExtensionsViewItem' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         extensionElement: ChainablePromiseElement<WebdriverIO.Element>,
         public section: ExtensionsViewSection
     ) {

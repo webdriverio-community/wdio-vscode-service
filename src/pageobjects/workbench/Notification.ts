@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { BasePage, IPluginDecorator, LocatorMap } from '../utils'
+import { BasePage, IPluginDecorator, VSCodeLocatorMap } from '../utils'
 import { Notification as NotificationLocators } from '../../locators/1.61.0'
 
 /**
@@ -28,7 +28,7 @@ class NotificationButton extends BasePage<typeof NotificationLocators> {
     private title: string
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         title: string
     ) {
         super(locators, (locators.Notification.buttonConstructor as Function)(title) as string)
@@ -152,7 +152,7 @@ export class StandaloneNotification extends Notification {
     public locatorKey = 'Notification' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         notification: ChainablePromiseElement<WebdriverIO.Element>
     ) {
         super(locators, notification, locators.Notification.standaloneContainer as string)

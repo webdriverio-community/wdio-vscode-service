@@ -2,7 +2,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import child_process from 'child_process'
 
-import type { LocatorMap } from './pageobjects/utils'
+import type { VSCodeLocatorMap } from './pageobjects/utils'
 
 function isEmulatedRosettaEnvironment () {
     const archName = child_process.spawnSync('uname', ['-m']).stdout.toString().trim()
@@ -55,7 +55,7 @@ export function validatePlatform () {
     return process.platform
 }
 
-export async function getLocators (version: string): Promise<LocatorMap> {
+export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
     const files = (await fs.readdir(path.join(__dirname, 'locators'), { encoding: 'utf-8' }))
         .filter((filename) => filename.endsWith('.js') && !filename.endsWith('.d.ts'))
         .map((filename) => filename.slice(0, -3))
@@ -63,7 +63,7 @@ export async function getLocators (version: string): Promise<LocatorMap> {
     const [major, minor] = version.split('.')
     const sanitizedVersion = `${major}.${minor}.0`
     const locatorFile = files.find((f) => f >= sanitizedVersion) || files[files.length - 1]
-    return import(`./locators/${locatorFile}`) as Promise<LocatorMap>
+    return import(`./locators/${locatorFile}`) as Promise<VSCodeLocatorMap>
 }
 
 export function fileExist (filepath: string) {

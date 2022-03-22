@@ -4,7 +4,7 @@ import {
     ContextMenu, ViewContent, ViewItem, WelcomeContentSection
 } from '..'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, LocatorMap
+    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     ViewSection as ViewSectionLocators,
@@ -31,7 +31,7 @@ export interface ViewSection extends IPluginDecorator<AllViewSectionLocators> { 
  */
 export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public content: ViewContent
     ) {
@@ -230,7 +230,7 @@ export class ViewPanelAction extends BasePage<typeof ViewSectionLocators> {
     public locatorKey = 'ViewSection' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         viewPart: ViewSection
     ) {

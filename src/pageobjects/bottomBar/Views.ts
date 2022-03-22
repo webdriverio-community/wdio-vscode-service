@@ -3,7 +3,7 @@ import clipboard from 'clipboardy'
 import { Workbench, BottomBarPanel, ContentAssist } from '../..'
 import { TextView, ChannelView } from './AbstractViews'
 import {
-    ElementWithContextMenu, PluginDecorator, IPluginDecorator, LocatorMap
+    ElementWithContextMenu, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
 } from '../utils'
 import {
     OutputView as OutputViewLocators,
@@ -44,7 +44,7 @@ export class OutputView extends TextView<typeof OutputViewLocators> {
     public locatorKey = 'OutputView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public panel = new BottomBarPanel(locators)
     ) {
         super(locators)
@@ -68,7 +68,7 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
     public locatorKey = 'DebugConsoleView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public panel: BottomBarPanel = new BottomBarPanel(locators)
     ) {
         super(locators)
@@ -141,7 +141,7 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
     public locatorKey = 'TerminalView' as const
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         public panel = new BottomBarPanel(locators)
     ) {
         super(locators)

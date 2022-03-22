@@ -1,5 +1,5 @@
 import {
-    IPluginDecorator, BasePage, ElementWithContextMenu, PluginDecorator, LocatorMap
+    IPluginDecorator, BasePage, ElementWithContextMenu, PluginDecorator, VSCodeLocatorMap
 } from '../utils'
 import {
     ViewSection as ViewSectionLocators,
@@ -212,7 +212,7 @@ export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
     private label: string
 
     constructor (
-        locators: LocatorMap,
+        locators: VSCodeLocatorMap,
         label: string,
         viewItem: TreeItem
     ) {

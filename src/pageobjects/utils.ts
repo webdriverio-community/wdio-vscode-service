@@ -42,7 +42,7 @@ type LocatorProperties<T> = {
 type AllLocatorType = typeof allLocatorsTypes
 export type LocatorComponents = keyof AllLocatorType | (keyof AllLocatorType)[]
 export type Locators = Record<string | symbol, string | Function>
-export type LocatorMap = Record<keyof AllLocatorType, Locators>
+export type VSCodeLocatorMap = Record<keyof AllLocatorType, Locators>
 export type IPluginDecorator<T> = (
     ClassWithLocators$<T> & ClassWithLocators$$<T> &
     ClassWithFunctionLocators$<T> & ClassWithFunctionLocators$$<T>
@@ -73,17 +73,17 @@ export function PluginDecorator<T extends { new(...args: any[]): any }> (locator
     }
 }
 
-export abstract class BasePage<T, F extends Record<string, Locators> = LocatorMap> {
+export abstract class BasePage<PageLocators, LocatorMap extends Record<string, Locators> = VSCodeLocatorMap> {
     /**
      * @private
      */
-    abstract locatorKey: keyof F | (keyof F)[]
+    abstract locatorKey: keyof LocatorMap | (keyof LocatorMap)[]
 
     /**
      * @private
      */
     constructor (
-        protected _locators: F,
+        protected _locators: LocatorMap,
         private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
         private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
     ) {}
@@ -96,10 +96,10 @@ export abstract class BasePage<T, F extends Record<string, Locators> = LocatorMa
         if (Array.isArray(this.locatorKey)) {
             return this.locatorKey.reduce((prev, locatorKey) => ({
                 ...prev,
-                ...this._locators[locatorKey as keyof LocatorMap]
-            } as Locators), {} as Locators) as any as T
+                ...this._locators[locatorKey]
+            } as Locators), {} as Locators) as any as PageLocators
         }
-        return this._locators[this.locatorKey as keyof LocatorMap] as any as T
+        return this._locators[this.locatorKey] as any as PageLocators
     }
 
     /**
