@@ -25,7 +25,9 @@ To initiate a new WebdriverIO project, run:
 npm create wdio ./
 ```
 
-An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed.
+An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed. Then make sure to select `vscode` within the list of services:
+
+![Install Demo](https://raw.githubusercontent.com/webdriverio-community/wdio-vscode-service/main/.github/assets/demo.gif "Install Demo")
 
 For more information on how to install `WebdriverIO`, please check the [project docs](https://webdriver.io/docs/gettingstarted).
 
@@ -51,6 +53,25 @@ export const config = {
     ],
     // ...
 };
+```
+
+In your `tsconfig.json` make sure to add `wdio-vscode-service` to your list of types:
+
+```json
+{
+    "compilerOptions": {
+        "types": [
+            "node",
+            "webdriverio/async",
+            "@wdio/mocha-framework",
+            "expect-webdriverio",
+            "wdio-vscode-service"
+        ],
+        "target": "es2019",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true
+    }
+}
 ```
 
 You can then use the `getWorkspace` method to access the page objects for the locators matching your desired VSCode version:
