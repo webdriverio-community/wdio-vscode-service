@@ -22,9 +22,9 @@
     "release:minor": "npm run release -- minor",
     "release:major": "npm run release -- major",
     "test": "run-s test:*",
+    "test:setup": "cd node_modules && rm -rf ./wdio-vscode-service && ln -s ../ wdio-vscode-service && cd ..",
     "test:lint": "eslint src test example",
     "test:e2e": "run-s test:e2e:*",
-    "test:e2e:setup": "cd node_modules && rm -rf ./wdio-vscode-service && ln -s ../ wdio-vscode-service && cd ..",
     "test:e2e:run": "wdio run ./test/wdio.conf.ts",
     "watch": "yarn run build --watch"
   },

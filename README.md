@@ -137,3 +137,67 @@ Additional start-up arguments. See [`argv.ts`](https://github.com/microsoft/vsco
 
 Type: `string[]`<br />
 Default: `[]`
+
+## Create Your Own PageObjects
+
+You can re-use the components used in this service for your own webview page objects. For that first create a file that defines all your selectors, e.g.:
+
+```ts
+// e.g. in /test/pageobjects/locators.ts
+export const componentA = {
+    elem: 'form', // component container element
+    submit: 'button[type="submit"]', // submit button
+    username: 'input.username', // username input
+    password: 'input.password' // password input
+}
+```
+
+Now you can create a page object as following:
+
+```ts
+// e.g. in /test/pageobjects/loginForm.ts
+import { PluginDecorator, IPluginDecorator, BasePage } from 'wdio-vscode-service'
+import { componentA as componentALocators } from './locators'
+
+export interface LoginForm extends IPluginDecorator<typeof componentALocators> {}
+@PluginDecorator(componentALocators)
+export class LoginForm extends BasePage<typeof componentALocators> {
+    /**
+     * @private locator key to identify locator map (see locators.ts)
+     */
+    public locatorKey = 'componentA' as const
+
+    public login (username: string, password: string) {
+        await this.username$.setValue(username)
+        await this.password$.setValue(password)
+        await this.submit$.click()
+    }
+}
+```
+
+Now in your test you can use your page object as follows:
+
+```ts
+import { LoginForm } from '../pageobjects/loginForm'
+import * as locatorMap from '../locators'
+
+// e.g. in /test/specs/example.e2e.ts
+describe('my extension', () => {
+    it('should login', async () => {
+        const loginForm = new LoginForm(locatorMap)
+        await loginForm.login('admin', 'test123')
+
+        // you can also use page object elements directly via `[selector]$`
+        // or `[selector]$$`, e.g.:
+        await loginForm.submit$.click()
+
+        // or access locators directly
+        console.log(loginForm.locators.username)
+        // outputs: "input.username"
+    })
+})
+```
+
+---
+
+For more information on WebdriverIO check out the project [homepage](https://webdriver.io).

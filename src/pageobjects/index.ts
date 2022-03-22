@@ -46,4 +46,4 @@ export * from './workbench/NotificationsCenter'
 export * from './workbench/Input'
 export * from './workbench/DebugToolbar'
 
-export * from './dialog/ModalDialog'
+export * from './utils'
