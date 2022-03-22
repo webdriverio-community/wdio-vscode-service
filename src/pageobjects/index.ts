@@ -1,13 +1,28 @@
+export * from './activityBar/ActivityBar'
+export * from './activityBar/ViewControl'
+export * from './activityBar/ActionsControl'
+
+export * from './bottomBar/BottomBarPanel'
+export * from './bottomBar/ProblemsView'
+export * from './bottomBar/Views'
+
+export * from './dialog/ModalDialog'
+
+export * from './editor/EditorView'
+export * from './editor/TextEditor'
+export * from './editor/Editor'
+export * from './editor/SettingsEditor'
+export * from './editor/DiffEditor'
+export * from './editor/WebView'
+export * from './editor/ContentAssist'
+export * from './editor/CustomEditor'
+
 export * from './menu/Menu'
 export * from './menu/MenuItem'
 export * from './menu/TitleBar'
 export * from './menu/MacTitleBar'
 export * from './menu/ContextMenu'
 export * from './menu/WindowControls'
-
-export * from './activityBar/ActivityBar'
-export * from './activityBar/ViewControl'
-export * from './activityBar/ActionsControl'
 
 export * from './sidebar/SideBarView'
 export * from './sidebar/ViewTitlePart'
@@ -26,19 +41,7 @@ export { ScmView, ScmProvider, ScmChange } from './sidebar/scm/ScmView'
 export * from './sidebar/scm/NewScmView'
 export * from './sidebar/debug/DebugView'
 
-export * from './bottomBar/BottomBarPanel'
-export * from './bottomBar/ProblemsView'
-export * from './bottomBar/Views'
 export * from './statusBar/StatusBar'
-
-export * from './editor/EditorView'
-export * from './editor/TextEditor'
-export * from './editor/Editor'
-export * from './editor/SettingsEditor'
-export * from './editor/DiffEditor'
-export * from './editor/WebView'
-export * from './editor/ContentAssist'
-export * from './editor/CustomEditor'
 
 export * from './workbench/Workbench'
 export { Notification, NotificationType } from './workbench/Notification'
@@ -46,4 +49,4 @@ export * from './workbench/NotificationsCenter'
 export * from './workbench/Input'
 export * from './workbench/DebugToolbar'
 
-export * from './dialog/ModalDialog'
+export * from './utils'
