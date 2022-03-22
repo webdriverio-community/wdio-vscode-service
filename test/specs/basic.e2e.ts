@@ -6,7 +6,7 @@ import { PluginDecorator, IPluginDecorator, BasePage } from 'wdio-vscode-service
 const locators = {
     marquee: {
         elem: 'ul[aria-label="Active View Switcher"]',
-        menuitems: '> li'
+        menuitems: 'li'
     }
 }
 
