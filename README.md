@@ -157,11 +157,10 @@ Now you can create a page object as following:
 ```ts
 // e.g. in /test/pageobjects/loginForm.ts
 import { PluginDecorator, IPluginDecorator, BasePage } from 'wdio-vscode-service'
-import { componentA as componentALocators } from './locators'
-
+import * as locatorMap, { componentA as componentALocators } from './locators'
 export interface LoginForm extends IPluginDecorator<typeof componentALocators> {}
 @PluginDecorator(componentALocators)
-export class LoginForm extends BasePage<typeof componentALocators> {
+export class LoginForm extends BasePage<typeof componentALocators, typeof locatorMap> {
     /**
      * @private locator key to identify locator map (see locators.ts)
      */
