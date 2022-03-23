@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../dist/service.d.ts" />
 
-import { PluginDecorator, IPluginDecorator, BasePage } from 'wdio-vscode-service'
+import { PluginDecorator, IPluginDecorator, BasePage } from '../..'
 
 const locators = {
     marquee: {
