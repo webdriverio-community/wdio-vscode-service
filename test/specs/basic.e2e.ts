@@ -35,7 +35,13 @@ describe('WDIO VSCode Service', () => {
 
     it('should be able to load VSCode', async () => {
         const workbench = await browser.getWorkbench()
-        expect(await workbench.getTitleBar().getTitle())
-            .toContain('[Extension Development Host] - README.md - wdio-vscode-service')
+        const title = await workbench.getTitleBar().getTitle()
+
+        /**
+         * actual title is "[Extension Development Host] - README.md - wdio-vscode-service"
+         * but test fails on different operating systems due to different "-" chars
+         */
+        expect(title).toContain('[Extension Development Host] - README.md')
+        expect(title).toContain('wdio-vscode-service')
     })
 })
