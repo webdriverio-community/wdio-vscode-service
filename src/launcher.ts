@@ -1,3 +1,4 @@
+import os from 'os'
 import fs from 'fs/promises'
 import path from 'path'
 import { format } from 'util'
@@ -125,9 +126,9 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 { extract: true, strip: 1 }
             )
 
-            console.log(await fs.readdir(this._cachePath))
-            const chromedriverPath = path.join(this._cachePath, `chromedriver-${chromedriverVersion}`)
-            await fs.rename(path.join(this._cachePath, 'chromedriver'), chromedriverPath)
+            const ext = os.platform().startsWith('win') ? '.exe' : ''
+            const chromedriverPath = path.join(this._cachePath, `chromedriver-${chromedriverVersion}${ext}`)
+            await fs.rename(path.join(this._cachePath, `chromedriver${ext}`), chromedriverPath)
 
             /**
              * return 'insiders' if desired release channel
