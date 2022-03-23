@@ -125,9 +125,9 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 { extract: true, strip: 1 }
             )
 
+            console.log(await fs.readdir(this._cachePath))
             const chromedriverPath = path.join(this._cachePath, `chromedriver-${chromedriverVersion}`)
             await fs.rename(path.join(this._cachePath, 'chromedriver'), chromedriverPath)
-            console.log(await fs.readdir(this._cachePath))
 
             /**
              * return 'insiders' if desired release channel
