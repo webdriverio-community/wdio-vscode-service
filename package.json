@@ -22,7 +22,7 @@
     "release:minor": "npm run release -- minor",
     "release:major": "npm run release -- major",
     "test": "run-s test:*",
-    "test:setup": "./.github/scripts/link.mjs",
+    "test:setup": "node ./.github/scripts/link.mjs",
     "test:lint": "eslint src test example",
     "test:e2e": "run-s test:e2e:*",
     "test:e2e:run": "wdio run ./test/wdio.conf.ts",
