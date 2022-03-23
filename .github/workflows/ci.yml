@@ -23,10 +23,6 @@ jobs:
           node-version: 16
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
-      - name: Test
-        run: node .github/scripts/link.mjs
-      - name: Check
-        run: ls ./node_modules
       - name: Build
         run: yarn build
       - name: 🧪 Run Tests
