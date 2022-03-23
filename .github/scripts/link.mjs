@@ -19,5 +19,5 @@ await fs.rm(LINKED_DIR, {
     recursive: true
 }).catch((e) => console.warn(`Linked dir doesn't exists: ${e.message}`))
 
-await fs.symlink(relative(LINKED_DIR, ROOT), LINKED_DIR)
+await fs.symlink(relative(LINKED_DIR, ROOT), LINKED_DIR, 'dir')
 console.log('Successful linked package');
