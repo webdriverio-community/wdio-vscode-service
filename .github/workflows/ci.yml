@@ -23,10 +23,14 @@ jobs:
           node-version: 16
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
-      - name: 🧪 Run Tests
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: yarn test
+      - name: Test
+        run: yarn test:setup
+      - name: Check
+        run: ls -la ./node_modules
+      # - name: Build
+      #   run: yarn build
+      # - name: 🧪 Run Tests
+      #   uses: GabrielBB/xvfb-action@v1
+      #   with:
+      #     run: yarn test
 
