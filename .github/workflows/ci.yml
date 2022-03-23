@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
       - name: Test
-        run: ./.github/scripts/link.mjs
+        run: node .github/scripts/link.mjs
       - name: Check
         run: ls ./node_modules
       # - name: Build
