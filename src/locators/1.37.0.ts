@@ -63,7 +63,7 @@ export const DebugConsoleView = {
 }
 export const OutputView = {
     elem: 'div[id="workbench.panel.output"]',
-    lines: '.view-lines div.view-line',
+    lines: '.view-lines',
     actionsLabel: 'Output actions'
 }
 
