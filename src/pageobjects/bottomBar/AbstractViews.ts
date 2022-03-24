@@ -67,13 +67,12 @@ export abstract class TextView<T> extends ChannelView<T> {
      */
     async getText (): Promise<string[]> {
         const lines = await this.elem.$(this.locatorMap.OutputView.lines as string)
-        const textLines = await browser.execute((elem) => {
-            const divs = Array.from(
+        const textLines = await browser.execute(
+            (elem) => Array.from(
                 (elem as any as HTMLDivElement).children as any as ArrayLike<HTMLDivElement>
-            )
-            const ret = divs.map((l) => l.innerText)
-            return ret
-        }, lines)
+            ).map((l) => l.innerText),
+            lines
+        )
         return textLines.filter(Boolean)
     }
 
