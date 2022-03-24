@@ -73,7 +73,13 @@ export abstract class TextView<T> extends ChannelView<T> {
             ).map((l) => l.innerText),
             lines
         )
-        return textLines.filter(Boolean)
+
+        return textLines
+            // strip empty lines (usually the last one)
+            .filter(Boolean)
+            // replace `\u00A0` characters with white space
+            // eslint-disable-next-line no-control-regex
+            .map((l) => l.replace(/\u00A0/g, ' '))
     }
 
     /**
