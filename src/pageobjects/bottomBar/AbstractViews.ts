@@ -66,12 +66,20 @@ export abstract class TextView<T> extends ChannelView<T> {
      * @returns Promise resolving to the view's text
      */
     async getText (): Promise<string[]> {
-        const lines = await this.elem.$$(this.locatorMap.OutputView.lines as string)
-        const ret = []
-        for (const line of lines) {
-            ret.push(await line.getText())
-        }
-        return ret.filter(Boolean)
+        const lines = await this.elem.$(this.locatorMap.OutputView.lines as string)
+        const textLines = await browser.execute(
+            (elem) => Array.from(
+                (elem as any as HTMLDivElement).children as any as ArrayLike<HTMLDivElement>
+            ).map((l) => l.innerText),
+            lines
+        )
+
+        return textLines
+            // strip empty lines (usually the last one)
+            .filter(Boolean)
+            // replace `\u00A0` characters with white space
+            // eslint-disable-next-line no-control-regex
+            .map((l) => l.replace(/\u00A0/g, ' '))
     }
 
     /**
