@@ -61,7 +61,6 @@ describe('WDIO VSCode Service', () => {
             expect(channels).toContain('Tasks')
             expect(channels).toContain('Extensions')
             expect(channels).toContain('Log (Extension Host)')
-            expect(channels).toContain('Guinea Pig')
 
             const currentChannel = await outputView.getCurrentChannel()
             expect(currentChannel).toEqual(channels[0])
