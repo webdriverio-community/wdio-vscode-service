@@ -41,7 +41,6 @@ describe('WDIO VSCode Service', () => {
          * actual title is "[Extension Development Host] - README.md - wdio-vscode-service"
          * but test fails on different operating systems due to different "-" chars
          */
-        expect(title).toContain('[Extension Development Host] - README.md')
         expect(title).toContain('wdio-vscode-service')
     })
 })
