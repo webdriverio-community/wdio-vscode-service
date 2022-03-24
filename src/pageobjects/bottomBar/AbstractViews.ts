@@ -71,7 +71,7 @@ export abstract class TextView<T> extends ChannelView<T> {
             const divs = Array.from(
                 (elem as any as HTMLDivElement).children as any as ArrayLike<HTMLDivElement>
             )
-            const ret = divs.map((l) => l.innerText as string)
+            const ret = divs.map((l) => l.innerText)
             return ret
         }, lines)
         return textLines.filter(Boolean)
