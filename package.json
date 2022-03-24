@@ -46,7 +46,7 @@
     "wdio-chromedriver-service": "^7.3.2"
   },
   "peerDependencies": {
-    "webdriverio": "^7.17.4"
+    "webdriverio": "^7.19.1"
   },
   "peerDependenciesMeta": {
     "webdriverio": {
@@ -58,10 +58,10 @@
     "@types/node": "^17.0.21",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
-    "@wdio/cli": "^7.18.1",
-    "@wdio/local-runner": "^7.18.1",
-    "@wdio/mocha-framework": "^7.18.0",
-    "@wdio/spec-reporter": "^7.18.0",
+    "@wdio/cli": "^7.19.1",
+    "@wdio/local-runner": "^7.19.1",
+    "@wdio/mocha-framework": "^7.19.1",
+    "@wdio/spec-reporter": "^7.19.1",
     "@wdio/types": "^7.17.3",
     "chromedriver": "^99.0.0",
     "eslint": "^8.10.0",

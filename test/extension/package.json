@@ -1,0 +1,35 @@
+{
+  "name": "test-extension",
+  "version": "0.0.1",
+  "publisher": "webdriverio",
+  "displayName": "Guinea Pig",
+  "description": "A VSCode Guinea Pig Extension",
+  "author": "Christian Bromann <mail@bromann.dev>",
+  "license": "MIT",
+  "homepage": "https://marquee.stateful.com",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/webdriverio-community/wdio-vscode-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webdriverio-community/wdio-vscode-service/issues"
+  },
+  "private": true,
+  "engines": {
+    "vscode": "^1.63.0"
+  },
+  "categories": [
+    "Testing"
+  ],
+  "keywords": [
+    "webdriverio"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "browser": "./extension.js",
+  "main": "./extension.js",
+  "contributes": {},
+  "scripts": {},
+  "devDependencies": {}
+}

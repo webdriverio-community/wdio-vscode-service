@@ -1,7 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../dist/service.d.ts" />
 
-import { PluginDecorator, IPluginDecorator, BasePage } from '../..'
+import {
+    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel
+} from '../..'
 
 const locators = {
     marquee: {
@@ -42,5 +44,36 @@ describe('WDIO VSCode Service', () => {
          * but test fails on different operating systems due to different "-" chars
          */
         expect(title).toContain('wdio-vscode-service')
+    })
+
+    describe('bottombar', () => {
+        let bottomBar: BottomBarPanel
+
+        before(async () => {
+            const workbench = await browser.getWorkbench()
+            bottomBar = workbench.getBottomBar()
+            await bottomBar.toggle(true)
+        })
+
+        it('can get output channels', async () => {
+            const outputView = await bottomBar.openOutputView()
+            const channels = await outputView.getChannelNames()
+            expect(channels).toContain('Tasks')
+            expect(channels).toContain('Extensions')
+            expect(channels).toContain('Log (Extension Host)')
+
+            const currentChannel = await outputView.getCurrentChannel()
+            expect(currentChannel).toEqual(channels[0])
+        })
+
+        /**
+         * ToDo(Christian): investigate why extension isn't loading on Windows
+         * https://github.com/webdriverio-community/wdio-vscode-service/issues/4
+         */
+        it('can get extension logs (ignore in win32)', async () => {
+            const outputView = await bottomBar.openOutputView()
+            await outputView.selectChannel('Guinea Pig')
+            expect(await outputView.getText()).toEqual(['Hello World!'])
+        })
     })
 })
