@@ -129,7 +129,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
              */
             return version === 'main'
                 ? [desiredReleaseChannel, chromedriverVersion, chromedriverPath]
-                : [version, chromedriverVersion]
+                : [version, chromedriverVersion, chromedriverPath]
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't set up Chromedriver ${err.message}`)
         }
