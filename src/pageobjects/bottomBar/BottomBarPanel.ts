@@ -1,5 +1,6 @@
 import {
-    DebugConsoleView, OutputView, TerminalView, ProblemsView, EditorView, TitleBar
+    DebugConsoleView, OutputView, TerminalView, ProblemsView, EditorView, TitleBar,
+    StatusBar
 } from '..'
 import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
 import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.61.0'
@@ -37,12 +38,23 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
         const height = await this.elem.getSize('height')
 
         if ((open && height === 0) || (!open && height > 0)) {
-            await browser.keys(['Meta', 'j'])
+            const statusBar = new StatusBar(this.locatorMap)
+            await statusBar.problems$.click()
+
             if (open) {
                 await this.wait()
-            } else {
-                await this.elem.waitForDisplayed({ reverse: true })
+                return
             }
+
+            /**
+             * we might have to click again if we were on a different tab
+             * than the problems tab
+             */
+            if (await this.elem.isDisplayed()) {
+                await statusBar.problems$.click()
+            }
+
+            await this.elem.waitForDisplayed({ reverse: true })
         }
     }
 

@@ -1,5 +1,3 @@
-import clipboard from 'clipboardy'
-
 import { ElementWithContextMenu } from '../utils'
 
 /**
@@ -15,16 +13,13 @@ export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
     * @returns Promise resolving to array of strings - channel names
     */
     async getChannelNames (): Promise<string[]> {
-        const names: string[] = []
-        const elements = await this.parent
-            .$((this.locatorMap.BottomBarViews.actionsContainer as Function)(this.actionsLabel) as string)
-            .$$(this.locatorMap.BottomBarViews.channelOption as string)
+        const select = await this.parent.$(this.locatorMap.BottomBarViews.outputChannels as string)
+        await select.click()
+        const channels = await this.parent.$$(`${this.locatorMap.BottomBarViews.outputChannels} option`)
 
-        for (const element of elements) {
-            const disabled = await element.getAttribute('disabled')
-            if (!disabled) {
-                names.push(await element.getAttribute('value'))
-            }
+        const names = []
+        for (const channel of channels) {
+            names.push(await channel.getAttribute('value'))
         }
         return names
     }
@@ -43,49 +38,20 @@ export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
      * @param name name of the channel to open
      */
     async selectChannel (name: string): Promise<void> {
-        const rows = await this.getOptions()
-        for (let i = 0; i < rows.length; i += 1) {
-            if ((await rows[i].getAttribute('class')).indexOf('disabled') < 0) {
-                const text = await rows[i].$(this.locatorMap.BottomBarViews.channelText as string).getText()
-                if (name === text) {
-                    await rows[i].click()
-                    await new Promise((res) => setTimeout(res, 500))
-                    return
-                }
+        const select = await this.parent.$(this.locatorMap.BottomBarViews.outputChannels as string)
+        await select.click()
+        const channels = await this.parent.$$(`${this.locatorMap.BottomBarViews.outputChannels} option`)
+        for (const channel of channels) {
+            const val = await channel.getValue()
+            if (val === name) {
+                await channel.click()
+                // eslint-disable-next-line wdio/no-pause
+                await browser.pause(200)
+                await browser.keys(['Escape'])
+                return
             }
         }
         throw new Error(`Channel ${name} not found`)
-    }
-
-    private async getOptions () {
-        const combo = await this.parent.$(this.locatorMap.BottomBarViews.channelCombo as string)
-        const workbench = await browser.$(this.locatorMap.Workbench.elem as string)
-        const menus = await workbench.$$(this.locatorMap.ContextMenu.contextView as string)
-        let menu!: WebdriverIO.Element
-
-        if (menus.length < 1) {
-            await combo.click()
-            // eslint-disable-next-line wdio/no-pause
-            await browser.pause(500)
-            menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string)
-            return menu.$$(this.locatorMap.BottomBarViews.channelRow as string)
-        }
-
-        if (await menus[0].isDisplayed()) {
-            await combo.click()
-            // eslint-disable-next-line wdio/no-pause
-            await browser.pause(500)
-        }
-        await combo.click()
-        // eslint-disable-next-line wdio/no-pause
-        await browser.pause(500)
-        menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string)
-        if (!await menu.isDisplayed()) {
-            await combo.click()
-            // eslint-disable-next-line wdio/no-pause
-            await browser.pause(500)
-        }
-        return menu.$$(this.locatorMap.BottomBarViews.channelRow as string)
     }
 }
 
@@ -99,17 +65,13 @@ export abstract class TextView<T> extends ChannelView<T> {
      * Get all text from the currently open channel
      * @returns Promise resolving to the view's text
      */
-    async getText (): Promise<string> {
-        const textarea = await this.elem.$(this.locatorMap.BottomBarViews.textArea as string)
-        /**
-         * Todo(Christian): replace with actions command
-         */
-        await textarea.addValue(['CTRL', 'a'])
-        await textarea.addValue(['CTRL', 'c'])
-        const text = clipboard.readSync()
-        await textarea.click()
-        clipboard.writeSync('')
-        return text
+    async getText (): Promise<string[]> {
+        const lines = await this.elem.$$(this.locatorMap.OutputView.lines as string)
+        const ret = []
+        for (const line of lines) {
+            ret.push(await line.getText())
+        }
+        return ret.filter(Boolean)
     }
 
     /**

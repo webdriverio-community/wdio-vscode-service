@@ -34,7 +34,8 @@ export const BottomBarViews = {
     channelText: '.option-text',
     channelRow: '.monaco-list-row',
     textArea: 'textarea',
-    clearText: '.clear-output'
+    clearText: '.clear-output',
+    outputChannels: 'select[aria-label="Output Channels."]'
 }
 export const ProblemsView = {
     elem: 'div[id="workbench.panel.markers"]',
@@ -62,6 +63,7 @@ export const DebugConsoleView = {
 }
 export const OutputView = {
     elem: 'div[id="workbench.panel.output"]',
+    lines: '.view-lines div.view-line',
     actionsLabel: 'Output actions'
 }
 
@@ -284,14 +286,15 @@ export const DebugView = {
 }
 
 export const StatusBar = {
-    elem: 'div[id="workbench.parts.statusbar"]',
-    language: '#status.editor.mode',
-    lines: '#status.editor.eol',
-    encoding: '#status.editor.encoding',
-    indent: '#status.editor.indentation',
-    selection: '#status.editor.selection',
+    elem: 'footer[id="workbench.parts.statusbar"]',
+    language: 'div[id="status.editor.mode"]',
+    lines: 'div[id="status.editor.eol"]',
+    encoding: 'div[id="status.editor.encoding"]',
+    indent: 'div[id="status.editor.indentation"]',
+    selection: 'div[id="status.editor.selection"]',
     notifications: '.notifications-center',
-    bell: '#status.notifications',
+    bell: 'div[id="status.notifications"]',
+    problems: 'div[id="status.problems"]',
     item: '.statusbar-item',
     itemTitle: 'aria-label'
 }
