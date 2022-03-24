@@ -1,3 +1,4 @@
+import os from 'os'
 import fs from 'fs/promises'
 import path from 'path'
 import { format } from 'util'
@@ -50,7 +51,6 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
     }
 
-    // @ts-expect-error parent class has different structure
     async onPrepare (_: never, capabilities: ServiceCapabilities[]) {
         const version = this._options.vscode?.version || DEFAULT_CHANNEL
 
@@ -71,7 +71,6 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                     + `and Chromedriver v${content[version]?.chromedriver} already exist`
                 )
 
-                // @ts-expect-error `chromedriverCustomPath` is not defined in parent class
                 this.chromedriverCustomPath = chromedriverPath
                 this._populateCaps(capabilities, {
                     chromedriver: { version: content[version]!.chromedriver, path: chromedriverPath },
@@ -84,12 +83,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             }
         }
 
-        const [vscodeVersion, chromedriverVersion] = await this._setupChromedriver(version)
-        // @ts-expect-error `chromedriverCustomPath` is not defined
-        const chromedriverPath = this.chromedriverCustomPath = path.join(
-            this._cachePath,
-            `chromedriver-${chromedriverVersion}`
-        )
+        const [vscodeVersion, chromedriverVersion, chromedriverPath] = await this._setupChromedriver(version)
+        this.chromedriverCustomPath = chromedriverPath
         const serviceArgs: ServiceCapability = {
             chromedriver: { version: chromedriverVersion, path: chromedriverPath },
             vscode: { version: vscodeVersion, path: await this._setupVSCode(vscodeVersion) }
@@ -112,7 +107,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      *                              or a concrete version e.g. 1.66.0
      * @returns "insiders" if `desiredReleaseChannel` is set to this otherwise a concrete version
      */
-    private async _setupChromedriver (desiredReleaseChannel?: VSCodeChannel) {
+    private async _setupChromedriver (desiredReleaseChannel: VSCodeChannel) {
         const version = await this._fetchVSCodeVersion(desiredReleaseChannel)
 
         try {
@@ -125,15 +120,16 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 { extract: true, strip: 1 }
             )
 
-            const chromedriverPath = path.join(this._cachePath, `chromedriver-${chromedriverVersion}`)
-            await fs.rename(path.join(this._cachePath, 'chromedriver'), chromedriverPath)
+            const ext = os.platform().startsWith('win') ? '.exe' : ''
+            const chromedriverPath = path.join(this._cachePath, `chromedriver-${chromedriverVersion}${ext}`)
+            await fs.rename(path.join(this._cachePath, `chromedriver${ext}`), chromedriverPath)
 
             /**
              * return 'insiders' if desired release channel
              */
             return version === 'main'
-                ? [desiredReleaseChannel!, chromedriverVersion]
-                : [version, chromedriverVersion]
+                ? [desiredReleaseChannel, chromedriverVersion, chromedriverPath]
+                : [version, chromedriverVersion, chromedriverPath]
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't set up Chromedriver ${err.message}`)
         }
