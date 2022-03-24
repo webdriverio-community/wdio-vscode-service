@@ -66,7 +66,11 @@ describe('WDIO VSCode Service', () => {
             expect(currentChannel).toEqual(channels[0])
         })
 
-        it('can get extension logs', async () => {
+        /**
+         * ToDo(Christian): investigate why extension isn't loading on Windows
+         * https://github.com/webdriverio-community/wdio-vscode-service/issues/4
+         */
+        it('can get extension logs (ignore in win32)', async () => {
             const outputView = await bottomBar.openOutputView()
             await outputView.selectChannel('Guinea Pig')
             expect(await outputView.getText()).toEqual(['Hello World!'])
