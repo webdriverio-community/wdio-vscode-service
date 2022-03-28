@@ -2,7 +2,8 @@
 /// <reference path="../../dist/service.d.ts" />
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel
+    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
+    ExtensionsViewSection
 } from '../..'
 
 const locators = {
@@ -44,6 +45,40 @@ describe('WDIO VSCode Service', () => {
          * but test fails on different operating systems due to different "-" chars
          */
         expect(title).toContain('wdio-vscode-service')
+    })
+
+    describe('activity bar', () => {
+        it('should show all activity bar items', async () => {
+            const workbench = await browser.getWorkbench()
+            const viewControls = await workbench.getActivityBar().getViewControls()
+            expect(await Promise.all(viewControls.map((vc) => vc.getTitle()))).toEqual([
+                'Explorer (⇧⌘E)',
+                'Search (⇧⌘F)',
+                'Source Control (⌃⇧G)',
+                'Run and Debug (⇧⌘D)',
+                'Extensions (⇧⌘X)'
+            ])
+        })
+
+        it('can open extension view and check that first installed extension is our guinea pig', async () => {
+            const workbench = await browser.getWorkbench()
+            const extensionView = await workbench.getActivityBar().getViewControl('Extensions (⇧⌘X)')
+            await extensionView?.openView()
+            const sidebar = workbench.getSideBar()
+            const sidebarView = sidebar.getContent()
+            const extensionViewSection = (await sidebarView.getSection('EXTENSIONS')) as ExtensionsViewSection
+            const installedExtensions = await extensionViewSection.getVisibleItems()
+            expect(await installedExtensions[0].getTitle()).toBe('Guinea Pig')
+        })
+
+        it('should be able to get global options', async () => {
+            const workbench = await browser.getWorkbench()
+            const viewControls = await workbench.getActivityBar().getGlobalActions()
+            expect(await Promise.all(viewControls.map((vc) => vc.getTitle()))).toEqual([
+                'Accounts',
+                'Manage'
+            ])
+        })
     })
 
     describe('bottombar', () => {

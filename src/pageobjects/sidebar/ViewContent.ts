@@ -24,7 +24,7 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
         locators: VSCodeLocatorMap,
         public view: SideBarView<any> = new SideBarView(locators)
     ) {
-        super(locators, locators.ViewContent.elem as string)
+        super(locators, view.elem)
     }
 
     /**
@@ -48,14 +48,20 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
         const elements = await this.section$$
         let panel!: WebdriverIO.Element
 
+        const availableSections: Set<string> = new Set()
         for (const element of elements) {
-            if (await this.sectionTitle$.getAttribute(this.locators.sectionText) === title) {
+            const sectionTitle = await this.sectionTitle$.getText()
+            availableSections.add(sectionTitle)
+            if (sectionTitle === title) {
                 panel = element
                 break
             }
         }
         if (!panel) {
-            throw new Error(`No section with title '${title}' found`)
+            throw new Error(
+                `No section with title '${title}' found, `
+                + `available are: ${[...availableSections].join(', ')}`
+            )
         }
         return this.createSection(panel)
     }

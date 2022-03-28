@@ -240,12 +240,12 @@ export const CustomTreeItem = {
 export const ExtensionsViewSection = {
     items: '.monaco-list-rows',
     itemRow: '.monaco-list-row',
-    itemTitle: '.name',
     searchBox: '.inputarea',
     textContainer: '.view-line',
     textField: '.mtk1'
 }
 export const ExtensionsViewItem = {
+    itemTitle: '.name',
     version: '.version',
     author: '.author',
     description: '.description',
