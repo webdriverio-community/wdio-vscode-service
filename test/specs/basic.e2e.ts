@@ -52,11 +52,11 @@ describe('WDIO VSCode Service', () => {
             const workbench = await browser.getWorkbench()
             const viewControls = await workbench.getActivityBar().getViewControls()
             expect(await Promise.all(viewControls.map((vc) => vc.getTitle()))).toEqual([
-                'Explorer (⇧⌘E)',
-                'Search (⇧⌘F)',
-                'Source Control (⌃⇧G)',
-                'Run and Debug (⇧⌘D)',
-                'Extensions (⇧⌘X)'
+                'Explorer',
+                'Search',
+                'Source Control',
+                'Run and Debug',
+                'Extensions'
             ])
         })
 

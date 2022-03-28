@@ -28,6 +28,7 @@ export class ExtensionsViewSection extends ViewSection {
     public locatorKey = 'ExtensionsViewSection' as const
 
     async getVisibleItems (): Promise<ExtensionsViewItem[]> {
+        await this.itemRow$.waitForExist()
         const extensionRows = await this.items$.$$(this.locators.itemRow)
         const extensionViewItems: ExtensionsViewItem[] = []
 
