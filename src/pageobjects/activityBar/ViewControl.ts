@@ -19,11 +19,11 @@ export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators
  * const viewControls = await workbench.getActivityBar().getViewControls()
  * console.log(await Promise.all(viewControls.map((vc) => vc.getTitle())))
  * // returns: [
- * //    'Explorer (⇧⌘E)',
- * //    'Search (⇧⌘F)',
- * //    'Source Control (⌃⇧G)',
- * //    'Run and Debug (⇧⌘D)',
- * //    'Extensions (⇧⌘X)'
+ * //    'Explorer',
+ * //    'Search',
+ * //    'Source Control',
+ * //    'Run and Debug',
+ * //    'Extensions'
  * // ]
  * ```
  *
@@ -81,6 +81,8 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
 
     /**
      * Returns the title of the associated view
+     * @param includeKeyboardShortcuts if true it includes the keyboard shortcut
+     *                                 in the title (e.g. "Source Control (Ctrl+Shift+G)")
      */
     async getTitle (includeKeyboardShortcuts = false): Promise<string> {
         const title = await this.badge$.getAttribute('aria-label')
