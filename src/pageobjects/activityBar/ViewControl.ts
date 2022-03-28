@@ -82,7 +82,12 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
     /**
      * Returns the title of the associated view
      */
-    async getTitle (): Promise<string> {
-        return this.badge$.getAttribute('aria-label')
+    async getTitle (includeKeyboardShortcuts = false): Promise<string> {
+        const title = await this.badge$.getAttribute('aria-label')
+        if (!includeKeyboardShortcuts) {
+            return title.split(' ').slice(0, -1).join(' ')
+        }
+
+        return title
     }
 }

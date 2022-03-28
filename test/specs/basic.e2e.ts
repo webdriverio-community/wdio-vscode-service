@@ -62,7 +62,7 @@ describe('WDIO VSCode Service', () => {
 
         it('can open extension view and check that first installed extension is our guinea pig', async () => {
             const workbench = await browser.getWorkbench()
-            const extensionView = await workbench.getActivityBar().getViewControl('Extensions (⇧⌘X)')
+            const extensionView = await workbench.getActivityBar().getViewControl('Extensions')
             await extensionView?.openView()
             const sidebar = workbench.getSideBar()
             const sidebarView = sidebar.getContent()
