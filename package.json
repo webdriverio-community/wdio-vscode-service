@@ -45,7 +45,7 @@
     "wdio-chromedriver-service": "^7.3.2"
   },
   "peerDependencies": {
-    "webdriverio": "^7.19.1"
+    "webdriverio": "^7.19.2"
   },
   "peerDependenciesMeta": {
     "webdriverio": {

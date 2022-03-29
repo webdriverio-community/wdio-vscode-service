@@ -8,11 +8,13 @@ import { SevereServiceError } from 'webdriverio'
 import { Workbench } from './pageobjects'
 import { getLocators } from './utils'
 import { VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS } from './constants'
-import type { ServiceOptions, ServiceCapabilities } from './types'
+import type { ServiceOptions, ServiceCapabilities, WDIOLogs } from './types'
 
 const log = logger('wdio-vscode-service')
 
 export default class VSCodeWorkerService implements Services.ServiceInstance {
+    private _browser?: WebdriverIO.Browser
+
     constructor (private _options: ServiceOptions) {}
 
     async beforeSession (_: Options.Testrunner, capabilities: ServiceCapabilities) {
@@ -43,6 +45,10 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             customArgs.push(`--file-uri=${this._options.filePath}`)
         }
 
+        if (this._options.verboseLogging) {
+            customArgs.push('--verbose', '--logExtensionHostCommunication')
+        }
+
         capabilities.browserName = 'chrome'
         capabilities['goog:chromeOptions'] = {
             binary: capabilities['wdio:vscodeService'].vscode.path,
@@ -50,6 +56,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
                 ...VSCODE_APPLICATION_ARGS,
                 `--extensionDevelopmentPath=${this._options.extensionPath}`,
                 `--user-data-dir=${path.join(storagePath.path, 'settings')}`,
+                `--extensions-dir=${path.join(storagePath.path, 'extensions')}`,
                 ...customArgs,
                 ...(this._options.args || [])
             ].filter(Boolean),
@@ -58,14 +65,37 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     async before (capabilities: ServiceCapabilities, __: never, browser: WebdriverIO.Browser) {
+        this._browser = browser
         const locators = await getLocators(capabilities['wdio:vscodeService'].vscode.version)
         const workbenchPO = new Workbench(locators)
-        browser.addCommand('getWorkbench', () => workbenchPO.wait())
-        browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].vscode.version)
-        browser.addCommand('getVSCodeChannel', () => (
+        this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
+        this._browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].vscode.version)
+        this._browser.addCommand('getVSCodeChannel', () => (
             capabilities['wdio:vscodeService'].vscode.version === 'insiders' ? 'insiders' : 'vscode'
         ))
         return workbenchPO.elem.waitForExist()
+    }
+
+    async after () {
+        if (!this._browser || !this._options.verboseLogging) {
+            return
+        }
+
+        const logs = await this._browser.getLogs('browser').then(
+            (res) => res as WDIOLogs[],
+            (err) => err as Error
+        )
+
+        if (logs instanceof Error) {
+            return
+        }
+
+        for (const l of logs) {
+            log.info(
+                `[${(new Date(l.timestamp)).toISOString()}]`
+                + ` - ${l.source} - ${l.message}`
+            )
+        }
     }
 }
 

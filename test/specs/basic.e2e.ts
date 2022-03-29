@@ -2,9 +2,10 @@
 /// <reference path="../../dist/service.d.ts" />
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
-    ExtensionsViewSection
+    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel
 } from '../..'
+
+const skipWindows = process.platform === 'win32' ? it.skip : it
 
 const locators = {
     marquee: {
@@ -45,6 +46,17 @@ describe('WDIO VSCode Service', () => {
          * but test fails on different operating systems due to different "-" chars
          */
         expect(title).toContain('wdio-vscode-service')
+    })
+
+    skipWindows('is able to read guinea pig notification', async () => {
+        const workbench = await browser.getWorkbench()
+        await browser.waitUntil(async () => {
+            const notifs = await workbench.getNotifications()
+            const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+            return messages.includes('Hello World!')
+        }, {
+            timeoutMsg: 'Could not find test extension notification'
+        })
     })
 
     describe('activity bar', () => {

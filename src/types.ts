@@ -40,6 +40,13 @@ export interface ServiceOptions extends ChromedriverServiceOptions {
      * Additional start-up arguments
      */
     args?: string[]
+    /**
+     * If set to true, service logs VSCode output from the extension host
+     * and console API
+     *
+     * @default `true`
+     */
+    verboseLogging?: boolean
 }
 
 export interface BundleInformation {
@@ -54,4 +61,11 @@ export interface ServiceCapability {
 
 export interface ServiceCapabilities extends Capabilities.Capabilities {
     'wdio:vscodeService': ServiceCapability
+}
+
+export interface WDIOLogs {
+    level: string
+    message: string
+    source: string
+    timestamp: number
 }
