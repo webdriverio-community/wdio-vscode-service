@@ -138,6 +138,13 @@ Additional start-up arguments. See [`argv.ts`](https://github.com/microsoft/vsco
 Type: `string[]`<br />
 Default: `[]`
 
+### `verboseLogging`
+
+If set to true, service logs VSCode output from the extension host and console API.
+
+Type: `boolean`<br />
+Default: `false`
+
 ## Create Your Own PageObjects
 
 You can re-use the components used in this service for your own webview page objects. For that first create a file that defines all your selectors, e.g.:
