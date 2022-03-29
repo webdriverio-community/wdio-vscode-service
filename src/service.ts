@@ -41,15 +41,15 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
 
         if (this._options.workspacePath) {
-            customArgs.push(`--folder-uri=${this._options.workspacePath}`)
+            customArgs.push(`folder-uri=${this._options.workspacePath}`)
         }
 
         if (this._options.filePath) {
-            customArgs.push(`--file-uri=${this._options.filePath}`)
+            customArgs.push(`file-uri=${this._options.filePath}`)
         }
 
         if (this._verboseLogging) {
-            customArgs.push('--verbose', '--logExtensionHostCommunication')
+            customArgs.push('verbose', 'logExtensionHostCommunication')
         }
 
         capabilities.browserName = 'chrome'
@@ -57,8 +57,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             binary: capabilities['wdio:vscodeService'].vscode.path,
             args: [
                 ...VSCODE_APPLICATION_ARGS,
-                `--extensionDevelopmentPath=${this._options.extensionPath}`,
-                `--user-data-dir=${path.join(storagePath.path, 'settings')}`,
+                `extensionDevelopmentPath=${this._options.extensionPath}`,
+                `user-data-dir=${path.join(storagePath.path, 'settings')}`,
                 ...customArgs,
                 ...(this._options.args || [])
             ].filter(Boolean),
