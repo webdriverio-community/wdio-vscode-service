@@ -55,6 +55,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             ].filter(Boolean),
             windowTypes: ['webview']
         }
+        console.log(JSON.stringify(capabilities, null, 4))
     }
 
     async before (capabilities: ServiceCapabilities, __: never, browser: WebdriverIO.Browser) {
