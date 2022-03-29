@@ -32,7 +32,7 @@ export class ExtensionsViewItem extends ViewItem {
      * Get title of the extension
      */
     async getTitle (): Promise<string> {
-        return this.section.itemLabel$.getText()
+        return this.itemTitle$.getText()
     }
 
     /**

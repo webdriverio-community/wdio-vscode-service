@@ -28,13 +28,23 @@ export class ExtensionsViewSection extends ViewSection {
     public locatorKey = 'ExtensionsViewSection' as const
 
     async getVisibleItems (): Promise<ExtensionsViewItem[]> {
+        await this.items$.$(this.locators.itemRow).waitForExist({
+            timeoutMsg: 'Could not find any extension items'
+        })
         const extensionRows = await this.items$.$$(this.locators.itemRow)
-        return Promise.all(
-            extensionRows.map(async (row) => (
+        const extensionViewItems: ExtensionsViewItem[] = []
+
+        for (const row of extensionRows) {
+            // add implicit wait to avoid stale element exceptions
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(100)
+            extensionViewItems.push(
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new ExtensionsViewItem(this.locatorMap, row as any, this).wait()
-            ))
-        )
+                await new ExtensionsViewItem(this.locatorMap, row as any, this).wait()
+            )
+        }
+
+        return extensionViewItems
     }
 
     /**
