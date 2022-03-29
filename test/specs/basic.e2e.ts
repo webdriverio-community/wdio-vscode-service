@@ -2,8 +2,7 @@
 /// <reference path="../../dist/service.d.ts" />
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
-    ExtensionsViewSection
+    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel
 } from '../..'
 
 const locators = {

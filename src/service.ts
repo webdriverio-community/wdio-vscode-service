@@ -14,11 +14,8 @@ const log = logger('wdio-vscode-service')
 
 export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _browser?: WebdriverIO.Browser
-    private _verboseLogging: boolean
 
-    constructor (private _options: ServiceOptions) {
-        this._verboseLogging = typeof this._options.verboseLogging === 'undefined' || this._options.verboseLogging
-    }
+    constructor (private _options: ServiceOptions) {}
 
     async beforeSession (_: Options.Testrunner, capabilities: ServiceCapabilities) {
         const customArgs: string[] = []
@@ -48,7 +45,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             customArgs.push(`--file-uri=${this._options.filePath}`)
         }
 
-        if (this._verboseLogging) {
+        if (this._options.verboseLogging) {
             customArgs.push('--verbose', '--logExtensionHostCommunication')
         }
 
@@ -65,7 +62,6 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             ].filter(Boolean),
             windowTypes: ['webview']
         }
-        console.log(JSON.stringify(capabilities, null, 4))
     }
 
     async before (capabilities: ServiceCapabilities, __: never, browser: WebdriverIO.Browser) {
@@ -81,7 +77,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     async after () {
-        if (!this._browser || !this._verboseLogging) {
+        if (!this._browser || !this._options.verboseLogging) {
             return
         }
 
