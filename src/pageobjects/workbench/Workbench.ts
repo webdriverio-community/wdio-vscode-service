@@ -73,22 +73,26 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      */
     async getNotifications (): Promise<Notification[]> {
         const notifications: Notification[] = []
-        const container = await this.notificationContainer$
+        const containers = await this.notificationContainer$$
 
-        if (!await container.isExisting()) {
+        if (containers.length === 0) {
             return []
         }
-        const elements = await container.$$(this.locators.notificationItem)
 
-        for (const element of elements) {
-            notifications.push(
-                await new StandaloneNotification(
-                    this.locatorMap,
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    element as any
-                ).wait()
-            )
+        for (const container of containers) {
+            const elements = await container.$$(this.locators.notificationItem)
+
+            for (const element of elements) {
+                notifications.push(
+                    await new StandaloneNotification(
+                        this.locatorMap,
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                        element as any
+                    ).wait()
+                )
+            }
         }
+
         return notifications
     }
 

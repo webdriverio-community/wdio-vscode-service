@@ -1,5 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { BasePage, IPluginDecorator, VSCodeLocatorMap } from '../utils'
+import {
+    BasePage, IPluginDecorator, PluginDecorator, VSCodeLocatorMap
+} from '../utils'
 import { Notification as NotificationLocators } from '../../locators/1.61.0'
 
 /**
@@ -145,6 +147,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
  *
  * @category Workbench
  */
+@PluginDecorator(NotificationLocators)
 export class StandaloneNotification extends Notification {
     /**
      * @private
@@ -164,6 +167,7 @@ export class StandaloneNotification extends Notification {
  *
  * @category Workbench
  */
+@PluginDecorator(NotificationLocators)
 export class CenterNotification extends Notification {
     /**
      * @private

@@ -47,6 +47,17 @@ describe('WDIO VSCode Service', () => {
         expect(title).toContain('wdio-vscode-service')
     })
 
+    it('is able to read guinea pig notification', async () => {
+        const workbench = await browser.getWorkbench()
+        await browser.waitUntil(async () => {
+            const notifs = await workbench.getNotifications()
+            const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+            return messages.includes('Hello World')
+        }, {
+            timeoutMsg: 'Could not find test extension notification'
+        })
+    })
+
     describe('activity bar', () => {
         it('should show all activity bar items', async () => {
             const workbench = await browser.getWorkbench()
