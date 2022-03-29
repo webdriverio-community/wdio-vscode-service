@@ -52,7 +52,7 @@ describe('WDIO VSCode Service', () => {
         await browser.waitUntil(async () => {
             const notifs = await workbench.getNotifications()
             const messages = await Promise.all(notifs.map((n) => n.getMessage()))
-            return messages.includes('Hello World')
+            return messages.includes('Hello World!')
         }, {
             timeoutMsg: 'Could not find test extension notification'
         })
