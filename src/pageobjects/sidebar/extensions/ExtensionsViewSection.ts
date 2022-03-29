@@ -28,9 +28,6 @@ export class ExtensionsViewSection extends ViewSection {
     public locatorKey = 'ExtensionsViewSection' as const
 
     async getVisibleItems (): Promise<ExtensionsViewItem[]> {
-        console.log('---->')
-        console.log(await this.items$.getHTML())
-
         await this.items$.$(this.locators.itemRow).waitForExist({
             timeoutMsg: 'Could not find any extension items'
         })
