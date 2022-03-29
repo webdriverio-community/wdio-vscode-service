@@ -5,6 +5,8 @@ import {
     PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel
 } from '../..'
 
+const skipWindows = process.platform === 'win32' ? it.skip : it
+
 const locators = {
     marquee: {
         elem: 'ul[aria-label="Active View Switcher"]',
@@ -46,7 +48,7 @@ describe('WDIO VSCode Service', () => {
         expect(title).toContain('wdio-vscode-service')
     })
 
-    it('is able to read guinea pig notification', async () => {
+    skipWindows('is able to read guinea pig notification', async () => {
         const workbench = await browser.getWorkbench()
         await browser.waitUntil(async () => {
             const notifs = await workbench.getNotifications()

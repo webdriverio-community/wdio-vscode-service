@@ -8,8 +8,8 @@ export const VSCODE_APPLICATION_ARGS = [
     '--disable-updates',
     '--skip-welcome',
     '--skip-release-notes',
-    '--disable-workspace-trust'
-    // '--disable-extensions'
+    '--disable-workspace-trust',
+    '--disable-extensions'
 ]
 export const DEFAULT_VSCODE_SETTINGS = {
     'window.titleBarStyle': 'custom',
