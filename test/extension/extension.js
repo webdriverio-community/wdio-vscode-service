@@ -6,6 +6,6 @@ exports.activate = function (context) {
     vscode.window.showInformationMessage('Hello World!')
 
     context.subscriptions.push(vscode.commands.registerCommand('test-extension.callme', () => {
-		vscode.window.showInformationMessage('I got called!');
-	}))
+        vscode.window.showInformationMessage('I got called!');
+    }))
 }
