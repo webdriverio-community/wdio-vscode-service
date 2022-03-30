@@ -38,11 +38,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
 
         if (this._options.workspacePath) {
-            customArgs.push(`--folder-uri=${this._options.workspacePath.replace('\\\\', '\\')}`)
+            customArgs.push(`--folder-uri=${this._options.workspacePath.replace(/\\/g, '/')}`)
         }
 
         if (this._options.filePath) {
-            customArgs.push(`--file-uri=${this._options.filePath.replace('\\\\', '\\')}`)
+            customArgs.push(`--file-uri=${this._options.filePath.replace(/\\/g, '/')}`)
         }
 
         if (this._options.verboseLogging) {
@@ -54,7 +54,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             binary: capabilities['wdio:vscodeService'].vscode.path,
             args: [
                 ...VSCODE_APPLICATION_ARGS,
-                `--extensionDevelopmentPath=${this._options.extensionPath.replace('\\\\', '\\')}`,
+                `--extensionDevelopmentPath=${this._options.extensionPath.replace(/\\/g, '/')}`,
                 `--user-data-dir=${path.join(storagePath.path, 'settings')}`,
                 `--extensions-dir=${path.join(storagePath.path, 'extensions')}`,
                 ...customArgs,
