@@ -55,7 +55,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             binary: capabilities['wdio:vscodeService'].vscode.path,
             args: [
                 ...VSCODE_APPLICATION_ARGS,
-                `--extensionDevelopmentPath=${slash(this._options.extensionPath)}`,
+                `--extensionDevelopmentPath=file:${slash(this._options.extensionPath)}`,
                 `--user-data-dir=${slash(path.join(storagePath.path, 'settings'))}`,
                 `--extensions-dir=${slash(path.join(storagePath.path, 'extensions'))}`,
                 ...customArgs,
