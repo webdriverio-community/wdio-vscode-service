@@ -44,7 +44,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
             await clipboard.write(text)
             await input.addValue(['End'])
             await input.addValue(['Shift', 'Home'])
-            await input.addValue(['Meta', 'v'])
+            await input.addValue(['Control', 'v'])
             await clipboard.write('')
         }
     }

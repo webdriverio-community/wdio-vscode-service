@@ -108,3 +108,4 @@ example/.vscode-test
 example/.wdio-vscode-service
 docs
 .wdio-vscode-service
+test/screenshots
