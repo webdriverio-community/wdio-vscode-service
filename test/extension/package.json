@@ -22,13 +22,13 @@
     "Testing"
   ],
   "contributes": {
-		"commands": [
-			{
-				"command": "test-extension.callme",
-				"title": "Call Me!"
-			}
-		]
-	},
+    "commands": [
+      {
+        "command": "test-extension.callme",
+        "title": "Call Me!"
+      }
+    ]
+  },
   "keywords": [
     "webdriverio"
   ],
