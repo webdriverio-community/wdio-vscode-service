@@ -87,7 +87,8 @@ describe('WDIO VSCode Service', () => {
              * close settings view again after test
              */
             if (settings && await settings.elem.isExisting()) {
-                await browser.keys(['Meta', 'w'])
+                const CMD_KEY = process.platform === 'win32' ? 'Control' : 'Meta'
+                await browser.keys([CMD_KEY, 'w'])
             }
         })
     })
