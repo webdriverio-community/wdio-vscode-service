@@ -63,7 +63,7 @@ describe('WDIO VSCode Service', () => {
 
         it('executeCommand', async () => {
             const workbench = await browser.getWorkbench()
-            await workbench.executeCommand('Search: Find in Files')
+            await workbench.executeCommand('Find in Files')
             const selectedView = await workbench.getActivityBar().getSelectedViewAction()
             expect(await selectedView.getTitle()).toBe('Search')
         })
