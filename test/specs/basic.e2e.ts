@@ -2,7 +2,8 @@
 /// <reference path="../../dist/service.d.ts" />
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel
+    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
+    MacTitleBar
 } from '../..'
 
 const skipWindows = process.platform === 'win32' ? it.skip : it
@@ -76,6 +77,10 @@ describe('WDIO VSCode Service', () => {
             const workbench = await browser.getWorkbench()
             const extensionView = await workbench.getActivityBar().getViewControl('Extensions')
             await extensionView?.openView()
+
+            const selectedView = await workbench.getActivityBar().getSelectedViewAction()
+            expect(await selectedView.getTitle()).toBe('Extensions')
+
             const sidebar = workbench.getSideBar()
             const sidebarView = sidebar.getContent()
             await sidebarView.getSection('EXTENSIONS')

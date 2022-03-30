@@ -3,7 +3,8 @@ export const ActivityBar = {
     viewContainer: './/ul[@aria-label=\'Active View Switcher\']',
     label: 'aria-label',
     actionsContainer: './/ul[@aria-label=\'Manage\']',
-    actionItem: '.action-item'
+    actionItem: '.action-item',
+    actionItemSelected: '.action-item.checked'
 }
 export const ViewControl = {
     attribute: 'class',

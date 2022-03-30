@@ -51,6 +51,20 @@ export class ActivityBar extends ElementWithContextMenu<typeof ActivityBarLocato
     }
 
     /**
+     * Returns selected view control
+     * @returns Promise resolving to selected ViewControl object
+     */
+    async getSelectedViewAction (): Promise<ViewControl> {
+        const element = await this.viewContainer$.$(this.locators.actionItemSelected)
+        return new ViewControl(
+            this.locatorMap,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            element as any,
+            this
+        ).wait()
+    }
+
+    /**
      * Find all global action controls displayed on the bottom of the activity bar
      * @returns Promise resolving to array of ActionsControl objects
      */
