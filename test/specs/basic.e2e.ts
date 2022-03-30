@@ -6,7 +6,7 @@ import {
     StatusBar
 } from '../..'
 
-const skipWindows = process.platform === 'win32' ? it.skip : it
+// const skipWindows = process.platform === 'win32' ? it.skip : it
 
 const locators = {
     marquee: {
@@ -50,7 +50,7 @@ describe('WDIO VSCode Service', () => {
     })
 
     describe('workbench', () => {
-        skipWindows('is able to read guinea pig notification', async () => {
+        it('is able to read guinea pig notification', async () => {
             const workbench = await browser.getWorkbench()
             await browser.waitUntil(async () => {
                 const notifs = await workbench.getNotifications()
@@ -151,7 +151,7 @@ describe('WDIO VSCode Service', () => {
         })
     })
 
-    describe.only('statusbar', () => {
+    describe('statusbar', () => {
         let statusBar: StatusBar
 
         before(async () => {
