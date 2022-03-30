@@ -39,7 +39,7 @@
     "@wdio/logger": "^7.17.3",
     "clipboardy": "^2.3.0",
     "download": "^8.0.0",
-    "slash": "^4.0.0",
+    "slash": "^3.0.0",
     "tmp-promise": "^3.0.3",
     "undici": "^4.15.1",
     "wdio-chromedriver-service": "^7.3.2"
