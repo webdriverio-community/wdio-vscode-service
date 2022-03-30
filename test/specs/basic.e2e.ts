@@ -53,7 +53,7 @@ describe('WDIO VSCode Service', () => {
     })
 
     describe('workbench', () => {
-        it('is able to read guinea pig notification', async () => {
+        skip('win32')('is able to read guinea pig notification', async () => {
             const workbench = await browser.getWorkbench()
             await browser.waitUntil(async () => {
                 const notifs = await workbench.getNotifications()
