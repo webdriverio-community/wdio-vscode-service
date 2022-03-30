@@ -158,6 +158,7 @@ describe('WDIO VSCode Service', () => {
         let statusBar: StatusBar
 
         before(async () => {
+            await browser.keys(['Control', 'r'])
             const workbench = await browser.getWorkbench()
             statusBar = workbench.getStatusBar()
         })
