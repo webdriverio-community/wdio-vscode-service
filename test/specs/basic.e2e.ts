@@ -6,7 +6,10 @@ import {
     StatusBar
 } from '../..'
 
-// const skipWindows = process.platform === 'win32' ? it.skip : it
+function skip (param: string | string[] = process.platform) {
+    const platforms = Array.isArray(param) ? param : [param]
+    return platforms.includes(process.platform) ? it.skip : it
+}
 
 const locators = {
     marquee: {
@@ -61,14 +64,14 @@ describe('WDIO VSCode Service', () => {
             })
         })
 
-        it('executeCommand', async () => {
+        skip('linux')('executeCommand', async () => {
             const workbench = await browser.getWorkbench()
             await workbench.executeCommand('Find in Files')
             const selectedView = await workbench.getActivityBar().getSelectedViewAction()
             expect(await selectedView.getTitle()).toBe('Search')
         })
 
-        it('openSettings', async () => {
+        skip('linux')('openSettings', async () => {
             const workbench = await browser.getWorkbench()
             const settings = await workbench.openSettings()
             const setting = await settings.findSetting('Cursor Style', 'Editor')
