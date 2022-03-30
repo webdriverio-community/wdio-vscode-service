@@ -3,10 +3,13 @@
 
 import {
     PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
-    MacTitleBar
+    StatusBar, SettingsEditor
 } from '../..'
 
-const skipWindows = process.platform === 'win32' ? it.skip : it
+function skip (param: string | string[] = process.platform) {
+    const platforms = Array.isArray(param) ? param : [param]
+    return platforms.includes(process.platform) ? it.skip : it
+}
 
 const locators = {
     marquee: {
@@ -49,14 +52,44 @@ describe('WDIO VSCode Service', () => {
         expect(title).toContain('wdio-vscode-service')
     })
 
-    skipWindows('is able to read guinea pig notification', async () => {
-        const workbench = await browser.getWorkbench()
-        await browser.waitUntil(async () => {
-            const notifs = await workbench.getNotifications()
-            const messages = await Promise.all(notifs.map((n) => n.getMessage()))
-            return messages.includes('Hello World!')
-        }, {
-            timeoutMsg: 'Could not find test extension notification'
+    describe('workbench', () => {
+        skip('win32')('is able to read guinea pig notification', async () => {
+            const workbench = await browser.getWorkbench()
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                return messages.includes('Hello World!')
+            }, {
+                timeoutMsg: 'Could not find test extension notification'
+            })
+        })
+
+        skip('linux')('executeCommand', async () => {
+            const workbench = await browser.getWorkbench()
+            await workbench.executeCommand('Find in Files')
+            const selectedView = await workbench.getActivityBar().getSelectedViewAction()
+            expect(await selectedView.getTitle()).toBe('Search')
+        })
+    })
+
+    describe('settings', () => {
+        let settings: SettingsEditor
+
+        skip('linux')('openSettings', async () => {
+            const workbench = await browser.getWorkbench()
+            settings = await workbench.openSettings()
+            const setting = await settings.findSetting('Cursor Style', 'Editor')
+            expect(await setting.getValue()).toBe('line')
+        })
+
+        after(async () => {
+            /**
+             * close settings view again after test
+             */
+            if (settings && await settings.elem.isExisting()) {
+                const CMD_KEY = process.platform === 'win32' ? 'Control' : 'Meta'
+                await browser.keys([CMD_KEY, 'w'])
+            }
         })
     })
 
@@ -128,10 +161,47 @@ describe('WDIO VSCode Service', () => {
          * ToDo(Christian): investigate why extension isn't loading on Windows
          * https://github.com/webdriverio-community/wdio-vscode-service/issues/4
          */
-        it('can get extension logs (ignore in win32)', async () => {
+        skip('win32')('can get extension logs', async () => {
             const outputView = await bottomBar.openOutputView()
             await outputView.selectChannel('Guinea Pig')
             expect(await outputView.getText()).toEqual(['Hello World!'])
+        })
+    })
+
+    describe('statusbar', () => {
+        let statusBar: StatusBar
+
+        before(async () => {
+            const workbench = await browser.getWorkbench()
+            statusBar = workbench.getStatusBar()
+        })
+
+        it('can receive all items', async () => {
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(1000)
+            const items = await statusBar.getItems()
+            expect(items).toContain('Markdown')
+            expect(items).toContain('Ln 1, Col 1')
+        })
+
+        it('can get line ending', async () => {
+            expect(await statusBar.getCurrentLineEnding()).toBe('LF')
+        })
+
+        it('can get current position', async () => {
+            expect(await statusBar.getCurrentPosition()).toBe('Ln 1, Col 1')
+        })
+
+        it('can get current line indentation', async () => {
+            expect(await statusBar.getCurrentIndentation()).toBe('Spaces: 4')
+        })
+
+        it('can get current encoding', async () => {
+            expect(await statusBar.getCurrentEncoding()).toBe('UTF-8')
+        })
+
+        it('can get current language', async () => {
+            expect(await statusBar.getCurrentLanguage()).toBe('Markdown')
         })
     })
 })

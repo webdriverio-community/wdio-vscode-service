@@ -4,6 +4,7 @@ import {
 } from './1.54.0'
 
 export * from './1.54.0'
+export const locatorVersion = '1.56.0'
 export const bottomBar = {
     ...TerminalViewImport,
     newTerminal: './/a[@title=\'New Terminal\']'

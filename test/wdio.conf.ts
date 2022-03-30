@@ -1,3 +1,4 @@
+import fs from 'fs/promises'
 import path from 'path'
 import type { Options } from '@wdio/types'
 
@@ -132,7 +133,8 @@ export const config: Options.Testrunner = {
     services: [['vscode', {
         extensionPath: path.join(__dirname, 'extension'),
         workspacePath: path.join(__dirname, '..'),
-        filePath: path.join(__dirname, '..', 'README.md')
+        filePath: path.join(__dirname, '..', 'README.md'),
+        verboseLogging: true
     }]],
 
     // Framework you want to run your specs with.
@@ -164,7 +166,7 @@ export const config: Options.Testrunner = {
         timeout: 60000,
         grep: process.platform,
         invert: true
-    }
+    },
     //
     // =====
     // Hooks
@@ -259,8 +261,16 @@ export const config: Options.Testrunner = {
      * @param {Boolean} result.passed    true if test has passed, otherwise false
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    // afterTest: function(test, context, { error, result, duration, passed, retries }) {
-    // },
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    afterTest: async (test, __, { passed }) => {
+        if (passed) {
+            return
+        }
+
+        const screenshotDir = path.join(__dirname, 'screenshots')
+        await fs.mkdir(screenshotDir, { recursive: true })
+        await browser.saveScreenshot(path.join(screenshotDir, `${test.parent} - ${test.title}.png`))
+    }
     /**
      * Hook that gets executed after the suite has ended
      * @param {Object} suite suite details

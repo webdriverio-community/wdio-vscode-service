@@ -1,6 +1,7 @@
 import { Editor, InputBox, WebView } from '..'
 import { PluginDecorator, IPluginDecorator } from '../utils'
 import { Editor as EditorLocators } from '../../locators/1.61.0'
+import { CMD_KEY } from '../../constants'
 
 export interface CustomEditor extends IPluginDecorator<typeof EditorLocators> {}
 /**
@@ -38,7 +39,7 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      */
     async save (): Promise<void> {
         const tab = await this.getTab()
-        await tab.elem.addValue(['Meta', 's'])
+        await tab.elem.addValue([CMD_KEY, 's'])
     }
 
     /**
@@ -48,7 +49,7 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      */
     async saveAs (): Promise<InputBox> {
         const tab = await this.getTab()
-        await tab.elem.addValue(['Meta', 'Shift', 's'])
+        await tab.elem.addValue([CMD_KEY, 'Shift', 's'])
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
         await inputBox.waitForExist({ timeout: 5000 })
         return new InputBox(this.locatorMap)

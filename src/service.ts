@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import slash from 'slash'
 import tmp from 'tmp-promise'
 import logger from '@wdio/logger'
 import { Services, Options } from '@wdio/types'
@@ -38,11 +39,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
 
         if (this._options.workspacePath) {
-            customArgs.push(`--folder-uri=${this._options.workspacePath}`)
+            customArgs.push(`--folder-uri=file:${slash(this._options.workspacePath)}`)
         }
 
         if (this._options.filePath) {
-            customArgs.push(`--file-uri=${this._options.filePath}`)
+            customArgs.push(`--file-uri=file:${slash(this._options.filePath)}`)
         }
 
         if (this._options.verboseLogging) {
@@ -54,9 +55,9 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             binary: capabilities['wdio:vscodeService'].vscode.path,
             args: [
                 ...VSCODE_APPLICATION_ARGS,
-                `--extensionDevelopmentPath=${this._options.extensionPath}`,
-                `--user-data-dir=${path.join(storagePath.path, 'settings')}`,
-                `--extensions-dir=${path.join(storagePath.path, 'extensions')}`,
+                `--extensionDevelopmentPath=${slash(this._options.extensionPath)}`,
+                `--user-data-dir=${slash(path.join(storagePath.path, 'settings'))}`,
+                `--extensions-dir=${slash(path.join(storagePath.path, 'extensions'))}`,
                 ...customArgs,
                 ...(this._options.args || [])
             ].filter(Boolean),

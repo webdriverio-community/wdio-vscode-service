@@ -6,6 +6,7 @@ import {
 } from './1.44.0'
 
 export * from './1.44.0'
+export const locatorVersion = '1.45.0'
 export const NotificationsCenter = {
     ...NotificationsCenterImport,
     closeBtn: '.codicon-notifications-hide',

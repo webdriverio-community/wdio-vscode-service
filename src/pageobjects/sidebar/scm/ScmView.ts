@@ -6,6 +6,7 @@ import {
     ElementWithContextMenu, VSCodeLocatorMap, PluginDecorator, IPluginDecorator, BasePage
 } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0'
+import { CMD_KEY } from '../../../constants'
 
 export interface ScmView extends IPluginDecorator<typeof ScmViewLocators> { }
 /**
@@ -142,7 +143,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         const input = await this.inputField$
         await input.clearValue()
         await input.addValue(message)
-        await input.addValue(['Meta', 'Enter'])
+        await input.addValue([CMD_KEY, 'Enter'])
     }
 
     /**

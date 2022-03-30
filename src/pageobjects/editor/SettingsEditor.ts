@@ -44,7 +44,7 @@ export class SettingsEditor extends Editor<EditorLocators> {
     async findSetting (title: string, ...categories: string[]): Promise<Setting> {
         const category = categories.join(' › ')
         const searchBox = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await searchBox.addValue(['Meta', 'a', `${category}: ${title}`])
+        await searchBox.setValue(`${category}: ${title}`)
 
         const count = await this.itemCount$
         let textCount = await count.getText()
@@ -94,7 +94,9 @@ export class SettingsEditor extends Editor<EditorLocators> {
     }
 
     private async createSetting (element: WebdriverIO.Element, title: string, category: string): Promise<Setting> {
-        await element.$(this.locators.settingConstructor(title, category))
+        if (!await element.$(this.locators.settingConstructor(title, category)).isExisting()) {
+            throw new Error('Setting not found')
+        }
 
         // try a combo setting
         if (await element.$(this.locators.comboSetting).isExisting()) {
@@ -184,6 +186,7 @@ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
  *
  * @category Editor
  */
+@PluginDecorator(SettingsEditorLocators)
 export class ComboSetting extends Setting {
     /**
      * @private

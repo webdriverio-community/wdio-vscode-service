@@ -74,6 +74,8 @@ In your `tsconfig.json` make sure to add `wdio-vscode-service` to your list of t
 }
 ```
 
+## Usage
+
 You can then use the `getWorkspace` method to access the page objects for the locators matching your desired VSCode version:
 
 ```ts
@@ -86,7 +88,7 @@ describe('WDIO VSCode Service', () => {
 })
 ```
 
-For the full page object documentation, check out the [docs](https://webdriverio-community.github.io/wdio-vscode-service/modules.html).
+For the full page object documentation, check out the [docs](https://webdriverio-community.github.io/wdio-vscode-service/modules.html). You can find various usage examples in this [projects test suite](https://github.com/webdriverio-community/wdio-vscode-service/blob/main/test/specs/basic.e2e.ts).
 
 ## Configuration
 

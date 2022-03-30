@@ -21,6 +21,14 @@
   "categories": [
     "Testing"
   ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "test-extension.callme",
+        "title": "Call Me!"
+      }
+    ]
+  },
   "keywords": [
     "webdriverio"
   ],
@@ -29,7 +37,6 @@
   ],
   "browser": "./extension.js",
   "main": "./extension.js",
-  "contributes": {},
   "scripts": {},
   "devDependencies": {}
 }

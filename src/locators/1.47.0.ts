@@ -4,6 +4,7 @@ import {
 } from './1.46.0'
 
 export * from './1.46.0'
+export const locatorVersion = '1.47.0'
 export const CustomTreeItem = {
     ...CustomTreeItemImport,
     elem: (label: string) => `.//div[@role='treeitem' and .//span[text()='${label}']]`
