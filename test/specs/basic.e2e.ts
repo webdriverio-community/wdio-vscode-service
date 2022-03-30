@@ -137,36 +137,36 @@ describe('WDIO VSCode Service', () => {
         })
     })
 
-    // describe('bottombar', () => {
-    //     let bottomBar: BottomBarPanel
+    describe('bottombar', () => {
+        let bottomBar: BottomBarPanel
 
-    //     before(async () => {
-    //         const workbench = await browser.getWorkbench()
-    //         bottomBar = workbench.getBottomBar()
-    //         await bottomBar.toggle(true)
-    //     })
+        before(async () => {
+            const workbench = await browser.getWorkbench()
+            bottomBar = workbench.getBottomBar()
+            await bottomBar.toggle(true)
+        })
 
-    //     it('can get output channels', async () => {
-    //         const outputView = await bottomBar.openOutputView()
-    //         const channels = await outputView.getChannelNames()
-    //         expect(channels).toContain('Tasks')
-    //         expect(channels).toContain('Extensions')
-    //         expect(channels).toContain('Log (Extension Host)')
+        it('can get output channels', async () => {
+            const outputView = await bottomBar.openOutputView()
+            const channels = await outputView.getChannelNames()
+            expect(channels).toContain('Tasks')
+            expect(channels).toContain('Extensions')
+            expect(channels).toContain('Log (Extension Host)')
 
-    //         const currentChannel = await outputView.getCurrentChannel()
-    //         expect(currentChannel).toEqual(channels[0])
-    //     })
+            const currentChannel = await outputView.getCurrentChannel()
+            expect(currentChannel).toEqual(channels[0])
+        })
 
-    //     /**
-    //      * ToDo(Christian): investigate why extension isn't loading on Windows
-    //      * https://github.com/webdriverio-community/wdio-vscode-service/issues/4
-    //      */
-    //     it('can get extension logs (ignore in win32)', async () => {
-    //         const outputView = await bottomBar.openOutputView()
-    //         await outputView.selectChannel('Guinea Pig')
-    //         expect(await outputView.getText()).toEqual(['Hello World!'])
-    //     })
-    // })
+        /**
+         * ToDo(Christian): investigate why extension isn't loading on Windows
+         * https://github.com/webdriverio-community/wdio-vscode-service/issues/4
+         */
+        skip('win32')('can get extension logs', async () => {
+            const outputView = await bottomBar.openOutputView()
+            await outputView.selectChannel('Guinea Pig')
+            expect(await outputView.getText()).toEqual(['Hello World!'])
+        })
+    })
 
     describe('statusbar', () => {
         let statusBar: StatusBar

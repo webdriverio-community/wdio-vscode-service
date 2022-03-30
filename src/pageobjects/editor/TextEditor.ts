@@ -13,6 +13,7 @@ import {
     TextEditor as TextEditorLocators,
     FindWidget as FindWidgetLocators
 } from '../../locators/1.61.0'
+import { CMD_KEY } from '../../constants'
 
 export interface TextEditor extends IPluginDecorator<EditorLocators> {}
 /**
@@ -42,7 +43,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async save (): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue(['Meta', 's'])
+        await inputarea.addValue([CMD_KEY, 's'])
     }
 
     /**
@@ -52,7 +53,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async saveAs (): Promise<InputBox> {
         const tab = await this.getTab()
-        await tab.elem.addValue(['Meta', 'Shift', 's'])
+        await tab.elem.addValue([CMD_KEY, 'Shift', 's'])
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
         await inputBox.waitForExist({ timeout: 5000 })
         return new InputBox(this.locatorMap, inputBox)
@@ -95,7 +96,7 @@ export class TextEditor extends Editor<EditorLocators> {
 
         if (open) {
             if (isHidden) {
-                await inputarea.addValue(['Meta', 'Space'])
+                await inputarea.addValue([CMD_KEY, 'Space'])
                 await browser.$(this.locatorMap.ContentAssist.elem as string)
                     .waitForExist({ timeout: 2000 })
             }
@@ -115,7 +116,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getText (): Promise<string> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue(['Meta', 'a', 'Meta', 'c'])
+        await inputarea.addValue([CMD_KEY, 'a', CMD_KEY, 'c'])
         const text = clipboard.readSync()
         await inputarea.addValue(['ArrowUp'])
         clipboard.writeSync('')
@@ -131,7 +132,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async setText (text: string, formatText = false): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
         clipboard.writeSync(text)
-        await inputarea.sendKeys(['Meta', 'a', 'Meta', 'v'])
+        await inputarea.sendKeys([CMD_KEY, 'a', CMD_KEY, 'v'])
         clipboard.writeSync('')
         if (formatText) {
             await this.formatDocument()
@@ -144,7 +145,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async clearText (): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue(['Meta', 'a'])
+        await inputarea.addValue([CMD_KEY, 'a'])
         await inputarea.addValue(['Backspace'])
     }
 
@@ -258,7 +259,7 @@ export class TextEditor extends Editor<EditorLocators> {
     }
 
     async openFindWidget (): Promise<FindWidget> {
-        await browser.keys(['Meta', 'f'])
+        await browser.keys([CMD_KEY, 'f'])
         const widget = await browser.$(this.locators.findWidget)
         await widget.waitForDisplayed({ timeout: 2000 })
 

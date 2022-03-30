@@ -26,3 +26,4 @@ export const CHROMEDRIVER_RELEASES = 'https://chromedriver.storage.googleapis.co
 export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleapis.com/%s/chromedriver_%s.zip'
 
 export const DEFAULT_CACHE_PATH = path.join(process.cwd(), '.wdio-vscode-service')
+export const CMD_KEY = process.platform === 'win32' ? 'Control' : 'Meta'

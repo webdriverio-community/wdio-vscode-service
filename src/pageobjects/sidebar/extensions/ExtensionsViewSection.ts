@@ -2,6 +2,7 @@ import { ViewSection } from '../ViewSection'
 import { ExtensionsViewItem, AllViewSectionLocators } from '../..'
 import { PluginDecorator, IPluginDecorator } from '../../utils'
 import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0'
+import { CMD_KEY } from '../../../constants'
 
 /**
  * Categories of extensions to search for
@@ -98,7 +99,7 @@ export class ExtensionsViewSection extends ViewSection {
 
         try {
             await textField.$(this.locators.textField)
-            await searchField.addValue(['Meta', 'a'])
+            await searchField.addValue([CMD_KEY, 'a'])
             await searchField.addValue(['Backspace'])
             await progress.waitForDisplayed()
             await progress.waitForDisplayed({ reverse: true })
