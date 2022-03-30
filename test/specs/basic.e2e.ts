@@ -86,7 +86,7 @@ describe('WDIO VSCode Service', () => {
             /**
              * close settings view again after test
              */
-            if (await settings.elem.isExisting()) {
+            if (settings && await settings.elem.isExisting()) {
                 await browser.keys(['Meta', 'w'])
             }
         })
