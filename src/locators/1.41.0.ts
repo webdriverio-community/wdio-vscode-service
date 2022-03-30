@@ -4,6 +4,7 @@ import {
 } from './1.40.0'
 
 export * from './1.40.0'
+export const locatorVersion = '1.41.0'
 export const ViewSection = {
     ...ViewSectionImport,
     header: '.pane-header'

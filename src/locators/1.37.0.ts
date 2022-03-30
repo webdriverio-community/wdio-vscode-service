@@ -1,3 +1,4 @@
+export const locatorVersion = '1.37.0'
 export const ActivityBar = {
     elem: 'div[id="workbench.parts.activitybar"]',
     viewContainer: './/ul[@aria-label=\'Active View Switcher\']',

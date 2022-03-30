@@ -4,6 +4,7 @@ import {
 } from './1.41.0'
 
 export * from './1.41.0'
+export const locatorVersion = '1.43.0'
 export const NotificationsCenter = {
     ...NotificationsCenterImport,
     closeBtn: '.codicon-chevron-down'

@@ -20,7 +20,12 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * @returns Promise resolving to an array of WebElement
      */
     async getItems () {
-        return this.item$$
+        const elems = await this.item$$
+        const items: string[] = []
+        for (const elem of elems) {
+            items.push(await elem.getAttribute(this.locators.itemTitle))
+        }
+        return items.map((i) => i.trim()).filter(Boolean)
     }
 
     /**
@@ -29,7 +34,7 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      * @returns Promise resolving to a WebElement if item is found, to undefined otherwise
      */
     async getItem (title: string) {
-        const items = await this.getItems()
+        const items = await this.item$$
         for (const item of items) {
             if (await item.getAttribute(this.locators.itemTitle) === title) {
                 return item
@@ -166,6 +171,6 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
     }
 
     private async getPartText (locator: string): Promise<string> {
-        return this.elem.$(locator).$('a').getAttribute('innerHTML')
+        return this.elem.$(locator).$('a').getText()
     }
 }

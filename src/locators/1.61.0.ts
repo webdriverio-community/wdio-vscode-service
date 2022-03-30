@@ -4,6 +4,7 @@ import {
 } from './1.60.0'
 
 export * from './1.60.0'
+export const locatorVersion = '1.61.0'
 export const sideBar = {
     ...DefaultTreeItemImport,
     tooltip: '.monaco-icon-label'
