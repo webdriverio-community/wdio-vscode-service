@@ -11,7 +11,9 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "build": "tsc -b .",
+    "build": "run-s build:*",
+    "build:ts": "tsc -b .",
+    "build:chmod": "chmod +x ./dist/chromium/index.js",
     "ci": "run-s lint build test",
     "clean": "rimraf ./node_modules yarn-lock.yaml ./dist",
     "docs": "typedoc",
