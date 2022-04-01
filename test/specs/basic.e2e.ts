@@ -53,7 +53,7 @@ describe('WDIO VSCode Service', () => {
     })
 
     describe('workbench', () => {
-        it.only('is able to read guinea pig notification', async () => {
+        it('is able to read guinea pig notification', async () => {
             const workbench = await browser.getWorkbench()
             await browser.waitUntil(async () => {
                 const notifs = await workbench.getNotifications()
@@ -157,11 +157,7 @@ describe('WDIO VSCode Service', () => {
             expect(currentChannel).toEqual(channels[0])
         })
 
-        /**
-         * ToDo(Christian): investigate why extension isn't loading on Windows
-         * https://github.com/webdriverio-community/wdio-vscode-service/issues/4
-         */
-        skip('win32')('can get extension logs', async () => {
+        it('can get extension logs', async () => {
             const outputView = await bottomBar.openOutputView()
             await outputView.selectChannel('Guinea Pig')
             expect(await outputView.getText()).toEqual(['Hello World!'])
