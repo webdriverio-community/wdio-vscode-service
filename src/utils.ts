@@ -69,3 +69,10 @@ export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
 export function fileExist (filepath: string) {
     return fs.access(filepath).then(() => true, () => false)
 }
+
+export function getValueSuffix (value: string | boolean) {
+    if (typeof value === 'boolean' && value) {
+        return ''
+    }
+    return `=${value}`
+}

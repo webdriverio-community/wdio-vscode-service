@@ -3,13 +3,16 @@ import path from 'path'
 import slash from 'slash'
 import tmp from 'tmp-promise'
 import logger from '@wdio/logger'
+import decamelize from 'decamelize'
 import { Services, Options } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
-import { getLocators } from './utils'
+import { getLocators, getValueSuffix } from './utils'
 import { VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS } from './constants'
-import type { ServiceOptions, ServiceCapabilities, WDIOLogs } from './types'
+import type {
+    ServiceOptions, ServiceCapabilities, WDIOLogs, ArgsParams
+} from './types'
 
 const log = logger('wdio-vscode-service')
 
@@ -19,13 +22,18 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     constructor (private _options: ServiceOptions) {}
 
     async beforeSession (_: Options.Testrunner, capabilities: ServiceCapabilities) {
-        const customArgs: string[] = []
+        const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
         const storagePath = await tmp.dir()
         const userSettings = path.join(storagePath.path, 'settings', 'User')
 
         if (!this._options.extensionPath) {
             throw new SevereServiceError('No extension path provided')
         }
+
+        customArgs.extensionDevelopmentPath = slash(this._options.extensionPath)
+        customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
+        customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
+        customArgs.vscodeBinaryPath = capabilities['wdio:vscodeService'].vscode.path
 
         log.info(`Setting up VSCode directory at ${userSettings}`)
         await fs.mkdir(userSettings, { recursive: true })
@@ -39,30 +47,29 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
 
         if (this._options.workspacePath) {
-            customArgs.push(`--folder-uri=file:${slash(this._options.workspacePath)}`)
+            customArgs.folderUri = `file:${slash(this._options.workspacePath)}`
         }
 
         if (this._options.filePath) {
-            customArgs.push(`--file-uri=file:${slash(this._options.filePath)}`)
+            customArgs.fileUri = `file:${slash(this._options.filePath)}`
         }
 
         if (this._options.verboseLogging) {
-            customArgs.push('--verbose', '--logExtensionHostCommunication')
+            customArgs.verbose = true
+            customArgs.logExtensionHostCommunication = true
         }
 
+        const binary = path.join(__dirname, 'chromium', 'index.js')
+        const args = Object.entries({ ...customArgs, ...this._options.args }).reduce(
+            (prev, [key, value]) => [
+                ...prev,
+                `--${decamelize(key, { separator: '-' })}${getValueSuffix(value)}`
+            ],
+            [] as string[]
+        )
         capabilities.browserName = 'chrome'
-        capabilities['goog:chromeOptions'] = {
-            binary: capabilities['wdio:vscodeService'].vscode.path,
-            args: [
-                ...VSCODE_APPLICATION_ARGS,
-                `--extensionDevelopmentPath=${slash(this._options.extensionPath)}`,
-                `--user-data-dir=${slash(path.join(storagePath.path, 'settings'))}`,
-                `--extensions-dir=${slash(path.join(storagePath.path, 'extensions'))}`,
-                ...customArgs,
-                ...(this._options.args || [])
-            ].filter(Boolean),
-            windowTypes: ['webview']
-        }
+        capabilities['goog:chromeOptions'] = { binary, args, windowTypes: ['webview'] }
+        log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
     }
 
     async before (capabilities: ServiceCapabilities, __: never, browser: WebdriverIO.Browser) {

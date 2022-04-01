@@ -1,16 +1,17 @@
 import path from 'path'
+import type { ArgsParams } from './types'
 
 export const DEFAULT_CHANNEL = 'stable'
-export const VSCODE_APPLICATION_ARGS = [
+export const VSCODE_APPLICATION_ARGS: ArgsParams = {
     // https://github.com/microsoft/vscode/issues/84238
-    '--no-sandbox',
+    noSandbox: true,
     // https://github.com/microsoft/vscode-test/issues/120
-    '--disable-updates',
-    '--skip-welcome',
-    '--skip-release-notes',
-    '--disable-workspace-trust',
-    '--disable-extensions'
-]
+    disableUpdates: true,
+    skipWelcome: true,
+    skipReleaseNotes: true,
+    disableWorkspaceTrust: true,
+    disableExtensions: true
+}
 export const DEFAULT_VSCODE_SETTINGS = {
     'window.titleBarStyle': 'custom',
     'workbench.editor.enablePreview': false,

@@ -37,12 +37,15 @@
   "dependencies": {
     "@vscode/test-electron": "^2.1.3",
     "@wdio/logger": "^7.17.3",
+    "camelcase": "^6.3.0",
     "clipboardy": "^2.3.0",
+    "decamelize": "5.0.1",
     "download": "^8.0.0",
     "slash": "^3.0.0",
     "tmp-promise": "^3.0.3",
     "undici": "^4.15.1",
-    "wdio-chromedriver-service": "^7.3.2"
+    "wdio-chromedriver-service": "^7.3.2",
+    "yargs-parser": "^21.0.1"
   },
   "peerDependencies": {
     "webdriverio": "^7.19.2"

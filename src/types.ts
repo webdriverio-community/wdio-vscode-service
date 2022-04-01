@@ -8,10 +8,12 @@ export interface ServiceDownloadOptions extends Omit<DownloadOptions, 'version'>
     version: VSCodeChannel
 }
 
+export type ArgsParams = Record<string, string | boolean>
+
 /**
  * wdio-vscode-service options
  */
-export interface ServiceOptions extends ChromedriverServiceOptions {
+export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'> {
     /**
      * Define which VSCode application should be used for testing
      */
@@ -37,9 +39,16 @@ export interface ServiceOptions extends ChromedriverServiceOptions {
      */
     filePath?: string
     /**
-     * Additional start-up arguments
+     * Additional start-up arguments as object, e.g.
+     * ```
+     * args: { fooBar: true, 'bar-foo': '/foobar' }
+     * ```
+     * will be passed in as:
+     * ```
+     * --foo-bar --fooBar --bar-foo=/foobar
+     * ```
      */
-    args?: string[]
+    args?: ArgsParams
     /**
      * If set to true, service logs VSCode output from the extension host
      * and console API
