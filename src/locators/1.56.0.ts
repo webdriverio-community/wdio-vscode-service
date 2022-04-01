@@ -5,11 +5,11 @@ import {
 
 export * from './1.54.0'
 export const locatorVersion = '1.56.0'
-export const bottomBar = {
+export const TerminalView = {
     ...TerminalViewImport,
     newTerminal: './/a[@title=\'New Terminal\']'
 }
-export const editor = {
+export const EditorView = {
     ...EditorViewImport,
     webView: './/div[starts-with(@id, \'webview-editor\')]'
 }

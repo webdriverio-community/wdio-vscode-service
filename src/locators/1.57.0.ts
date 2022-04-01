@@ -9,7 +9,7 @@ export const TerminalView = {
     ...TerminalViewImport,
     elem: '.integrated-terminal'
 }
-export const editor = {
+export const EditorView = {
     ...EditorViewImport,
     settingsEditor: '.settings-editor'
 }
