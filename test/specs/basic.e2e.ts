@@ -70,7 +70,7 @@ describe('WDIO VSCode Service', () => {
             for (const notif of notifs) {
                 await notif.dismiss()
             }
-            expect(await workbench.getNotifications()).toHaveLength(0)
+            expect(await workbench.hasNotifications()).toBe(false)
         })
 
         skip('linux')('executeCommand', async () => {

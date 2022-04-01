@@ -95,8 +95,17 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      */
     async dismiss (): Promise<void> {
         const btn = await this.dismiss$
+
+        /**
+         * make button interactable given they only contain
+         * text on hover
+         */
+        await browser.execute(
+            (btnSection) => { btnSection.style.display = 'block' },
+            await this.btnSection$ as any as HTMLLinkElement
+        )
+
         await btn.click()
-        await btn.waitForDisplayed({ reverse: true, timeout: 2000 })
     }
 
     /**
