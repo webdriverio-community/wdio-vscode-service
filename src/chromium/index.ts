@@ -11,12 +11,12 @@ import argvParser from 'yargs-parser'
  * @return {Object}           child process running chrome
  */
 function run (p: NodeJS.Process, execFile: typeof childProcess.execFile) {
-    console.error('[FAKE VSCode Binary] init...') // eslint-disable-line no-console
+    console.info('[FAKE VSCode Binary] init...') // eslint-disable-line no-console
 
     p.on('uncaughtException',
         /* istanbul ignore next */
         // eslint-disable-next-line no-console
-        (err) => console.error(`[FAKE Chrome Binary] Error: ${err.stack}`))
+        (err) => console.info(`[FAKE Chrome Binary] Error: ${err.stack}`))
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { _: positionalParams, ...argv } = argvParser(process.argv.slice(2), {
@@ -35,11 +35,9 @@ function run (p: NodeJS.Process, execFile: typeof childProcess.execFile) {
         return `--${key}=${value}`
     })
     const args: string[] = [...params, ...positionalParams.map(String)]
+
     // eslint-disable-next-line no-console
-    console.error(
-        `[FAKE Chrome Binary] starting: ${p.env.CHROME_BINARY}`,
-        args.join(' ')
-    )
+    console.info(`[FAKE Chrome Binary] starting: ${binaryPath}`, args.join(' '))
     const cp = execFile(binaryPath, args, {
         env: p.env,
         cwd: p.cwd()
