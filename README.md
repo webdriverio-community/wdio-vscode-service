@@ -12,7 +12,7 @@ This WebdriverIO service allows you to seamlessly test your VSCode extensions fr
 
 - Installing VSCode (either `stable`, `insiders` or a specified version)
 - Downloading Chromedriver specific to given VSCode version
-- Starting VSCode with custom user settings
+- Starting VSCode with custom user settings (including support for VSCode on Ubuntu, MacOS and Windows)
 - Bootstraping page objects with locators matching your VSCode version
 
 This project was highly inspired by the [vscode-extension-tester](https://www.npmjs.com/package/vscode-extension-tester) project which is based on Selenium. This package takes the idea and adapts it for WebdriverIO.
