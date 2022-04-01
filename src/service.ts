@@ -59,7 +59,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             customArgs.logExtensionHostCommunication = true
         }
 
-        const binary = path.join(__dirname, 'chromium', 'index.js')
+        const binary = path.join(__dirname, 'chromium', `index.${process.platform === 'win32' ? 'exe' : 'js'}`)
         const args = Object.entries({ ...customArgs, ...this._options.args }).reduce(
             (prev, [key, value]) => [
                 ...prev,
