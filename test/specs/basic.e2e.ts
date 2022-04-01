@@ -64,6 +64,15 @@ describe('WDIO VSCode Service', () => {
             })
         })
 
+        it('is able to close all notifications', async () => {
+            const workbench = await browser.getWorkbench()
+            const notifs = await workbench.getNotifications()
+            for (const notif of notifs) {
+                await notif.dismiss()
+            }
+            expect(await workbench.getNotifications()).toHaveLength(0)
+        })
+
         skip('linux')('executeCommand', async () => {
             const workbench = await browser.getWorkbench()
             await workbench.executeCommand('Find in Files')
