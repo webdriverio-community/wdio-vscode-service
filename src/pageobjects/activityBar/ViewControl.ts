@@ -87,7 +87,14 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
     async getTitle (includeKeyboardShortcuts = false): Promise<string> {
         const title = await this.badge$.getAttribute('aria-label')
         if (!includeKeyboardShortcuts) {
-            return title.split(' ').slice(0, -1).join(' ')
+            /**
+             * title label can be:
+             * - "Source Control (⌃⇧G)
+             * or
+             * - "Source Control (⌃⇧G) - 8 pending
+             * both needs to be stripped so we can only have to deal with "Source Control"
+             */
+            return title.split(' - ')[0].split(' ').slice(0, -1).join(' ')
         }
 
         return title

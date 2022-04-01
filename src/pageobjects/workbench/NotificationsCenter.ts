@@ -37,7 +37,7 @@ export class NotificationsCenter extends BasePage<typeof NotificationsCenterLoca
     /**
      * Get all notifications of a given type
      * @param type type of the notifications to look for,
-     * NotificationType.Any will retrieve all notifications
+     *             NotificationType.Any will retrieve all notifications
      *
      * @returns Promise resolving to array of Notification objects
      */

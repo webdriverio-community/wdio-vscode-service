@@ -313,6 +313,7 @@ export const Notification = {
     progress: '.monaco-progress-container',
     dismiss: '.clear-notification-action',
     expand: '.codicon-notifications-expand',
+    btnSection: '.notification-list-item-toolbar-container',
     actions: '.notification-list-item-buttons-container',
     action: '.monaco-button',
     actionLabel: 'title',

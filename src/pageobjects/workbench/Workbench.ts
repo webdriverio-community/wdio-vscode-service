@@ -97,6 +97,14 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
     }
 
     /**
+     * Verifies if any notifications are shown
+     * @returns true if workbench has notifications, false otherwise
+     */
+    hasNotifications (): Promise<boolean> {
+        return this.notificationContainer$.isExisting()
+    }
+
+    /**
      * Opens the notifications center
      * @returns Promise resolving to NotificationsCenter object
      */

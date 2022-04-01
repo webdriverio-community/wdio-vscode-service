@@ -5,11 +5,11 @@ import {
 
 export * from './1.60.0'
 export const locatorVersion = '1.61.0'
-export const sideBar = {
+export const DefaultTreeItem = {
     ...DefaultTreeItemImport,
     tooltip: '.monaco-icon-label'
 }
-export const bottomBar = {
+export const BottomBarPanel = {
     ...BottomBarPanelImport,
     globalActions: '.global-actions'
 }
