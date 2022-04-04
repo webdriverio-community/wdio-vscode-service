@@ -98,7 +98,8 @@ export const TextEditor = {
     lineOverlay: (line: number) => `.//div[contains(@class, 'line-numbers') and text() = '${line}']/..`,
     breakPoint: '.codicon-debug-breakpoint',
     debugHint: '.codicon-debug-hint',
-    selection: '.cslr selected-text top-left-radius bottom-left-radius top-right-radius bottom-right-radius',
+    // eslint-disable-next-line max-len
+    selection: 'div[class="cslr selected-text top-left-radius bottom-left-radius top-right-radius bottom-right-radius"]',
     findWidget: '.find-widget'
 }
 export const FindWidget = {

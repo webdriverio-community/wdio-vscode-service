@@ -43,7 +43,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     private _cachePath: string
 
     constructor (
-        private _options: Omit<ServiceOptions, 'args'>,
+        private _options: ServiceOptions,
         capabilities: Capabilities.Capabilities,
         config: Options.Testrunner
     ) {

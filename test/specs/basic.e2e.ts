@@ -1,9 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../dist/service.d.ts" />
 
+import path from 'path'
 import {
     PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
-    StatusBar, SettingsEditor
+    StatusBar, SettingsEditor, TextEditor, FindWidget
 } from '../..'
 
 function skip (param: string | string[] = process.platform) {
@@ -29,30 +30,27 @@ class TestPageObject extends BasePage<typeof locators.marquee, typeof locators> 
 }
 
 describe('WDIO VSCode Service', () => {
-    it('exports necessary components for custom pageobjects', () => {
-        expect(typeof PluginDecorator).toBe('function')
-        expect(typeof BasePage).toBe('function')
-    })
+    describe('page objects', () => {
+        it('exports necessary components for custom pageobjects', () => {
+            expect(typeof PluginDecorator).toBe('function')
+            expect(typeof BasePage).toBe('function')
+        })
 
-    it('can use exported page object structure', async () => {
-        const page = new TestPageObject(locators)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const menuItemCnt = await page.itemCnt()
-        expect(menuItemCnt).toBe(await page.menuitems$$.length)
-    })
-
-    it('should be able to load VSCode', async () => {
-        const workbench = await browser.getWorkbench()
-        const title = await workbench.getTitleBar().getTitle()
-
-        /**
-         * actual title is "[Extension Development Host] - README.md - wdio-vscode-service"
-         * but test fails on different operating systems due to different "-" chars
-         */
-        expect(title).toContain('wdio-vscode-service')
+        it('can use exported page object structure', async () => {
+            const page = new TestPageObject(locators)
+            const menuItemCnt = await page.itemCnt()
+            expect(menuItemCnt).toBe(await page.menuitems$$.length)
+        })
     })
 
     describe('workbench', () => {
+        it('should be able to load VSCode', async () => {
+            const workbench = await browser.getWorkbench()
+            const title = await workbench.getTitleBar().getTitle()
+            expect(title).toContain('README.md')
+            expect(title).toContain('wdio-vscode-service')
+        })
+
         it('is able to read guinea pig notification', async () => {
             const workbench = await browser.getWorkbench()
             await browser.waitUntil(async () => {
@@ -207,6 +205,111 @@ describe('WDIO VSCode Service', () => {
 
         it('can get current language', async () => {
             expect(await statusBar.getCurrentLanguage()).toBe('Markdown')
+        })
+    })
+
+    describe('TextEditor', () => {
+        let tab: TextEditor
+        before(async () => {
+            const workbench = await browser.getWorkbench()
+            const editorView = workbench.getEditorView()
+            tab = await editorView.openEditor('README.md') as TextEditor
+        })
+
+        it('getFilePath', async () => {
+            expect(await tab.getFilePath())
+                .toContain(`wdio-vscode-service${path.sep}README.md`)
+        })
+
+        it('getFileUri', async () => {
+            expect(await tab.getFileUri())
+                .toContain('wdio-vscode-service/README.md')
+        })
+
+        it('getText', async () => {
+            expect(await tab.getText())
+                .toContain('For more information on WebdriverIO check out the project')
+        })
+
+        it('setText', async () => {
+            await tab.setText('Hello World!\n\nThis is an automated text change.\n\nEnd of conversation.')
+            const newText = await tab.getText()
+            expect(newText).not.toContain('For more information on WebdriverIO check out the project')
+            expect(newText).toContain('Hello World')
+        })
+
+        it('getTextAtLine', async () => {
+            const textOnLine3 = await tab.getTextAtLine(3)
+            expect(textOnLine3).toBe('This is an automated text change.')
+        })
+
+        it('setTextAtLine', async () => {
+            const err = await tab.setTextAtLine(99, 'foobar')
+                .catch((error) => error as Error)
+            expect(err?.message).toBe('Line number 99 does not exist')
+
+            await tab.setTextAtLine(3, 'foobar')
+            expect(await tab.getTextAtLine(3)).toBe('foobar')
+        })
+
+        it('getLineOfText', async () => {
+            expect(await tab.getLineOfText('foobar')).toBe(3)
+        })
+
+        it('selectText / getSelectedText', async () => {
+            await tab.selectText('foobar')
+            expect(await tab.getSelectedText()).toBe('foobar')
+        })
+
+        it('typeTextAt', async () => {
+            await tab.typeTextAt(3, 4, 'loo')
+            expect(await tab.getTextAtLine(3)).toBe('fooloobar')
+        })
+
+        it('typeText', async () => {
+            await tab.moveCursor(3, 7)
+            await tab.typeText('boo')
+            expect(await tab.getTextAtLine(3)).toBe('foolooboobar')
+        })
+
+        it('getCoordinates', async () => {
+            await tab.moveCursor(3, 7)
+            expect(await tab.getCoordinates()).toEqual([3, 7])
+        })
+
+        it('getNumberOfLines', async () => {
+            expect(await tab.getNumberOfLines()).toBe(5)
+        })
+
+        it('clearText', async () => {
+            await tab.clearText()
+            const clearedText = await tab.getText()
+            expect(clearedText).toBe('')
+        })
+
+        describe('openFindWidget', () => {
+            let findWidget: FindWidget
+
+            before(async () => {
+                await tab.setText('Hello World!\n\nThis is an automated text change.\n\nEnd of conversation.')
+                findWidget = await tab.openFindWidget()
+            })
+
+            it('should be able to find text', async () => {
+                await findWidget.setSearchText('automated text')
+                expect(await findWidget.getSearchText())
+                    .toBe('automated text')
+            })
+
+            it('getResultCount', async () => {
+                expect(await findWidget.getResultCount()).toEqual([1, 1])
+            })
+
+            it('setReplaceText', async () => {
+                await findWidget.setReplaceText('manual text')
+                await findWidget.replace()
+                expect(await tab.getTextAtLine(3)).toBe('This is an manual text change.')
+            })
         })
     })
 })
