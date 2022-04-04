@@ -135,10 +135,27 @@ Type: `string`
 
 ### `args`
 
-Additional start-up arguments. See [`argv.ts`](https://github.com/microsoft/vscode/blob/ef70f99af7c90bb37f6dbb797c36de76a51ba73b/src/vs/platform/environment/common/argv.ts#L6-L113) for all supported arguments.
+Additional Chromedriver arguments (see `chromedriver --help` for more information)
 
 Type: `string[]`<br />
 Default: `[]`
+
+### `vscodeArgs`
+
+Additional start-up arguments as object, e.g.
+
+```ts
+vscodeArgs: { fooBar: true, 'bar-foo': '/foobar' }
+```
+
+will be passed in as:
+
+```ts
+--foo-bar --fooBar --bar-foo=/foobar
+```
+
+Type: `Record<string, string | boolean>`<br />
+Default: see [`constants.ts#L5-L14`](https://github.com/webdriverio-community/wdio-vscode-service/blob/196a69be3ac2fb82d9c7e4f19a2a1c8ccbaec1e2/src/constants.ts#L5-L14)
 
 ### `verboseLogging`
 

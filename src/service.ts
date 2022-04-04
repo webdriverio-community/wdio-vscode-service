@@ -60,7 +60,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
 
         const binary = path.join(__dirname, 'chromium', `index.${process.platform === 'win32' ? 'exe' : 'js'}`)
-        const args = Object.entries({ ...customArgs, ...this._options.args }).reduce(
+        const args = Object.entries({ ...customArgs, ...this._options.vscodeArgs }).reduce(
             (prev, [key, value]) => [
                 ...prev,
                 `--${decamelize(key, { separator: '-' })}${getValueSuffix(value)}`

@@ -39,16 +39,20 @@ export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'>
      */
     filePath?: string
     /**
+     * Additional Chromedriver arguments (see `chromedriver --help` for more information)
+     */
+    args?: string[]
+    /**
      * Additional start-up arguments as object, e.g.
      * ```
-     * args: { fooBar: true, 'bar-foo': '/foobar' }
+     * vscodeArgs: { fooBar: true, 'bar-foo': '/foobar' }
      * ```
      * will be passed in as:
      * ```
      * --foo-bar --fooBar --bar-foo=/foobar
      * ```
      */
-    args?: ArgsParams
+    vscodeArgs?: ArgsParams
     /**
      * If set to true, service logs VSCode output from the extension host
      * and console API
