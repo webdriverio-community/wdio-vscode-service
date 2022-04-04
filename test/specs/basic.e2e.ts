@@ -4,7 +4,7 @@
 import path from 'path'
 import {
     PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
-    StatusBar, SettingsEditor, TextEditor
+    StatusBar, SettingsEditor, TextEditor, FindWidget
 } from '../..'
 
 function skip (param: string | string[] = process.platform) {
@@ -261,10 +261,55 @@ describe('WDIO VSCode Service', () => {
             expect(await tab.getSelectedText()).toBe('foobar')
         })
 
+        it('typeTextAt', async () => {
+            await tab.typeTextAt(3, 4, 'loo')
+            expect(await tab.getTextAtLine(3)).toBe('fooloobar')
+        })
+
+        it('typeText', async () => {
+            await tab.moveCursor(3, 7)
+            await tab.typeText('boo')
+            expect(await tab.getTextAtLine(3)).toBe('foolooboobar')
+        })
+
+        it('getCoordinates', async () => {
+            await tab.moveCursor(3, 7)
+            expect(await tab.getCoordinates()).toEqual([3, 7])
+        })
+
+        it('getNumberOfLines', async () => {
+            expect(await tab.getNumberOfLines()).toBe(5)
+        })
+
         it('clearText', async () => {
             await tab.clearText()
             const clearedText = await tab.getText()
             expect(clearedText).toBe('')
+        })
+
+        describe('openFindWidget', () => {
+            let findWidget: FindWidget
+
+            before(async () => {
+                await tab.setText('Hello World!\n\nThis is an automated text change.\n\nEnd of conversation.')
+                findWidget = await tab.openFindWidget()
+            })
+
+            it('should be able to find text', async () => {
+                await findWidget.setSearchText('automated text')
+                expect(await findWidget.getSearchText())
+                    .toBe('automated text')
+            })
+
+            it('getResultCount', async () => {
+                expect(await findWidget.getResultCount()).toEqual([1, 1])
+            })
+
+            it('setReplaceText', async () => {
+                await findWidget.setReplaceText('manual text')
+                await findWidget.replace()
+                expect(await tab.getTextAtLine(3)).toBe('This is an manual text change.')
+            })
         })
     })
 })

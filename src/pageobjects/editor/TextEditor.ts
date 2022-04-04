@@ -384,14 +384,16 @@ export class TextEditor extends Editor<EditorLocators> {
         const breakPoint = await lineOverlay.$$(this.locators.breakPoint)
         if (breakPoint.length > 0) {
             await breakPoint[0].click()
-            await new Promise((res) => setTimeout(res, 200))
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(200)
             return false
         }
 
         const noBreak = await lineOverlay.$$(this.locators.debugHint)
         if (noBreak.length > 0) {
             await noBreak[0].click()
-            await new Promise((res) => setTimeout(res, 200))
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(200)
             return true
         }
         return false
@@ -556,8 +558,8 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * @param text text to fill in
      */
     async setSearchText (text: string): Promise<void> {
-        const findPart = await this.findPart$
-        await this.setText(text, findPart)
+        await browser.keys([CMD_KEY, 'f'])
+        await browser.keys(text)
     }
 
     /**
@@ -718,6 +720,6 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
 
     private async getInputText (composite: WebdriverIO.Element) {
         const input = await composite.$(this.locators.content)
-        return input.getAttribute('innerHTML')
+        return input.getHTML(false)
     }
 }
