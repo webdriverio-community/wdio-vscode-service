@@ -165,7 +165,7 @@ export class TextEditor extends Editor<EditorLocators> {
         if (line < 1 || line > lines.length) {
             throw new Error(`Line number ${line} does not exist`)
         }
-        return lines[line - 1]
+        return lines[line - 1].trim()
     }
 
     /**

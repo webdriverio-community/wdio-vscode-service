@@ -223,7 +223,7 @@ describe('WDIO VSCode Service', () => {
 
         it('getFileUri', async () => {
             expect(await tab.getFileUri())
-                .toContain(`wdio-vscode-service${path.sep}README.md`)
+                .toContain('wdio-vscode-service/README.md')
         })
 
         it('getText', async () => {
