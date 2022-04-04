@@ -81,7 +81,8 @@ export const config: Options.Testrunner = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        browserName: 'VSCode',
+        browserVersion: process.env.VSCODE_VERSION || 'stable'
     }],
     //
     // ===================
@@ -131,6 +132,7 @@ export const config: Options.Testrunner = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: [['vscode', {
+        vscode: { version: process.env.VSCODE_VERSION || 'stable' },
         extensionPath: path.join(__dirname, 'extension'),
         workspacePath: path.join(__dirname, '..'),
         filePath: path.join(__dirname, '..', 'README.md')
