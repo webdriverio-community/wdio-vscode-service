@@ -292,15 +292,20 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
      */
     async getTabByTitle (title: string): Promise<EditorTab> {
         const tabs = await this.tab$$
+        const availableLabels = new Set()
         for (const tab of tabs) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const editorTab = new EditorTab(this.locatorMap, tab as any, this.view)
             const label = await editorTab.getTitle()
+            availableLabels.add(label)
             if (label === title) {
                 return editorTab
             }
         }
-        throw new Error(`No editor with title '${title}' available`)
+        throw new Error(
+            `No editor with title '${title}' found, `
+            + `available editor were: ${[...availableLabels].join(', ')}`
+        )
     }
 
     /**

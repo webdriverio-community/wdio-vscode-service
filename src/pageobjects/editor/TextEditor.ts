@@ -116,11 +116,17 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getText (): Promise<string> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 'a', CMD_KEY, 'c'])
+        await inputarea.addValue([CMD_KEY, 'a', 'c'])
         const text = clipboard.readSync()
         await inputarea.addValue(['ArrowUp'])
         clipboard.writeSync('')
-        return text
+
+        /**
+         * let's return "" if the editor is empty rather than "\n"
+         */
+        return text.trim().length === 0
+            ? ''
+            : text
     }
 
     /**
@@ -132,7 +138,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async setText (text: string, formatText = false): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
         clipboard.writeSync(text)
-        await inputarea.sendKeys([CMD_KEY, 'a', CMD_KEY, 'v'])
+        await inputarea.addValue([CMD_KEY, 'a', 'v'])
         clipboard.writeSync('')
         if (formatText) {
             await this.formatDocument()
@@ -145,8 +151,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async clearText (): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 'a'])
-        await inputarea.addValue(['Backspace'])
+        await inputarea.addValue([CMD_KEY, 'a', 'Backspace'])
     }
 
     /**
@@ -223,25 +228,16 @@ export class TextEditor extends Editor<EditorLocators> {
 
         await this.moveCursor(lineNum, column)
 
-        const action = ['Shift']
-        for (let i = 0; i < text.length; i += 1) {
-            action.push('Right')
-        }
-        await browser.keys(action)
-        await new Promise((res) => setTimeout(res, 500))
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
+        await inputarea.addValue([CMD_KEY, 'Shift', 'ArrowRight'])
     }
 
     /**
      * Get the text that is currently selected as string
      */
     async getSelectedText (): Promise<string> {
-        const selection = await this.getSelection()
-        if (!selection) {
-            return ''
-        }
-        const menu = await selection.openContextMenu()
-        await menu.select('Copy')
-        await new Promise((res) => setTimeout(res, 500))
+        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
+        await inputarea.addValue([CMD_KEY, 'c'])
         return clipboard.read()
     }
 
