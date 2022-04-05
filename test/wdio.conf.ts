@@ -81,8 +81,7 @@ export const config: Options.Testrunner = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'VSCode',
-        browserVersion: process.env.VSCODE_VERSION || 'stable'
+        browserName: 'chrome'
     }],
     //
     // ===================
