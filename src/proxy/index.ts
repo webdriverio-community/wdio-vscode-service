@@ -5,6 +5,8 @@ import WebSocket from 'ws'
 import { SETTINGS_KEY } from '../constants'
 import type { RemoteCommand, RemoteResponse } from '../types'
 
+console.log('VSCode proxy service running...');
+
 export async function run(): Promise<void> {
     const config = vscode.workspace.getConfiguration(SETTINGS_KEY)
     console.log(`Connect to service proxy ${JSON.stringify(config)} - ${config.port}`);
