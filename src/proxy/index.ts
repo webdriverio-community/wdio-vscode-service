@@ -1,3 +1,5 @@
+console.log('RUN ME BEFORE IMPORTR')
+
 /* eslint-disable */
 import vscode from 'vscode'
 import WebSocket from 'ws'
