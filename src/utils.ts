@@ -56,6 +56,10 @@ export function validatePlatform () {
 }
 
 export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
+    if (version === 'insiders') {
+        return import('./locators/insiders') as any as Promise<VSCodeLocatorMap>
+    }
+
     const files = (await fs.readdir(path.join(__dirname, 'locators'), { encoding: 'utf-8' }))
         .filter((filename) => filename.endsWith('.js') && !filename.endsWith('.d.ts'))
         .map((filename) => filename.slice(0, -3))
