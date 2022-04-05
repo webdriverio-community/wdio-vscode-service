@@ -81,6 +81,21 @@ describe('WDIO VSCode Service', () => {
             const selectedView = await workbench.getActivityBar().getSelectedViewAction()
             expect(await selectedView.getTitle()).toBe('Search')
         })
+
+        it.only('can access VSCode API through service interface', async () => {
+            const workbench = await browser.getWorkbench()
+            await browser.executeWorkbench((vscode) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                vscode.window.showInformationMessage('I am an API call!')
+            })
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                return messages.includes('I am an API call!')
+            }, {
+                timeoutMsg: 'Could not find test extension notification'
+            })
+        })
     })
 
     describe('settings', () => {

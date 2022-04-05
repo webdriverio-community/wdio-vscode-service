@@ -28,3 +28,4 @@ export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleap
 
 export const DEFAULT_CACHE_PATH = path.join(process.cwd(), '.wdio-vscode-service')
 export const CMD_KEY = process.platform === 'darwin' ? 'Meta' : 'Control'
+export const WS_PORT = 4001

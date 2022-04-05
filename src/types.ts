@@ -82,3 +82,17 @@ export interface WDIOLogs {
     source: string
     timestamp: number
 }
+
+export interface RemoteCommand {
+    id: number
+    fn: string
+    params: any[]
+}
+
+export interface RemoteResponse {
+    id: number
+    result: any,
+    error?: string
+}
+
+export type PendingMessageResolver = (error: string | undefined, result: any) => void

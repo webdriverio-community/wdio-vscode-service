@@ -4,22 +4,59 @@ import slash from 'slash'
 import tmp from 'tmp-promise'
 import logger from '@wdio/logger'
 import decamelize from 'decamelize'
+import { WebSocketServer, WebSocket } from 'ws'
 import { Services, Options } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
 import { getLocators, getValueSuffix } from './utils'
-import { VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS } from './constants'
+import { VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, WS_PORT } from './constants'
 import type {
-    ServiceOptions, ServiceCapabilities, WDIOLogs, ArgsParams
+    ServiceOptions, ServiceCapabilities, WDIOLogs, ArgsParams,
+    RemoteCommand, RemoteResponse, PendingMessageResolver
 } from './types'
 
 const log = logger('wdio-vscode-service')
+const CMD_TIMEOUT = 5000
+const CONNECTION_TIMEOUT = 5000
 
 export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _browser?: WebdriverIO.Browser
+    private _wss = new WebSocketServer({ port: WS_PORT })
+    private _messageId = 0
+    private _pendingMessages = new Map<number, PendingMessageResolver>()
+    private _promisedSocket: Promise<WebSocket>
 
-    constructor (private _options: ServiceOptions) {}
+    constructor (private _options: ServiceOptions) {
+        this._promisedSocket = new Promise((resolve, reject) => {
+            const socketTimeout = setTimeout(
+                () => reject(new Error('Connection timeout exceeded')),
+                CONNECTION_TIMEOUT
+            )
+            this._wss.on('connection', (socket) => {
+                resolve(socket)
+                clearTimeout(socketTimeout)
+                socket.on('message', this._handleIncoming.bind(this))
+            })
+        })
+    }
+
+    private _handleIncoming (data: Buffer) {
+        try {
+            const message = JSON.parse(data.toString('utf-8')) as RemoteResponse
+            const resolver = this._pendingMessages.get(message.id)
+
+            if (!resolver) {
+                log.error(`Couldn't find remote message resolver with id ${message.id}`)
+                return
+            }
+
+            resolver(message.error, message.result)
+            return
+        } catch (err: any) {
+            log.error(`Error parsing remote response: ${err.message}`)
+        }
+    }
 
     async beforeSession (_: Options.Testrunner, capabilities: ServiceCapabilities) {
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
@@ -31,6 +68,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
 
         customArgs.extensionDevelopmentPath = slash(this._options.extensionPath)
+        customArgs.extensionTestsPath = slash(path.join(__dirname, 'proxy', 'index.js'))
         customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
         customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
         customArgs.vscodeBinaryPath = capabilities['wdio:vscodeService'].vscode.path
@@ -77,6 +115,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         const locators = await getLocators(capabilities['wdio:vscodeService'].vscode.version)
         const workbenchPO = new Workbench(locators)
         this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
+        this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
         this._browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].vscode.version)
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities['wdio:vscodeService'].vscode.version === 'insiders' ? 'insiders' : 'vscode'
@@ -104,6 +143,39 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
                 + ` - ${l.source} - ${l.message}`
             )
         }
+
+        this._wss.close()
+    }
+
+    private async _executeVSCode (fn: Function | string, ...params: any[]) {
+        const socket = await this._promisedSocket
+
+        const proxyFn = typeof fn === 'function'
+            ? fn.toString()
+            : fn
+
+        socket.send(JSON.stringify(<RemoteCommand>{
+            id: this._messageId,
+            fn: proxyFn,
+            params
+        }))
+
+        const returnVal = new Promise((resolve, reject) => {
+            const cmdTimeout = setTimeout(
+                () => reject(new Error('Remote command timeout exceeded')),
+                CMD_TIMEOUT
+            )
+            this._pendingMessages.set(this._messageId, (error: string | undefined, result: any) => {
+                clearTimeout(cmdTimeout)
+                if (error) {
+                    reject(new Error(error))
+                    return
+                }
+                resolve(result)
+            })
+        })
+        this._messageId += 1
+        return returnVal
     }
 }
 
@@ -111,6 +183,8 @@ declare global {
     namespace WebdriverIO {
         interface Browser {
             getWorkbench: () => Promise<Workbench>
+            // Todo(Christian): properly type VSCode object here
+            executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T) => Promise<T>
             getVSCodeVersion: () => Promise<string>
             getVSCodeChannel: () => Promise<string>
         }
