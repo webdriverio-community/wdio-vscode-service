@@ -95,13 +95,13 @@ describe('WDIO VSCode Service', () => {
 
 ### Accessing VSCode APIs
 
-If you like to execute certain automation through the [VSCode API](https://code.visualstudio.com/api/references/vscode-api) you can do that by running remote commands via the custom `executeWorkbench` command, e.g.:
+If you like to execute certain automation through the [VSCode API](https://code.visualstudio.com/api/references/vscode-api) you can do that by running remote commands via the custom `executeWorkbench` command. This command allows to remote execute code from your test inside the VSCode environment and enables to access the VSCode API. You can pass arbitrary paramaters into the function which will then be propagated into the function. The `vscode` object will be always passed in as first argument following the outer function parameters. Note that you can not access variables outside of the function scoped as the callback is executed remotely. Here is an example:
 
 ```ts
 const workbench = await browser.getWorkbench()
-await browser.executeWorkbench((vscode) => {
-    vscode.window.showInformationMessage('I am an API call!')
-})
+await browser.executeWorkbench((vscode, param1, param2) => {
+    vscode.window.showInformationMessage(`I am an ${param1} ${param2}!`)
+}, 'API', 'call')
 
 const notifs = await workbench.getNotifications()
 console.log(await notifs[0].getMessage()) // outputs: "I am an API call!"
