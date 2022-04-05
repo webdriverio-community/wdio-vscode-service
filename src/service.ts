@@ -86,8 +86,6 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
 
         customArgs.extensionDevelopmentPath = slash(this._options.extensionPath)
         customArgs.extensionTestsPath = slash(path.join(__dirname, 'proxy', 'index.js'))
-        console.log((await fs.readFile(customArgs.extensionTestsPath)).toString())
-
         customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
         customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
         customArgs.vscodeBinaryPath = capabilities['wdio:vscodeService'].vscode.path

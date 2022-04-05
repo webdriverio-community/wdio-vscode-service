@@ -1,43 +1,37 @@
-console.log('HAHAHAHAHH')
+/* eslint-disable */
+import vscode from 'vscode'
+import WebSocket from 'ws'
 
-// console.log('RUN ME BEFORE IMPORTR')
+import { SETTINGS_KEY } from '../constants'
+import type { RemoteCommand, RemoteResponse } from '../types'
 
-// /* eslint-disable */
-// import vscode from 'vscode'
-// import WebSocket from 'ws'
+export async function run(): Promise<void> {
+    const config = vscode.workspace.getConfiguration(SETTINGS_KEY)
+    console.log(`Connect to service proxy on port ${config.port}`);
 
-// import { SETTINGS_KEY } from '../constants'
-// import type { RemoteCommand, RemoteResponse } from '../types'
+    const ws = new WebSocket(`ws://localhost:${config.port}`)
+    ws.on('open', () => console.log('WebSocket proxy connected'))
+    ws.on('message', (data) => {
+        try {
+            const message = data.toString()
+            console.log(`Received remote command: ${message}`);
+            vscode.window
 
-// console.log('VSCode proxy service running...');
+            const { id, fn, params } = JSON.parse(data.toString()) as RemoteCommand
 
-// export async function run(): Promise<void> {
-//     const config = vscode.workspace.getConfiguration(SETTINGS_KEY)
-//     console.log(`Connect to service proxy on port ${config.port}`);
+            try {
+                const result = eval(fn).call(globalThis, vscode, ...params)
+                const response = JSON.stringify(<RemoteResponse>{ id, result })
+                console.log(`Return remote response: ${response}`);
 
-//     const ws = new WebSocket(`ws://localhost:${config.port}`)
-//     ws.on('open', () => console.log('WebSocket proxy connected'))
-//     ws.on('message', (data) => {
-//         try {
-//             const message = data.toString()
-//             console.log(`Received remote command: ${message}`);
-//             vscode.window
+                return ws.send(response)
+            } catch (err: any) {
+                return ws.send(JSON.stringify(<RemoteResponse>{ id, error: err.message }))
+            }
+        } catch (err: any) {
+            console.error(`Failed run remote command: ${err.message}`)
+        }
+    })
 
-//             const { id, fn, params } = JSON.parse(data.toString()) as RemoteCommand
-
-//             try {
-//                 const result = eval(fn).call(globalThis, vscode, ...params)
-//                 const response = JSON.stringify(<RemoteResponse>{ id, result })
-//                 console.log(`Return remote response: ${response}`);
-
-//                 return ws.send(response)
-//             } catch (err: any) {
-//                 return ws.send(JSON.stringify(<RemoteResponse>{ id, error: err.message }))
-//             }
-//         } catch (err: any) {
-//             console.error(`Failed run remote command: ${err.message}`)
-//         }
-//     })
-
-//     return new Promise(() => {})
-// }
+    return new Promise(() => {})
+}
