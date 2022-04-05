@@ -8,6 +8,33 @@ export interface ServiceDownloadOptions extends Omit<DownloadOptions, 'version'>
     version: VSCodeChannel
 }
 
+/**
+ * Settings to handle VSCode Proxy API
+ */
+export interface VSCodeProxyOptions {
+    /**
+     * If set to true, the service tries to establish a connection with the
+     * VSCode workbench to enable access to the VSCode API
+     * @default true
+     */
+    enable?: boolean
+    /**
+     * Port of the WebSocket connection used to connect to the workbench.
+     * @default 4001
+     */
+    port?: number
+    /**
+     * Timeout for connecting to WebSocket inside of VSCode
+     * @default 5000
+     */
+    connectionTimeout: number
+    /**
+     * Timeout for command to be executed within VSCode
+     * @default 5000
+     */
+    commandTimeout: number
+}
+
 export type ArgsParams = Record<string, string | boolean>
 
 /**
@@ -60,6 +87,10 @@ export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'>
      * @default `true`
      */
     verboseLogging?: boolean
+    /**
+     * VSCode API proxy configurations
+     */
+    vscodeProxyOptions: VSCodeProxyOptions
 }
 
 export interface BundleInformation {

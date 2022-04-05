@@ -10,35 +10,42 @@ import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
 import { getLocators, getValueSuffix } from './utils'
-import { VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, WS_PORT } from './constants'
+import {
+    VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS
+} from './constants'
 import type {
     ServiceOptions, ServiceCapabilities, WDIOLogs, ArgsParams,
-    RemoteCommand, RemoteResponse, PendingMessageResolver
+    RemoteCommand, RemoteResponse, PendingMessageResolver,
+    VSCodeProxyOptions
 } from './types'
 
 const log = logger('wdio-vscode-service')
-const CMD_TIMEOUT = 5000
-const CONNECTION_TIMEOUT = 5000
 
 export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _browser?: WebdriverIO.Browser
-    private _wss = new WebSocketServer({ port: WS_PORT })
+    private _wss?: WebSocketServer
     private _messageId = 0
     private _pendingMessages = new Map<number, PendingMessageResolver>()
-    private _promisedSocket: Promise<WebSocket>
+    private _promisedSocket?: Promise<WebSocket>
+    private _proxyOptions: Required<VSCodeProxyOptions>
 
     constructor (private _options: ServiceOptions) {
-        this._promisedSocket = new Promise((resolve, reject) => {
-            const socketTimeout = setTimeout(
-                () => reject(new Error('Connection timeout exceeded')),
-                CONNECTION_TIMEOUT
-            )
-            this._wss.on('connection', (socket) => {
-                resolve(socket)
-                clearTimeout(socketTimeout)
-                socket.on('message', this._handleIncoming.bind(this))
+        this._proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...this._options.vscodeProxyOptions }
+
+        if (this._proxyOptions.enable) {
+            this._wss = new WebSocketServer({ port: this._proxyOptions.port })
+            this._promisedSocket = new Promise((resolve, reject) => {
+                const socketTimeout = setTimeout(
+                    () => reject(new Error('Connection timeout exceeded')),
+                    this._proxyOptions.connectionTimeout
+                )
+                this._wss!.on('connection', (socket) => {
+                    resolve(socket)
+                    clearTimeout(socketTimeout)
+                    socket.on('message', this._handleIncoming.bind(this))
+                })
             })
-        })
+        }
     }
 
     private _handleIncoming (data: Buffer) {
@@ -144,10 +151,16 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             )
         }
 
-        this._wss.close()
+        if (this._wss) {
+            this._wss.close()
+        }
     }
 
     private async _executeVSCode (fn: Function | string, ...params: any[]) {
+        if (!this._promisedSocket) {
+            throw new Error('VSCode API proxy not enabled, see "vscodeProxyOptions" option in service docs')
+        }
+
         const socket = await this._promisedSocket
 
         const proxyFn = typeof fn === 'function'
@@ -163,7 +176,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         const returnVal = new Promise((resolve, reject) => {
             const cmdTimeout = setTimeout(
                 () => reject(new Error('Remote command timeout exceeded')),
-                CMD_TIMEOUT
+                this._proxyOptions.commandTimeout
             )
             this._pendingMessages.set(this._messageId, (error: string | undefined, result: any) => {
                 clearTimeout(cmdTimeout)

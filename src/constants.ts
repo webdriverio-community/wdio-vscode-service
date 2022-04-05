@@ -1,5 +1,5 @@
 import path from 'path'
-import type { ArgsParams } from './types'
+import type { ArgsParams, VSCodeProxyOptions } from './types'
 
 export const DEFAULT_CHANNEL = 'stable'
 export const VSCODE_APPLICATION_ARGS: ArgsParams = {
@@ -28,4 +28,9 @@ export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleap
 
 export const DEFAULT_CACHE_PATH = path.join(process.cwd(), '.wdio-vscode-service')
 export const CMD_KEY = process.platform === 'darwin' ? 'Meta' : 'Control'
-export const WS_PORT = 4001
+export const DEFAULT_PROXY_OPTIONS: Required<VSCodeProxyOptions> = {
+    enable: true,
+    port: 41001,
+    commandTimeout: 5000,
+    connectionTimeout: 5000
+}

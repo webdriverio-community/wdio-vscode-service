@@ -2,10 +2,10 @@
 import vscode from 'vscode'
 import WebSocket from 'ws'
 
-import { WS_PORT } from '../constants'
+import { DEFAULT_PROXY_OPTIONS } from '../constants'
 import type { RemoteCommand, RemoteResponse } from '../types'
 
-const ws = new WebSocket(`ws://localhost:${WS_PORT}`)
+const ws = new WebSocket(`ws://localhost:${DEFAULT_PROXY_OPTIONS.port}`)
 ws.on('open', () => console.log('WebSocket proxy connected'))
 ws.on('message', (data) => {
     try {
