@@ -13,6 +13,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        vscodeVersion:
+          - insiders
+          - stable
+          - 1.65.0
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -29,6 +33,8 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: yarn test
+        env:
+          VSCODE_VERSION: ${{ matrix.vscodeVersion }}
       - uses: actions/upload-artifact@v3
         if: failure()
         with:

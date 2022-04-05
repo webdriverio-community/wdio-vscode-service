@@ -1,6 +1,6 @@
 import type { ChainablePromiseElement, ChainablePromiseArray } from 'webdriverio'
 
-import * as allLocatorsTypes from '../locators/1.61.0'
+import * as allLocatorsTypes from '../locators/insiders'
 import { ContextMenu } from '..'
 
 type ClassWithFunctionLocatorsAsString<T> = {
