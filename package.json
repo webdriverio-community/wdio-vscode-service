@@ -44,6 +44,7 @@
     "clipboardy": "^2.3.0",
     "decamelize": "5.0.1",
     "download": "^8.0.0",
+    "get-port": "5.1.1",
     "slash": "^3.0.0",
     "tmp-promise": "^3.0.3",
     "undici": "^4.15.1",
