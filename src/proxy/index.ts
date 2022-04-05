@@ -9,7 +9,7 @@ console.log('VSCode proxy service running...');
 
 export async function run(): Promise<void> {
     const config = vscode.workspace.getConfiguration(SETTINGS_KEY)
-    console.log(`Connect to service proxy ${JSON.stringify(config)} - ${config.port}`);
+    console.log(`Connect to service proxy on port ${config.port}`);
 
     const ws = new WebSocket(`ws://localhost:${config.port}`)
     ws.on('open', () => console.log('WebSocket proxy connected'))

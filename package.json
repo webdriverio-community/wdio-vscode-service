@@ -28,7 +28,7 @@
     "test:setup": "node ./.github/scripts/link.mjs",
     "test:lint": "eslint src test example",
     "test:e2e": "wdio run ./test/wdio.conf.ts",
-    "watch": "yarn run build --watch"
+    "watch": "yarn run build:ts --watch"
   },
   "keywords": [
     "webdriverio",
