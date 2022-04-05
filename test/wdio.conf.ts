@@ -134,8 +134,8 @@ export const config: Options.Testrunner = {
         vscode: { version: process.env.VSCODE_VERSION || 'stable' },
         extensionPath: path.join(__dirname, 'extension'),
         workspacePath: path.join(__dirname, '..'),
-        filePath: path.join(__dirname, '..', 'README.md')
-        // verboseLogging: true
+        filePath: path.join(__dirname, '..', 'README.md'),
+        verboseLogging: true
     }]],
 
     // Framework you want to run your specs with.
