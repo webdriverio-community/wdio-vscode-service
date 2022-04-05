@@ -36,6 +36,6 @@ export const CMD_KEY = process.platform === 'darwin' ? 'Meta' : 'Control'
 export const DEFAULT_PROXY_OPTIONS: VSCodeProxyOptions = {
     enable: true,
     port: undefined,
-    commandTimeout: 5000,
-    connectionTimeout: 5000
+    commandTimeout: 60 * 1000,
+    connectionTimeout: 60 * 1000
 }
