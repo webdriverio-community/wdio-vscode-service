@@ -64,10 +64,14 @@ describe('WDIO VSCode Service', () => {
 
         it('is able to close all notifications', async () => {
             const workbench = await browser.getWorkbench()
-            const notifs = await workbench.getNotifications()
-            for (const notif of notifs) {
-                await notif.dismiss()
-            }
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                for (const notif of notifs) {
+                    await notif.dismiss()
+                }
+                return !(await workbench.hasNotifications())
+            })
+
             expect(await workbench.hasNotifications()).toBe(false)
         })
 
