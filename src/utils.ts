@@ -62,7 +62,11 @@ export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
 
     const [major, minor] = version.split('.')
     const sanitizedVersion = `${major}.${minor}.0`
-    const locatorFile = files.find((f) => f >= sanitizedVersion) || files[files.length - 1]
+
+    const locatorFile = files.find((f, i) => (
+        f === sanitizedVersion
+        || (files[i + 1] && files[i + 1] > sanitizedVersion)
+    )) || files[files.length - 1]
     return import(`./locators/${locatorFile}`) as Promise<VSCodeLocatorMap>
 }
 
