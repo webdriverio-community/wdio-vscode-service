@@ -6,6 +6,10 @@
 
 # WDIO VSCode Service [![CI](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml/badge.svg)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
 
+Tested on:
+
+[![](https://img.shields.io/badge/VSCode%20Version-insiders%20%2F%20stable%20%2F%20v1.65.0-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml) [![](https://img.shields.io/badge/Platform-windows%20%2F%20macos%20%2F%20ubuntu-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
+
 > WebdriverIO service for testing VSCode extensions.
 
 This WebdriverIO service allows you to seamlessly test your VSCode extensions from end to end. You only need to provide a path to your extension and the service does the rest by:
