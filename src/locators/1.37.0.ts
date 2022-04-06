@@ -44,7 +44,14 @@ export const ProblemsView = {
     markersFilter: '.markers-panel-action-filter',
     input: 'input',
     collapseAll: '.collapse-all',
-    markerRow: '.monaco-list-row',
+    markerRow: '.monaco-list-row'
+}
+export const Marker = {
+    detailsText: '.marker-message .monaco-highlighted-label',
+    detailsSource: '.marker-source .monaco-highlighted-label',
+    detailsLine: '.marker-line',
+    fileName: '.monaco-icon-name-container .label-name',
+    problemCount: '.monaco-count-badge',
     rowLabel: 'aria-label',
     markerTwistie: '.monaco-tl-twistie'
 }

@@ -4,7 +4,7 @@ import { BottomBarPanel } from '..'
 import {
     BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
 } from '../utils'
-import { ProblemsView as ProblemsViewLocators } from '../../locators/1.61.0'
+import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.61.0'
 
 export interface ProblemsView extends IPluginDecorator<typeof ProblemsViewLocators> {}
 /**
@@ -73,32 +73,37 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
      * @param type type of markers to retrieve
      * @returns Promise resolving to array of Marker objects
      */
-    async getAllMarkers (type: MarkerType): Promise<Marker[]> {
+    async getAllMarkers (): Promise<Marker[]> {
         const markers: Marker[] = []
         const elements = await this.markerRow$$
         for (const element of elements) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            const marker = await new Marker(this.locatorMap, element as any, this).wait()
-            if (type === MarkerType.Any || type === await marker.getType()) {
+            const isExpandable = typeof (await element.getAttribute('aria-expanded')) === 'string'
+            if (isExpandable) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                const marker = await new Marker(this.locatorMap, element as any, this).wait()
                 markers.push(marker)
+                continue
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            markers[markers.length - 1].problems.push(new Problem(this.locatorMap, element as any))
         }
         return markers
     }
 }
 
-export interface Marker extends IPluginDecorator<typeof ProblemsViewLocators> {}
+export interface Marker extends IPluginDecorator<typeof MarkerLocators> {}
 /**
  * Page object for marker in problems view
  *
  * @category BottomBar
  */
-@PluginDecorator(ProblemsViewLocators)
-export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> {
+@PluginDecorator(MarkerLocators)
+export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
     /**
      * @private
      */
-    public locatorKey = 'ProblemsView' as const
+    public locatorKey = 'Marker' as const
+    public problems: Problem[] = []
 
     constructor (
         locators: VSCodeLocatorMap,
@@ -109,20 +114,19 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
     }
 
     /**
-     * Get the type of the marker
-     * Possible types are: File, Error, Warning
-     * @returns Promise resolving to a MarkerType
+     * Get the name of the file that has problems
+     * @returns name of file containing problems
      */
-    async getType (): Promise<MarkerType> {
-        const twist = await this.markerTwistie$
-        if ((await twist.getAttribute('class')).indexOf('collapsible') > -1) {
-            return MarkerType.File
-        }
-        const text = await this.getText()
-        if (text.startsWith('Error')) {
-            return MarkerType.Error
-        }
-        return MarkerType.Warning
+    getFileName (): Promise<string> {
+        return this.fileName$.getText()
+    }
+
+    /**
+     * Get the error count of the file that has problems
+     * @returns error count of file containing problems
+     */
+    getProblemCount (): Promise<string> {
+        return this.problemCount$.getText()
     }
 
     /**
@@ -139,12 +143,68 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
      * @returns Promise resolving when the expand/collapse twistie is clicked
      */
     async toggleExpand (expand: boolean): Promise<void> {
-        if (await this.getType() === MarkerType.File) {
-            const klass = await this.markerTwistie$.getAttribute('class')
-            if ((klass.indexOf('collapsed') > -1) === expand) {
-                await this.elem.click()
-            }
+        const klass = await this.markerTwistie$.getAttribute('class')
+        if ((klass.indexOf('collapsed') > -1) === expand) {
+            await this.elem.click()
         }
+    }
+}
+
+export interface Problem extends IPluginDecorator<typeof MarkerLocators> {}
+/**
+ * Page object for marker in problems view
+ *
+ * @category BottomBar
+ */
+@PluginDecorator(MarkerLocators)
+export class Problem extends ElementWithContextMenu<typeof MarkerLocators> {
+    /**
+     * @private
+     */
+    public locatorKey = 'Marker' as const
+
+    /**
+     * Problem details
+     * @returns problem description
+     */
+    getText () {
+        return this.detailsText$.getText()
+    }
+
+    /**
+     * Type of file where the problem is located
+     * @returns source file type
+     */
+    getSource () {
+        return this.detailsSource$.getText()
+    }
+
+    /**
+     * Location problem
+     * @returns location of error as Array [line, column]
+     */
+    async getLocation () {
+        const locationText = await this.detailsLine$.getText()
+        return locationText
+            .slice(1, -1)
+            .split(',')
+            .map((loc) => parseInt(loc.split(' ').pop() as string, 10))
+    }
+
+    /**
+     * Get the type of the marker
+     * Possible types are: File, Error, Warning
+     * @returns Promise resolving to a MarkerType
+     */
+    async getType (): Promise<MarkerType> {
+        const label = await this.elem.getAttribute('aria-label')
+        if (!label) {
+            return MarkerType.Unknown
+        }
+        if (label.startsWith('Error')) {
+            return MarkerType.Error
+        }
+        return MarkerType.Warning
     }
 }
 
@@ -158,8 +218,7 @@ export class Marker extends ElementWithContextMenu<typeof ProblemsViewLocators> 
  * @hidden
  */
 export enum MarkerType {
-    File = 'file',
     Error = 'error',
     Warning = 'warning',
-    Any = 'any'
+    Unknown = 'unknown'
 }

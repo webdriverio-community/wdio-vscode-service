@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../dist/service.d.ts" />
 
 import path from 'path'
 import {
     PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
-    StatusBar, SettingsEditor, TextEditor, FindWidget
+    StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType, ProblemsView, EditorView
 } from '../..'
 
 function skip (param: string | string[] = process.platform) {
@@ -341,6 +342,55 @@ describe('WDIO VSCode Service', () => {
                 await findWidget.replace()
                 expect(await tab.getTextAtLine(3)).toBe('This is an manual text change.')
             })
+        })
+    })
+
+    describe('ProblemsView', () => {
+        let problemsView: ProblemsView
+        let editorView: EditorView
+
+        it('should show no problems in the beginning', async () => {
+            const workbench = await browser.getWorkbench()
+            const bottomBar = workbench.getBottomBar()
+
+            problemsView = await bottomBar.openProblemsView()
+            expect(await problemsView.getAllMarkers()).toHaveLength(0)
+        })
+
+        it('should create problems', async () => {
+            await browser.executeWorkbench(async (vscode) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                const doc = await vscode.workspace.openTextDocument(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                    vscode.Uri.file(`${vscode.workspace.rootPath}/.eslintrc.json`)
+                )
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                return vscode.window.showTextDocument(doc, {
+                    viewColumn: vscode.ViewColumn.Active
+                })
+            })
+            const workbench = await browser.getWorkbench()
+            editorView = workbench.getEditorView()
+            const tab = await editorView.openEditor('.eslintrc.json') as TextEditor
+            await tab.setText('I am creating problem')
+
+            await browser.waitUntil(async () => {
+                const markers = await problemsView.getAllMarkers()
+                return markers.length > 0
+            })
+        })
+
+        it('can access problem information', async () => {
+            const [marker] = await problemsView.getAllMarkers()
+            expect(await marker.getFileName()).toBe('.eslintrc.json')
+            expect(await marker.getText()).toBe('1 problems in file .eslintrc.json of folder .')
+
+            expect(await marker.problems[0].getText()).toBe('Expected a JSON object, array or literal.')
+            expect(await marker.problems[0].getSource()).toBe('jsonc')
+            expect(await marker.problems[0].getLocation()).toEqual([1, 1])
+            expect(await marker.problems[0].getType()).toBe(MarkerType.Error)
+
+            await editorView.closeEditor('.eslintrc.json')
         })
     })
 })

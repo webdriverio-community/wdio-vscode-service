@@ -11,7 +11,7 @@ export async function run(): Promise<void> {
 
     const ws = new WebSocket(`ws://localhost:${config.port}`)
     ws.on('open', () => console.log('WebSocket proxy connected'))
-    ws.on('message', (data) => {
+    ws.on('message', async (data) => {
         try {
             const message = data.toString()
             console.log(`Received remote command: ${message}`);
@@ -20,7 +20,11 @@ export async function run(): Promise<void> {
             const { id, fn, params } = JSON.parse(data.toString()) as RemoteCommand
 
             try {
-                const result = eval(fn).call(globalThis, vscode, ...params)
+                let result = eval(fn).call(globalThis, vscode, ...params)
+                if (typeof result === 'object' && typeof result.then === 'function') {
+                    result = await result
+                }
+
                 const response = JSON.stringify(<RemoteResponse>{ id, result })
                 console.log(`Return remote response: ${response}`);
 
