@@ -307,11 +307,15 @@ export class TextEditor extends Editor<EditorLocators> {
             await inputarea.addValue([lineKey])
         }
 
+        // eslint-disable-next-line wdio/no-pause
+        await browser.pause(100)
         coordinates = await this.getCoordinates()
         const columnGap = coordinates[1] - column
         const columnKey = columnGap >= 0 ? 'ArrowLeft' : 'ArrowRight'
         for (let i = 0; i < Math.abs(columnGap); i += 1) {
             await inputarea.addValue([columnKey])
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(50)
             if ((await this.getCoordinates())[0] !== coordinates[0]) {
                 throw new Error(`Column number ${column} is not accessible on line ${line}`)
             }
