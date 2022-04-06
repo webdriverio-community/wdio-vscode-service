@@ -37,5 +37,5 @@ export const DEFAULT_PROXY_OPTIONS: VSCodeProxyOptions = {
     enable: true,
     port: undefined,
     commandTimeout: 60 * 1000,
-    connectionTimeout: 60 * 1000
+    connectionTimeout: 5 * 60 * 1000
 }
