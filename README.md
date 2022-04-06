@@ -183,6 +183,36 @@ If set to true, service logs VSCode output from the extension host and console A
 Type: `boolean`<br />
 Default: `false`
 
+### `vscodeProxyOptions`
+
+VSCode API proxy configurations define how WebdriverIO connects to the VSCode workbench to give you access to the VSCode API.
+
+Type: `VSCodeProxyOptions`<br />
+Default:
+
+```ts
+{
+    /**
+     * If set to true, the service tries to establish a connection with the
+     * VSCode workbench to enable access to the VSCode API
+     */
+    enable: true,
+    /**
+     * Port of the WebSocket connection used to connect to the workbench.
+     * By default set to an available port in your operating system.
+     */
+    // port?: number
+    /**
+     * Timeout for connecting to WebSocket inside of VSCode
+     */
+    connectionTimeout: 5000,
+    /**
+     * Timeout for command to be executed within VSCode
+     */
+    commandTimeout: 5000
+}
+```
+
 ## Create Your Own PageObjects
 
 You can re-use the components used in this service for your own webview page objects. For that first create a file that defines all your selectors, e.g.:
