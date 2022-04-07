@@ -75,6 +75,11 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 cap['wdio:vscodeOptions'] = <VSCodeOptions>{}
             }
 
+            /**
+             * need to rename capability back to Chrome otherwise Chromedriver
+             * as well as the service won't recognise this capability
+             */
+            cap.browserName = 'chrome'
             const version = cap.browserVersion || DEFAULT_CHANNEL
 
             if (versionsFileExist) {
@@ -91,7 +96,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                         + `and Chromedriver v${content[version]?.chromedriver} already exist`
                     )
 
-                    cap['wdio:vscodeOptions'].binary = vscodePath
+                    cap['wdio:vscodeOptions'].binary = await this._setupVSCode(content[version]!.vscode)
                     this.chromedriverCustomPath = chromedriverPath
                     continue
                 }
@@ -154,7 +159,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      */
     private async _setupVSCode (version: string) {
         try {
-            log.info('Download VSCode (stable)')
+            log.info(`Download VSCode (${version})`)
             return await download({
                 cachePath: this._cachePath,
                 version

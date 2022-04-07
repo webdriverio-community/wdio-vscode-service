@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 import type { Options } from '@wdio/types'
+import type { VSCodeCapabilities } from '../dist/types'
 
 export const config: Options.Testrunner = {
     //
@@ -81,8 +82,15 @@ export const config: Options.Testrunner = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
-    }],
+        browserName: 'vscode',
+        browserVersion: process.env.VSCODE_VERSION || 'stable',
+        'wdio:vscodeOptions': {
+            extensionPath: path.join(__dirname, 'extension'),
+            workspacePath: path.join(__dirname, '..'),
+            filePath: path.join(__dirname, '..', 'README.md')
+            // verboseLogging: true
+        }
+    } as VSCodeCapabilities],
     //
     // ===================
     // Test Configurations
@@ -130,13 +138,7 @@ export const config: Options.Testrunner = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: [['vscode', {
-        vscode: { version: process.env.VSCODE_VERSION || 'stable' },
-        extensionPath: path.join(__dirname, 'extension'),
-        workspacePath: path.join(__dirname, '..'),
-        filePath: path.join(__dirname, '..', 'README.md')
-        // verboseLogging: true
-    }]],
+    services: ['vscode'],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
