@@ -54,9 +54,9 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     }
 
     async onPrepare (_: never, capabilities: Capabilities.RemoteCapabilities) {
-        const caps: VSCodeCapabilities[] = Array.isArray(capabilities)
+        const caps: (VSCodeCapabilities | Options.WebdriverIO)[] = Array.isArray(capabilities)
             ? capabilities.map((c) => ((c as Capabilities.W3CCapabilities).alwaysMatch || c) as VSCodeCapabilities)
-            : Object.values(capabilities).map((c) => c.capabilities as VSCodeCapabilities)
+            : Object.values(capabilities)
 
         /**
          * check if for given version we already have all bundles
@@ -65,7 +65,12 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         const versionsFilePath = path.join(this._cachePath, VERSIONS_TXT)
         const versionsFileExist = await fileExist(versionsFilePath)
 
-        for (const cap of caps) {
+        for (const capOrOptions of caps) {
+            const isMultirempte = Boolean((capOrOptions as Options.WebdriverIO).capabilities)
+            const cap = isMultirempte
+                ? (capOrOptions as Options.WebdriverIO).capabilities as VSCodeCapabilities
+                : capOrOptions as VSCodeCapabilities
+
             /**
              * skip setup if user is not using VSCode as capability
              */
@@ -92,7 +97,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                         + `and Chromedriver v${content[version]?.chromedriver} already exist`
                     )
 
-                    Object.assign(cap, this.options)
+                    Object.assign(isMultirempte ? capOrOptions : cap, this.options)
                     cap[VSCODE_CAPABILITY_KEY]!.binary = await this._setupVSCode(content[version]!.vscode)
                     this.chromedriverCustomPath = chromedriverPath
                     continue
@@ -108,7 +113,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                     path: cap[VSCODE_CAPABILITY_KEY]?.binary || await this._setupVSCode(vscodeVersion)
                 }
             }
-            Object.assign(cap, this.options)
+            Object.assign(isMultirempte ? capOrOptions : cap, this.options)
             cap[VSCODE_CAPABILITY_KEY]!.binary = serviceArgs.vscode.path
             await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
         }

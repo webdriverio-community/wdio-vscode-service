@@ -81,16 +81,25 @@ export const config: Options.Testrunner = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [{
-        browserName: 'vscode',
-        browserVersion: process.env.VSCODE_VERSION || 'stable',
-        'wdio:vscodeOptions': {
-            extensionPath: path.join(__dirname, 'extension'),
-            workspacePath: path.join(__dirname, '..'),
-            filePath: path.join(__dirname, '..', 'README.md')
-            // verboseLogging: true
+    capabilities: {
+        chrome: {
+            capabilities: {
+                browserName: 'chrome'
+            }
+        },
+        vscode: {
+            capabilities: {
+                browserName: 'vscode',
+                browserVersion: process.env.VSCODE_VERSION || 'stable',
+                'wdio:vscodeOptions': {
+                    extensionPath: path.join(__dirname, 'extension'),
+                    workspacePath: path.join(__dirname, '..'),
+                    filePath: path.join(__dirname, '..', 'README.md')
+                    // verboseLogging: true
+                }
+            } as VSCodeCapabilities
         }
-    } as VSCodeCapabilities],
+    },
     //
     // ===================
     // Test Configurations

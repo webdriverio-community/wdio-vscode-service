@@ -31,6 +31,10 @@ class TestPageObject extends BasePage<typeof locators.marquee, typeof locators> 
 }
 
 describe('WDIO VSCode Service', () => {
+    it.only('doo', async () => {
+        console.log(await browser.getTitle())
+    })
+
     describe('page objects', () => {
         it('exports necessary components for custom pageobjects', () => {
             expect(typeof PluginDecorator).toBe('function')
