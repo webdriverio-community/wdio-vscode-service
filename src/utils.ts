@@ -2,7 +2,9 @@ import fs from 'fs/promises'
 import path from 'path'
 import child_process from 'child_process'
 
+import { VSCODE_CAPABILITY_KEY } from './constants'
 import type { VSCodeLocatorMap } from './pageobjects/utils'
+import type { VSCodeCapabilities } from './types'
 
 function isEmulatedRosettaEnvironment () {
     const archName = child_process.spawnSync('uname', ['-m']).stdout.toString().trim()
@@ -83,4 +85,8 @@ export function getValueSuffix (value: string | boolean) {
         return ''
     }
     return `=${value}`
+}
+
+export function isVSCodeCapability (cap: VSCodeCapabilities) {
+    return Boolean(cap[VSCODE_CAPABILITY_KEY])
 }
