@@ -1,6 +1,7 @@
 import path from 'path'
 import type { ArgsParams, VSCodeProxyOptions } from './types'
 
+export const VSCODE_CAPABILITY_KEY = 'wdio:vscodeOptions' as const
 export const DEFAULT_CHANNEL = 'stable'
 export const VSCODE_APPLICATION_ARGS: ArgsParams = {
     // https://github.com/microsoft/vscode/issues/84238

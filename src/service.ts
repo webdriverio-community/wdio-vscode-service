@@ -10,10 +10,10 @@ import { Services, Options } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
-import { getLocators, getValueSuffix } from './utils'
+import { getLocators, getValueSuffix, isVSCodeCapability } from './utils'
 import {
     VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS,
-    SETTINGS_KEY
+    SETTINGS_KEY, VSCODE_CAPABILITY_KEY
 } from './constants'
 import type {
     VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
@@ -32,7 +32,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _vscodeOptions: VSCodeOptions
 
     constructor (_: never, private _capabilities: VSCodeCapabilities) {
-        this._vscodeOptions = this._capabilities['wdio:vscodeOptions'] || <VSCodeOptions>{}
+        this._vscodeOptions = this._capabilities[VSCODE_CAPABILITY_KEY] || <VSCodeOptions>{}
         this._proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...this._vscodeOptions.vscodeProxyOptions }
     }
 
@@ -54,6 +54,13 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     async beforeSession (_: Options.Testrunner, capabilities: VSCodeCapabilities) {
+        /**
+         * only run setup for VSCode capabilities
+         */
+        if (!isVSCodeCapability(capabilities)) {
+            return
+        }
+
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
         const storagePath = await tmp.dir()
         const userSettingsPath = path.join(storagePath.path, 'settings', 'User')
@@ -120,12 +127,24 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             ],
             [] as string[]
         )
+
+        /**
+         * need to rename capability back to Chrome otherwise Chromedriver
+         * won't recognise this capability
+         */
         capabilities.browserName = 'chrome'
         capabilities['goog:chromeOptions'] = { binary, args, windowTypes: ['webview'] }
         log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
     }
 
     async before (capabilities: VSCodeCapabilities, __: never, browser: WebdriverIO.Browser) {
+        /**
+         * only run setup for VSCode capabilities
+         */
+        if (!isVSCodeCapability(capabilities)) {
+            return
+        }
+
         this._browser = browser
         const locators = await getLocators(capabilities.browserVersion || 'insiders')
         const workbenchPO = new Workbench(locators)
@@ -135,11 +154,15 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
-        return workbenchPO.elem.waitForExist()
+        await workbenchPO.elem.waitForExist()
     }
 
     async after () {
-        if (!this._browser || !this._capabilities['wdio:vscodeOptions']?.verboseLogging) {
+        if (
+            !isVSCodeCapability(this._capabilities)
+            || !this._browser
+            || !this._capabilities[VSCODE_CAPABILITY_KEY]?.verboseLogging
+        ) {
             return
         }
 

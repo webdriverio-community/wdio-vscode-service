@@ -14,7 +14,7 @@ import type { Options, Capabilities } from '@wdio/types'
 import { validatePlatform, fileExist } from './utils'
 import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, CHROMEDRIVER_RELEASES,
-    CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH
+    CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY
 } from './constants'
 import type {
     ServiceOptions, ServiceCapability, VSCodeCapabilities, VSCodeOptions
@@ -49,6 +49,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     ) {
         super(_options, capabilities, config)
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
+        // @ts-expect-error overwrite private method
+        this._mapCapabilities = () => {}
     }
 
     async onPrepare (_: never, capabilities: Capabilities.RemoteCapabilities) {
@@ -71,22 +73,16 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 continue
             }
 
-            if (!cap['wdio:vscodeOptions']) {
-                cap['wdio:vscodeOptions'] = <VSCodeOptions>{}
+            if (!cap[VSCODE_CAPABILITY_KEY]) {
+                cap[VSCODE_CAPABILITY_KEY] = <VSCodeOptions>{}
             }
 
-            /**
-             * need to rename capability back to Chrome otherwise Chromedriver
-             * as well as the service won't recognise this capability
-             */
-            cap.browserName = 'chrome'
             const version = cap.browserVersion || DEFAULT_CHANNEL
-
             if (versionsFileExist) {
                 const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
                 const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
                 const vscodePath = (
-                    cap['wdio:vscodeOptions']?.binary
+                    cap[VSCODE_CAPABILITY_KEY]?.binary
                     || path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
                 )
 
@@ -96,7 +92,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                         + `and Chromedriver v${content[version]?.chromedriver} already exist`
                     )
 
-                    cap['wdio:vscodeOptions'].binary = await this._setupVSCode(content[version]!.vscode)
+                    Object.assign(cap, this.options)
+                    cap[VSCODE_CAPABILITY_KEY]!.binary = await this._setupVSCode(content[version]!.vscode)
                     this.chromedriverCustomPath = chromedriverPath
                     continue
                 }
@@ -108,10 +105,11 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 chromedriver: { version: chromedriverVersion, path: chromedriverPath },
                 vscode: {
                     version: vscodeVersion,
-                    path: cap['wdio:vscodeOptions']?.binary || await this._setupVSCode(vscodeVersion)
+                    path: cap[VSCODE_CAPABILITY_KEY]?.binary || await this._setupVSCode(vscodeVersion)
                 }
             }
-            cap['wdio:vscodeOptions'].binary = serviceArgs.vscode.path
+            Object.assign(cap, this.options)
+            cap[VSCODE_CAPABILITY_KEY]!.binary = serviceArgs.vscode.path
             await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
         }
 
