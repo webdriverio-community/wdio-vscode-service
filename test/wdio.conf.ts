@@ -90,9 +90,7 @@ export const config: Options.Testrunner = {
             filePath: path.join(__dirname, '..', 'README.md')
             // verboseLogging: true
         }
-    } as VSCodeCapabilities, {
-        browserName: 'chrome'
-    }],
+    } as VSCodeCapabilities],
     //
     // ===================
     // Test Configurations
