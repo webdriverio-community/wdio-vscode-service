@@ -1,12 +1,5 @@
 import type { ChromedriverServiceOptions } from 'wdio-chromedriver-service'
-import type { DownloadOptions } from '@vscode/test-electron/out/download'
 import type { Capabilities } from '@wdio/types'
-
-export type VSCodeChannel = 'stable' | 'insiders'
-
-export interface ServiceDownloadOptions extends Omit<DownloadOptions, 'version'> {
-    version: VSCodeChannel
-}
 
 /**
  * Settings to handle VSCode Proxy API
@@ -42,13 +35,33 @@ export type ArgsParams = Record<string, string | boolean>
  */
 export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'> {
     /**
-     * Define which VSCode application should be used for testing
-     */
-    vscode?: ServiceDownloadOptions
-    /**
      * Define a cache path to avoid re-downloading all bundles
      */
     cachePath?: string
+    /**
+     * Additional Chromedriver arguments (see `chromedriver --help` for more information)
+     */
+    args?: string[]
+}
+
+export interface BundleInformation {
+    version: string
+    path: string
+}
+
+export interface ServiceCapability {
+    vscode: BundleInformation
+    chromedriver: BundleInformation
+}
+
+/**
+ * Options to manage VSCode session as part of session capability
+ */
+export interface VSCodeOptions {
+    /**
+     * Path to custom VSCode installation
+     */
+    binary: string
     /**
      * Define the directory to the extension you want to test
      */
@@ -65,10 +78,6 @@ export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'>
      * Opens VSCode with a specific file opened
      */
     filePath?: string
-    /**
-     * Additional Chromedriver arguments (see `chromedriver --help` for more information)
-     */
-    args?: string[]
     /**
      * Additional start-up arguments as object, e.g.
      * ```
@@ -93,18 +102,8 @@ export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'>
     vscodeProxyOptions: Partial<VSCodeProxyOptions>
 }
 
-export interface BundleInformation {
-    version: string
-    path: string
-}
-
-export interface ServiceCapability {
-    vscode: BundleInformation
-    chromedriver: BundleInformation
-}
-
-export interface ServiceCapabilities extends Capabilities.Capabilities {
-    'wdio:vscodeService': ServiceCapability
+export interface VSCodeCapabilities extends Capabilities.Capabilities {
+    'wdio:vscodeOptions'?: VSCodeOptions
 }
 
 export interface WDIOLogs {

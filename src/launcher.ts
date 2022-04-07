@@ -17,7 +17,7 @@ import {
     CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH
 } from './constants'
 import type {
-    ServiceOptions, ServiceCapability, ServiceCapabilities, VSCodeChannel
+    ServiceOptions, ServiceCapability, VSCodeCapabilities, VSCodeOptions
 } from './types'
 
 interface BundeInformation {
@@ -51,8 +51,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
     }
 
-    async onPrepare (_: never, capabilities: ServiceCapabilities[]) {
-        const version = this._options.vscode?.version || DEFAULT_CHANNEL
+    async onPrepare (_: never, capabilities: Capabilities.RemoteCapabilities) {
+        const caps: VSCodeCapabilities[] = Array.isArray(capabilities)
+            ? capabilities.map((c) => ((c as Capabilities.W3CCapabilities).alwaysMatch || c) as VSCodeCapabilities)
+            : Object.values(capabilities).map((c) => c.capabilities as VSCodeCapabilities)
 
         /**
          * check if for given version we already have all bundles
@@ -60,45 +62,55 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
          */
         const versionsFilePath = path.join(this._cachePath, VERSIONS_TXT)
         const versionsFileExist = await fileExist(versionsFilePath)
-        if (versionsFileExist) {
-            const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
-            const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
-            const vscodePath = path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
 
-            if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
-                log.info(
-                    `Skipping download, bundles for VSCode v${content[version]?.vscode} `
-                    + `and Chromedriver v${content[version]?.chromedriver} already exist`
+        for (const cap of caps) {
+            /**
+             * skip setup if user is not using VSCode as capability
+             */
+            if (typeof cap.browserName !== 'string' || cap.browserName.toLowerCase() !== 'vscode') {
+                continue
+            }
+
+            if (!cap['wdio:vscodeOptions']) {
+                cap['wdio:vscodeOptions'] = <VSCodeOptions>{}
+            }
+
+            const version = cap.browserVersion || DEFAULT_CHANNEL
+
+            if (versionsFileExist) {
+                const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
+                const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
+                const vscodePath = (
+                    cap['wdio:vscodeOptions']?.binary
+                    || path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
                 )
 
-                this.chromedriverCustomPath = chromedriverPath
-                this._populateCaps(capabilities, {
-                    chromedriver: { version: content[version]!.chromedriver, path: chromedriverPath },
-                    vscode: {
-                        version: content[version]!.vscode,
-                        path: await this._setupVSCode(content[version]!.vscode)
-                    }
-                })
-                return super.onPrepare()
+                if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
+                    log.info(
+                        `Skipping download, bundles for VSCode v${content[version]?.vscode} `
+                        + `and Chromedriver v${content[version]?.chromedriver} already exist`
+                    )
+
+                    cap['wdio:vscodeOptions'].binary = vscodePath
+                    this.chromedriverCustomPath = chromedriverPath
+                    continue
+                }
             }
+
+            const [vscodeVersion, chromedriverVersion, chromedriverPath] = await this._setupChromedriver(version)
+            this.chromedriverCustomPath = chromedriverPath
+            const serviceArgs: ServiceCapability = {
+                chromedriver: { version: chromedriverVersion, path: chromedriverPath },
+                vscode: {
+                    version: vscodeVersion,
+                    path: cap['wdio:vscodeOptions']?.binary || await this._setupVSCode(vscodeVersion)
+                }
+            }
+            cap['wdio:vscodeOptions'].binary = serviceArgs.vscode.path
+            await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
         }
 
-        const [vscodeVersion, chromedriverVersion, chromedriverPath] = await this._setupChromedriver(version)
-        this.chromedriverCustomPath = chromedriverPath
-        const serviceArgs: ServiceCapability = {
-            chromedriver: { version: chromedriverVersion, path: chromedriverPath },
-            vscode: { version: vscodeVersion, path: await this._setupVSCode(vscodeVersion) }
-        }
-
-        this._populateCaps(capabilities, serviceArgs)
-        await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
         return super.onPrepare()
-    }
-
-    private _populateCaps (capabilities: ServiceCapabilities[], serviceArgs: ServiceCapability) {
-        for (const cap of capabilities) {
-            cap['wdio:vscodeService'] = serviceArgs
-        }
     }
 
     /**
@@ -107,7 +119,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      *                              or a concrete version e.g. 1.66.0
      * @returns "insiders" if `desiredReleaseChannel` is set to this otherwise a concrete version
      */
-    private async _setupChromedriver (desiredReleaseChannel: VSCodeChannel) {
+    private async _setupChromedriver (desiredReleaseChannel: string) {
         const version = await this._fetchVSCodeVersion(desiredReleaseChannel)
 
         try {
@@ -158,7 +170,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      *                              or a concrete version e.g. 1.66.0
      * @returns "main" if `desiredReleaseChannel` is "insiders" otherwise a concrete VSCode version
      */
-    private async _fetchVSCodeVersion (desiredReleaseChannel?: VSCodeChannel | string) {
+    private async _fetchVSCodeVersion (desiredReleaseChannel?: string | string) {
         if (desiredReleaseChannel === 'insiders') {
             return 'main'
         }

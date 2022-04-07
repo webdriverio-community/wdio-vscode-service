@@ -16,9 +16,8 @@ import {
     SETTINGS_KEY
 } from './constants'
 import type {
-    ServiceOptions, ServiceCapabilities, WDIOLogs, ArgsParams,
-    RemoteCommand, RemoteResponse, PendingMessageResolver,
-    VSCodeProxyOptions
+    VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
+    PendingMessageResolver, VSCodeProxyOptions, VSCodeOptions
 } from './types'
 
 const log = logger('wdio-vscode-service')
@@ -30,9 +29,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _pendingMessages = new Map<number, PendingMessageResolver>()
     private _promisedSocket?: Promise<WebSocket>
     private _proxyOptions: VSCodeProxyOptions
+    private _vscodeOptions: VSCodeOptions
 
-    constructor (private _options: ServiceOptions) {
-        this._proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...this._options.vscodeProxyOptions }
+    constructor (_: never, private _capabilities: VSCodeCapabilities) {
+        this._vscodeOptions = this._capabilities['wdio:vscodeOptions'] || <VSCodeOptions>{}
+        this._proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...this._vscodeOptions.vscodeProxyOptions }
     }
 
     private _handleIncoming (data: Buffer) {
@@ -52,16 +53,16 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
-    async beforeSession (_: Options.Testrunner, capabilities: ServiceCapabilities) {
+    async beforeSession (_: Options.Testrunner, capabilities: VSCodeCapabilities) {
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
         const storagePath = await tmp.dir()
         const userSettingsPath = path.join(storagePath.path, 'settings', 'User')
         const userSettings: Record<string, any> = {
             ...DEFAULT_VSCODE_SETTINGS,
-            ...(this._options.userSettings || {})
+            ...(this._vscodeOptions.userSettings || {})
         }
 
-        if (!this._options.extensionPath) {
+        if (!this._vscodeOptions.extensionPath) {
             throw new SevereServiceError('No extension path provided')
         }
 
@@ -84,11 +85,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             })
         }
 
-        customArgs.extensionDevelopmentPath = slash(this._options.extensionPath)
+        customArgs.extensionDevelopmentPath = slash(this._vscodeOptions.extensionPath)
         customArgs.extensionTestsPath = slash(path.join(__dirname, 'proxy', 'index.js'))
         customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
         customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
-        customArgs.vscodeBinaryPath = capabilities['wdio:vscodeService'].vscode.path
+        customArgs.vscodeBinaryPath = this._vscodeOptions.binary
 
         log.info(`Setting up VSCode directory at ${userSettingsPath}`)
         await fs.mkdir(userSettingsPath, { recursive: true })
@@ -98,21 +99,21 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             'utf-8'
         )
 
-        if (this._options.workspacePath) {
-            customArgs.folderUri = `file:${slash(this._options.workspacePath)}`
+        if (this._vscodeOptions.workspacePath) {
+            customArgs.folderUri = `file:${slash(this._vscodeOptions.workspacePath)}`
         }
 
-        if (this._options.filePath) {
-            customArgs.fileUri = `file:${slash(this._options.filePath)}`
+        if (this._vscodeOptions.filePath) {
+            customArgs.fileUri = `file:${slash(this._vscodeOptions.filePath)}`
         }
 
-        if (this._options.verboseLogging) {
+        if (this._vscodeOptions.verboseLogging) {
             customArgs.verbose = true
             customArgs.logExtensionHostCommunication = true
         }
 
         const binary = path.join(__dirname, 'chromium', `index.${process.platform === 'win32' ? 'exe' : 'js'}`)
-        const args = Object.entries({ ...customArgs, ...this._options.vscodeArgs }).reduce(
+        const args = Object.entries({ ...customArgs, ...this._vscodeOptions.vscodeArgs }).reduce(
             (prev, [key, value]) => [
                 ...prev,
                 `--${decamelize(key, { separator: '-' })}${getValueSuffix(value)}`
@@ -121,24 +122,25 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
         capabilities.browserName = 'chrome'
         capabilities['goog:chromeOptions'] = { binary, args, windowTypes: ['webview'] }
+        delete capabilities.browserVersion
         log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
     }
 
-    async before (capabilities: ServiceCapabilities, __: never, browser: WebdriverIO.Browser) {
+    async before (capabilities: VSCodeCapabilities, __: never, browser: WebdriverIO.Browser) {
         this._browser = browser
-        const locators = await getLocators(capabilities['wdio:vscodeService'].vscode.version)
+        const locators = await getLocators(capabilities.browserVersion || 'insiders')
         const workbenchPO = new Workbench(locators)
         this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
         this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
-        this._browser.addCommand('getVSCodeVersion', () => capabilities['wdio:vscodeService'].vscode.version)
+        this._browser.addCommand('getVSCodeVersion', () => capabilities.browserVersion)
         this._browser.addCommand('getVSCodeChannel', () => (
-            capabilities['wdio:vscodeService'].vscode.version === 'insiders' ? 'insiders' : 'vscode'
+            capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
         return workbenchPO.elem.waitForExist()
     }
 
     async after () {
-        if (!this._browser || !this._options.verboseLogging) {
+        if (!this._browser || !this._capabilities['wdio:vscodeOptions']?.verboseLogging) {
             return
         }
 
