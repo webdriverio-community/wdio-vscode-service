@@ -38,24 +38,29 @@ For more information on how to install `WebdriverIO`, please check the [project 
 
 ## Example Configuration
 
-To use the service you need to add `vscode` to your services array, followed by a configuration object:
+To use the service you need to add `vscode` to your list of services, optionally followed by a configuration object:
 
 ```js
 // wdio.conf.ts
 export const config = {
     outputDir: 'trace',
     // ...
-    services: [
-        ['vscode', {
+    capabilities: [{
+        browserName: 'vscode',
+        browserVersion: '1.66.0' // "insiders" or "stable" for latest VSCode version
+        'wdio:vscodeOptions': {
             extensionPath: __dirname,
-            vscode: {
-                version: 'insiders' // or "stable" for latest VSCode version
-            },
             userSettings: {
                 "editor.fontSize": 14
             }
-        }]
-    ],
+        }
+    }],
+    services: ['vscode'],
+    /**
+     * optionally you can define the path WebdriverIO stores all
+     * VSCode and Chromedriver binaries, e.g.:
+     * services: [['vscode', { cachePath: __dirname }]]
+     */
     // ...
 };
 ```
@@ -113,53 +118,53 @@ For the full page object documentation, check out the [docs](https://webdriverio
 
 Through service configuration you can manage the VSCode version as well as user settings for VSCode:
 
-### `vscode`
+### Service Options
 
-Define which VSCode application should be used for testing.
+Service options are options needed for the service to setup the test environment. They are a superset of the [Chromedriver options](https://webdriver.io/docs/wdio-chromedriver-service#options) which can be applied for this service as well.
 
-Type: `ServiceDownloadOptions`<br />
-Default: `{ version: "stable" }`
-
-### `cachePath`
+#### `cachePath`
 
 Define a cache path to avoid re-downloading all bundles. This is useful for CI/CD to avoid re-downloading VSCode and Chromedriver for every testrun.
 
 Type: `string`<br />
 Default: `process.cwd()`
 
-### `extensionPath`
+### VSCode Capabilities (`wdio:vscodeOptions`)
+
+In order to run tests through VSCode you have to define `vscode` as `browserName`. You can specify the VSCode version by providing a `browserVersion` capability. Custom VSCode options are then defined within the custom `wdio:vscodeOptions` capability. The options are the following:
+
+#### `binary`
+
+Path to a local installed VSCode installation. If option is not provided the service will download VSCode based on given `browserVersion` (or `stable` if not given).
+
+Type: `string`
+
+#### `extensionPath`
 
 Define the directory to the extension you want to test.
 
 Type: `string`
 
-### `userSettings`
+#### `userSettings`
 
 Define custom user settings to be applied to VSCode.
 
 Type: `Record<string, number | string | object | boolean>`<br />
 Default: `{}`
 
-### `workspacePath`
+#### `workspacePath`
 
 Opens VSCode for a specific workspace. If not provided VSCode starts without a workspace opened.
 
 Type: `string`
 
-### `filePath`
+#### `filePath`
 
 Opens VSCode with a specific file opened.
 
 Type: `string`
 
-### `args`
-
-Additional Chromedriver arguments (see `chromedriver --help` for more information)
-
-Type: `string[]`<br />
-Default: `[]`
-
-### `vscodeArgs`
+#### `vscodeArgs`
 
 Additional start-up arguments as object, e.g.
 
@@ -176,14 +181,14 @@ will be passed in as:
 Type: `Record<string, string | boolean>`<br />
 Default: see [`constants.ts#L5-L14`](https://github.com/webdriverio-community/wdio-vscode-service/blob/196a69be3ac2fb82d9c7e4f19a2a1c8ccbaec1e2/src/constants.ts#L5-L14)
 
-### `verboseLogging`
+#### `verboseLogging`
 
 If set to true, service logs VSCode output from the extension host and console API.
 
 Type: `boolean`<br />
 Default: `false`
 
-### `vscodeProxyOptions`
+#### `vscodeProxyOptions`
 
 VSCode API proxy configurations define how WebdriverIO connects to the VSCode workbench to give you access to the VSCode API.
 
