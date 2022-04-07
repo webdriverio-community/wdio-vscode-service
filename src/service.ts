@@ -122,7 +122,6 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
         capabilities.browserName = 'chrome'
         capabilities['goog:chromeOptions'] = { binary, args, windowTypes: ['webview'] }
-        delete capabilities.browserVersion
         log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
     }
 
