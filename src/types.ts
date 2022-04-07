@@ -33,15 +33,11 @@ export type ArgsParams = Record<string, string | boolean>
 /**
  * wdio-vscode-service options
  */
-export interface ServiceOptions extends Omit<ChromedriverServiceOptions, 'args'> {
+export interface ServiceOptions extends ChromedriverServiceOptions {
     /**
      * Define a cache path to avoid re-downloading all bundles
      */
     cachePath?: string
-    /**
-     * Additional Chromedriver arguments (see `chromedriver --help` for more information)
-     */
-    args?: string[]
 }
 
 export interface BundleInformation {

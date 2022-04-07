@@ -38,7 +38,7 @@ For more information on how to install `WebdriverIO`, please check the [project 
 
 ## Example Configuration
 
-To use the service you need to add `vscode` to your services array, followed by a configuration object:
+To use the service you need to add `vscode` to your list of services, optionally followed by a configuration object:
 
 ```js
 // wdio.conf.ts
@@ -56,6 +56,11 @@ export const config = {
         }
     }],
     services: ['vscode'],
+    /**
+     * optionally you can define the path WebdriverIO stores all
+     * VSCode and Chromedriver binaries, e.g.:
+     * services: [['vscode', { cachePath: __dirname }]]
+     */
     // ...
 };
 ```
@@ -115,14 +120,7 @@ Through service configuration you can manage the VSCode version as well as user 
 
 ### Service Options
 
-Service options are options needed for the service to setup the test environment.
-
-#### `args`
-
-Additional Chromedriver arguments (see `chromedriver --help` for more information)
-
-Type: `string[]`<br />
-Default: `[]`
+Service options are options needed for the service to setup the test environment. They are a superset of the [Chromedriver options](https://webdriver.io/docs/wdio-chromedriver-service#options) which can be applied for this service as well.
 
 #### `cachePath`
 
