@@ -90,7 +90,6 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
 
     /**
      * Get the locator map of given page object
-     *
      */
     get locators () {
         if (Array.isArray(this.locatorKey)) {
