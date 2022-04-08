@@ -45,9 +45,10 @@ export class OutputView extends TextView<typeof OutputViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        public panel = new BottomBarPanel(locators)
+        driver: WebdriverIO.Browser,
+        public panel = new BottomBarPanel(locators, driver)
     ) {
-        super(locators)
+        super(locators, driver)
         this.actionsLabel = locators.OutputView.actionsLabel as string
         this.setParentElement(panel.elem)
     }
@@ -69,9 +70,10 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
 
     constructor (
         locators: VSCodeLocatorMap,
-        public panel: BottomBarPanel = new BottomBarPanel(locators)
+        driver: WebdriverIO.Browser,
+        public panel: BottomBarPanel = new BottomBarPanel(locators, driver)
     ) {
-        super(locators)
+        super(locators, driver)
         this.setParentElement(panel.elem)
     }
 
@@ -115,7 +117,7 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
         if (expression) {
             await this.setExpression(expression)
         }
-        await browser.keys('Enter')
+        await this._driver.keys('Enter')
     }
 
     /**
@@ -123,7 +125,7 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
      * @returns promise resolving to ContentAssist object
      */
     async getContentAssist (): Promise<ContentAssist> {
-        return new ContentAssist(this.locatorMap, this).wait()
+        return this.load(ContentAssist, this).wait()
     }
 }
 
@@ -142,9 +144,10 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        public panel = new BottomBarPanel(locators)
+        driver: WebdriverIO.Browser,
+        public panel = new BottomBarPanel(locators, driver)
     ) {
-        super(locators)
+        super(locators, driver)
         this.actionsLabel = locators.OutputView.actionsLabel as string
     }
 
@@ -182,13 +185,13 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
      * @returns Promise resolving to all terminal text
      */
     async getText (): Promise<string> {
-        const workbench = new Workbench(this.locatorMap)
+        const workbench = this.load(Workbench)
         await workbench.executeCommand('terminal select all')
         // eslint-disable-next-line wdio/no-pause
-        await browser.pause(500)
+        await this._driver.pause(500)
         await workbench.executeCommand('terminal copy selection')
         // eslint-disable-next-line wdio/no-pause
-        await browser.pause(500)
+        await this._driver.pause(500)
         const text = clipboard.readSync()
         clipboard.writeSync('')
         return text
@@ -199,7 +202,7 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
      * @returns Promise resolving when Kill Terminal button is pressed
      */
     async killTerminal (): Promise<void> {
-        await new Workbench(this.locatorMap)
+        await this.load(Workbench)
             .executeCommand('terminal: kill the active terminal instance')
     }
 
@@ -208,11 +211,11 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
      * @returns Promise resolving when New Terminal button is pressed
      */
     async newTerminal (): Promise<void> {
-        await new Workbench(this.locatorMap)
+        await this.load(Workbench)
             .executeCommand(this.locators.newCommand)
         const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string)
         if (combo.length < 1) {
-            await browser.waitUntil(async () => {
+            await this._driver.waitUntil(async () => {
                 const list = await this.tabList$$
                 return list.length > 0
             }, { timeout: 5000 })

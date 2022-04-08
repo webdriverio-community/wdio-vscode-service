@@ -23,8 +23,8 @@ export class ActivityBar extends ElementWithContextMenu<typeof ActivityBarLocato
         const views: ViewControl[] = []
         const viewContainer = await this.viewContainer$
         for (const element of await viewContainer.$$(this.locators.actionItem)) {
-            views.push(await new ViewControl(
-                this.locatorMap,
+            views.push(await this.load(
+                ViewControl,
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 element as any,
                 this
@@ -56,8 +56,8 @@ export class ActivityBar extends ElementWithContextMenu<typeof ActivityBarLocato
      */
     async getSelectedViewAction (): Promise<ViewControl> {
         const element = await this.viewContainer$.$(this.locators.actionItemSelected)
-        return new ViewControl(
-            this.locatorMap,
+        return this.load(
+            ViewControl,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             element as any,
             this

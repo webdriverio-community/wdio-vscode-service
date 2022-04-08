@@ -18,7 +18,7 @@ export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
 
         // stabelise view otherwise we might run into stale element issues
         // eslint-disable-next-line wdio/no-pause
-        await browser.pause(100)
+        await this._driver.pause(100)
         const channels = await this.parent.$$(`${this.locatorMap.BottomBarViews.outputChannels} option`)
 
         const names = []
@@ -50,8 +50,8 @@ export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
             if (val === name) {
                 await channel.click()
                 // eslint-disable-next-line wdio/no-pause
-                await browser.pause(200)
-                await browser.keys(['Escape'])
+                await this._driver.pause(200)
+                await this._driver.keys(['Escape'])
                 return
             }
         }
@@ -71,7 +71,7 @@ export abstract class TextView<T> extends ChannelView<T> {
      */
     async getText (): Promise<string[]> {
         const lines = await this.elem.$(this.locatorMap.OutputView.lines as string)
-        const textLines = await browser.execute(
+        const textLines = await this._driver.execute(
             (elem) => Array.from(
                 (elem as any as HTMLDivElement).children as any as ArrayLike<HTMLDivElement>
             ).map((l) => l.innerText),

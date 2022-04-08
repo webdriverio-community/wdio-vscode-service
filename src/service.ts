@@ -10,7 +10,9 @@ import { Services, Options, Capabilities } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
-import { getLocators, getValueSuffix, isVSCodeCapability } from './utils'
+import {
+    getLocators, getValueSuffix, isVSCodeCapability, getBrowserObject
+} from './utils'
 import {
     VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS,
     SETTINGS_KEY, VSCODE_CAPABILITY_KEY
@@ -23,7 +25,7 @@ import type {
 const log = logger('wdio-vscode-service')
 
 export default class VSCodeWorkerService implements Services.ServiceInstance {
-    private _browser?: WebdriverIO.Browser
+    private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _wss?: WebSocketServer
     private _messageId = 0
     private _pendingMessages = new Map<number, PendingMessageResolver>()
@@ -158,7 +160,10 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
-    private async _before (capabilities: VSCodeCapabilities, browser: WebdriverIO.Browser) {
+    private async _before (
+        capabilities: VSCodeCapabilities,
+        browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+    ) {
         /**
          * only run setup for VSCode capabilities
          */
@@ -167,18 +172,36 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
 
         this._browser = browser
-        const locators = await getLocators(capabilities.browserVersion || 'insiders')
-        const workbenchPO = new Workbench(locators)
-        this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
-        this._browser.addCommand('executeWorkbench', (
-            fn: Function | string,
-            ...params: any[]
-        ) => this._executeVSCode(capabilities, fn, params))
+
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        this._browser.addCommand('getWorkbench', this._getWorkbench.bind(this))
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        this._browser.addCommand('getWorkbench', this._getWorkbench, true)
+        this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
         this._browser.addCommand('getVSCodeVersion', () => capabilities.browserVersion)
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
-        await workbenchPO.elem.waitForExist()
+
+        const instances: WebdriverIO.Browser[] = browser.isMultiremote
+            ? Object.keys(browser.capabilities).map((c) => browser[c] as WebdriverIO.Browser)
+            : [browser]
+        for (const driver of instances) {
+            await driver.getWorkbench()
+        }
+    }
+
+    private async _getWorkbench (this: WebdriverIO.Browser | WebdriverIO.Element) {
+        /**
+         * don't allow command on global browser with multiremote
+         */
+        if (this.isMultiremote && !(this as WebdriverIO.Element).selector) {
+            throw new Error('Method "getWorkbench" not supported on global driver in multiremote')
+        }
+        const browserVersion = (this.capabilities as Capabilities.Capabilities).browserVersion || 'insiders'
+        const locators = await getLocators(browserVersion)
+        const workbenchPO = new Workbench(locators, getBrowserObject(this))
+        return workbenchPO.wait()
     }
 
     async after () {

@@ -133,7 +133,7 @@ export class EditorView extends BasePage<typeof EditorViewLocators> {
         const groups = await Promise.all(
             elements.map(async (element) => (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new EditorGroup(this.locatorMap, element as any, this).wait()
+                this.load(EditorGroup, element as any, this).wait()
             ))
         )
 
@@ -195,10 +195,11 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
-        public view = new EditorView(locators)
+        public view = new EditorView(locators, driver)
     ) {
-        super(locators, element)
+        super(locators, driver, element)
     }
 
     /**
@@ -211,33 +212,18 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
         await tab.select()
 
         if (await this.settingsEditor$.isExisting()) {
-            return new SettingsEditor(
-                this.locatorMap,
-                this
-            ).wait()
+            return this.load(SettingsEditor, this).wait()
         }
 
         if (await this.webView$.isExisting()) {
-            return new WebView(
-                this.locatorMap,
-                this.locatorMap.Editor.elem as string,
-                this
-            ).wait()
+            return this.load(WebView, this.locatorMap.Editor.elem as string, this).wait()
         }
 
         if (await this.diffEditor$.isExisting()) {
-            return new DiffEditor(
-                this.locatorMap,
-                this.locatorMap.Editor.elem as string,
-                this
-            ).wait()
+            return this.load(DiffEditor, this.locatorMap.Editor.elem as string, this).wait()
         }
 
-        return new TextEditor(
-            this.locatorMap,
-            this.locatorMap.Editor.elem as string,
-            this
-        ).wait()
+        return this.load(TextEditor, this.locatorMap.Editor.elem as string, this).wait()
     }
 
     /**
@@ -279,7 +265,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
         const titles = []
         for (const tab of tabs) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            const title = await new EditorTab(this.locatorMap, tab as any, this.view).getTitle()
+            const title = await this.load(EditorTab, tab as any, this.view).getTitle()
             titles.push(title)
         }
         return titles
@@ -295,7 +281,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
         const availableLabels = new Set()
         for (const tab of tabs) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            const editorTab = new EditorTab(this.locatorMap, tab as any, this.view)
+            const editorTab = this.load(EditorTab, tab as any, this.view)
             const label = await editorTab.getTitle()
             availableLabels.add(label)
             if (label === title) {
@@ -317,7 +303,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
         return Promise.all(
             tabs.map(async (tab) => (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new EditorTab(this.locatorMap, tab as any, this.view).wait()
+                this.load(EditorTab, tab as any, this.view).wait()
             ))
         )
     }
@@ -376,10 +362,11 @@ export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> 
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: EditorView
     ) {
-        super(locators, element)
+        super(locators, driver, element)
     }
 
     /**

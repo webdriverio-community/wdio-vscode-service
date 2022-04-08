@@ -23,10 +23,11 @@ export class SettingsEditor extends Editor<EditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         view?: EditorView | EditorGroup
     ) {
-        super(locators, view?.elem)
-        this.view = view || new EditorView(this.locatorMap)
+        super(locators, driver, view?.elem)
+        this.view = view || this.load(EditorView)
     }
 
     /**
@@ -49,7 +50,7 @@ export class SettingsEditor extends Editor<EditorLocators> {
         const count = await this.itemCount$
         let textCount = await count.getText()
 
-        await browser.waitUntil(async () => {
+        await this._driver.waitUntil(async () => {
             await new Promise((res) => setTimeout(res, 1500))
             const text = await count.getText()
             if (text !== textCount) {
@@ -100,22 +101,22 @@ export class SettingsEditor extends Editor<EditorLocators> {
 
         // try a combo setting
         if (await element.$(this.locators.comboSetting).isExisting()) {
-            return new ComboSetting(this.locatorMap, title, category, this)
+            return this.load(ComboSetting, title, category, this)
         }
 
         // try text setting
         if (await element.$(this.locators.textSetting).isExisting()) {
-            return new TextSetting(this.locatorMap, title, category, this)
+            return this.load(TextSetting, title, category, this)
         }
 
         // try checkbox setting
         if (await element.$(this.locators.checkboxSetting).isExisting()) {
-            return new CheckboxSetting(this.locatorMap, title, category, this)
+            return this.load(CheckboxSetting, title, category, this)
         }
 
         // try link setting
         if (await element.$(this.locators.linkButton).isExisting()) {
-            return new LinkSetting(this.locatorMap, title, category, this)
+            return this.load(LinkSetting, title, category, this)
         }
 
         throw new Error('Setting type not supported')
@@ -135,10 +136,11 @@ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         title: string, category: string,
         public settings: SettingsEditor
     ) {
-        super(locators, (locators.SettingsEditor.settingConstructor as Function)(title, category) as string)
+        super(locators, driver, (locators.SettingsEditor.settingConstructor as Function)(title, category) as string)
         this.title = title
         this.category = category
     }
@@ -231,7 +233,7 @@ export class ComboSetting extends Setting {
 
     private async openCombo () {
         const combo = await this.comboSetting$
-        const workbench = await browser.$(this.locatorMap.Workbench.elem as string)
+        const workbench = await this._driver.$(this.locatorMap.Workbench.elem as string)
         const menus = await workbench.$$(this.locatorMap.ContextMenu.contextView as string)
         let menu!: WebdriverIO.Element
 
@@ -243,7 +245,7 @@ export class ComboSetting extends Setting {
         if (await menus[0].isDisplayed()) {
             await combo.click()
             // eslint-disable-next-line wdio/no-pause
-            await browser.pause(200)
+            await this._driver.pause(200)
         }
         await combo.click()
         menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string)

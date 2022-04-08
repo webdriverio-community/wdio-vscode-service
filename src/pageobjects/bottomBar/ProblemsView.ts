@@ -27,9 +27,10 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        public panel = new BottomBarPanel(locators)
+        driver: WebdriverIO.Browser,
+        public panel = new BottomBarPanel(locators, driver)
     ) {
-        super(locators)
+        super(locators, driver)
         this.setParentElement(this.panel.elem)
     }
 
@@ -80,12 +81,12 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
             const isExpandable = typeof (await element.getAttribute('aria-expanded')) === 'string'
             if (isExpandable) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                const marker = await new Marker(this.locatorMap, element as any, this).wait()
+                const marker = await this.load(Marker, element as any, this).wait()
                 markers.push(marker)
                 continue
             }
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            markers[markers.length - 1].problems.push(new Problem(this.locatorMap, element as any))
+            markers[markers.length - 1].problems.push(this.load(Problem, element as any))
         }
         return markers
     }
@@ -107,10 +108,11 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ProblemsView
     ) {
-        super(locators, element, view.elem)
+        super(locators, driver, element, view.elem)
     }
 
     /**

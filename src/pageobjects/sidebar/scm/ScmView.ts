@@ -77,10 +77,11 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ScmView
     ) {
-        super(locators, element, view.elem)
+        super(locators, driver, element, view.elem)
     }
 
     /**
@@ -211,10 +212,11 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         row: ChainablePromiseElement<WebdriverIO.Element>,
         public provider: ScmProvider
     ) {
-        super(locators, row, provider.elem)
+        super(locators, driver, row, provider.elem)
     }
 
     /**
@@ -308,9 +310,10 @@ export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         public scm: ScmProvider | ScmView
     ) {
-        super(locators, locators.ScmView.more as string, scm.elem)
+        super(locators, driver, locators.ScmView.more as string, scm.elem)
     }
 
     async openContextMenu (): Promise<ContextMenu> {
@@ -322,7 +325,8 @@ export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
             if (await this.elem.getAttribute('aria-expanded') !== 'true') {
                 await this.elem.click()
             }
-            const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
+            const selector: string = await this._driver.execute('return arguments[0].shadowRoot', shadowRootHost[0])
+            const shadowRoot = $(selector)
             return this.load(ContextMenu, shadowRoot).wait()
         }
         return super.openContextMenu()

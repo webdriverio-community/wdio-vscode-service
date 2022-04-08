@@ -24,14 +24,14 @@ export class NewScmView extends ScmView {
 
         const providers = await this.multiScmProvider$$
         if (inputs.length === 1 && providers.length < 1) {
-            return [await new SingleScmProvider(this.locatorMap, this.singleScmProvider$, this).wait()]
+            return [await this.load(SingleScmProvider, this.singleScmProvider$, this).wait()]
         }
 
         const elements = await this.multiProviderItem$$
         return Promise.all(
             elements.map(async (element) => (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new MultiScmProvider(this.locatorMap, element as any, this).wait()
+                this.load(MultiScmProvider, element as any, this).wait()
             ))
         )
     }
@@ -74,7 +74,7 @@ export class SingleScmProvider extends ScmProvider {
 
     async openMoreActions (): Promise<ContextMenu> {
         const view = this.view as NewScmView
-        return new MoreAction(this.locatorMap, view).openContextMenu()
+        return this.load(MoreAction, view).openContextMenu()
     }
 
     async getChanges (staged = false): Promise<ScmChange[]> {
@@ -99,7 +99,7 @@ export class SingleScmProvider extends ScmProvider {
         return Promise.all(
             elements.map(async (element) => (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new ScmChange(this.locatorMap, element as any, this).wait()
+                this.load(ScmChange, element as any, this).wait()
             ))
         )
     }
@@ -126,7 +126,7 @@ export class MultiScmProvider extends ScmProvider {
     }
 
     async openMoreActions (): Promise<ContextMenu> {
-        return new MultiMoreAction(this.locatorMap, this).openContextMenu()
+        return this.load(MultiMoreAction, this).openContextMenu()
     }
 
     async commitChanges (message: string): Promise<void> {
@@ -171,7 +171,7 @@ export class MultiScmProvider extends ScmProvider {
         return Promise.all(
             elements.map(async (element) => (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new ScmChange(this.locatorMap, element as any, this).wait()
+                this.load(ScmChange, element as any, this).wait()
             ))
         )
     }
@@ -205,8 +205,9 @@ class MultiMoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         public scm: ScmProvider
     ) {
-        super(locators, locators.ScmView.multiMore as string, scm.elem)
+        super(locators, driver, locators.ScmView.multiMore as string, scm.elem)
     }
 }

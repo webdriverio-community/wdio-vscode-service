@@ -54,9 +54,9 @@ export class TextEditor extends Editor<EditorLocators> {
     async saveAs (): Promise<InputBox> {
         const tab = await this.getTab()
         await tab.elem.addValue([CMD_KEY, 'Shift', 's'])
-        const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
+        const inputBox = this._driver.$(this.locatorMap.InputBox.elem as string)
         await inputBox.waitForExist({ timeout: 5000 })
-        return new InputBox(this.locatorMap, inputBox)
+        return this.load(InputBox, inputBox)
     }
 
     /**
@@ -97,11 +97,11 @@ export class TextEditor extends Editor<EditorLocators> {
         if (open) {
             if (isHidden) {
                 await inputarea.addValue([CMD_KEY, 'Space'])
-                await browser.$(this.locatorMap.ContentAssist.elem as string)
+                await this._driver.$(this.locatorMap.ContentAssist.elem as string)
                     .waitForExist({ timeout: 2000 })
             }
-            const assist = await new ContentAssist(this.locatorMap, this).wait()
-            await browser.waitUntil(() => assist.isLoaded(), { timeout: 10000 })
+            const assist = await this.load(ContentAssist, this).wait()
+            await this._driver.waitUntil(() => assist.isLoaded(), { timeout: 10000 })
             return assist
         }
         if (!isHidden) {
@@ -251,16 +251,16 @@ export class TextEditor extends Editor<EditorLocators> {
             return undefined
         }
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        return new Selection(this.locatorMap, selection[0] as any, this)
+        return this.load(Selection, selection[0] as any, this)
     }
 
     async openFindWidget (): Promise<FindWidget> {
-        await browser.keys([CMD_KEY, 'f'])
-        const widget = await browser.$(this.locators.findWidget)
+        await this._driver.keys([CMD_KEY, 'f'])
+        const widget = await this._driver.$(this.locators.findWidget)
         await widget.waitForDisplayed({ timeout: 2000 })
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        return new FindWidget(this.locatorMap, widget as any, this)
+        return this.load(FindWidget, widget as any, this)
     }
 
     /**
@@ -308,14 +308,14 @@ export class TextEditor extends Editor<EditorLocators> {
         }
 
         // eslint-disable-next-line wdio/no-pause
-        await browser.pause(100)
+        await this._driver.pause(100)
         coordinates = await this.getCoordinates()
         const columnGap = coordinates[1] - column
         const columnKey = columnGap >= 0 ? 'ArrowLeft' : 'ArrowRight'
         for (let i = 0; i < Math.abs(columnGap); i += 1) {
             await inputarea.addValue([columnKey])
             // eslint-disable-next-line wdio/no-pause
-            await browser.pause(50)
+            await this._driver.pause(50)
             if ((await this.getCoordinates())[0] !== coordinates[0]) {
                 throw new Error(`Column number ${column} is not accessible on line ${line}`)
             }
@@ -352,8 +352,8 @@ export class TextEditor extends Editor<EditorLocators> {
         const shadowRootHost = await this.view.elem.$$('.shadow-root-host')
 
         if (shadowRootHost.length > 0) {
-            const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
-            return new ContextMenu(this.locatorMap, shadowRoot).wait()
+            const shadowRoot = $(await this._driver.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
+            return this.load(ContextMenu, shadowRoot).wait()
         }
         return super.openContextMenu()
     }
@@ -365,7 +365,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getCoordinates (): Promise<[number, number]> {
         const coords: number[] = []
-        const statusBar = new StatusBar(this.locatorMap)
+        const statusBar = this.load(StatusBar)
         const coordinates = <RegExpMatchArray>(await statusBar.getCurrentPosition()).match(/\d+/g)
         for (const c of coordinates) {
             coords.push(+c)
@@ -389,7 +389,7 @@ export class TextEditor extends Editor<EditorLocators> {
         if (breakPoint.length > 0) {
             await breakPoint[0].click()
             // eslint-disable-next-line wdio/no-pause
-            await browser.pause(200)
+            await this._driver.pause(200)
             return false
         }
 
@@ -397,7 +397,7 @@ export class TextEditor extends Editor<EditorLocators> {
         if (noBreak.length > 0) {
             await noBreak[0].click()
             // eslint-disable-next-line wdio/no-pause
-            await browser.pause(200)
+            await this._driver.pause(200)
             return true
         }
         return false
@@ -414,7 +414,7 @@ export class TextEditor extends Editor<EditorLocators> {
 
         for (const item of items) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            lenses.push(await new CodeLens(this.locatorMap, item as any, this).wait())
+            lenses.push(await this.load(CodeLens, item as any, this).wait())
         }
         return lenses
     }
@@ -458,10 +458,11 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public editor: TextEditor
     ) {
-        super(locators, element)
+        super(locators, driver, element)
     }
 
     async openContextMenu (): Promise<ContextMenu> {
@@ -469,8 +470,8 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
         const shadowRootHost = await this.editor.view.elem.$$('.shadow-root-host')
 
         if (shadowRootHost.length > 0) {
-            const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
-            return new ContextMenu(this.locatorMap, shadowRoot).wait()
+            const shadowRoot = $(await this._driver.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
+            return this.load(ContextMenu, shadowRoot).wait()
         }
         return super.openContextMenu()
     }
@@ -491,10 +492,11 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public editor: TextEditor
     ) {
-        super(locators, element)
+        super(locators, driver, element)
     }
 
     /**
@@ -531,10 +533,11 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public textEditor: TextEditor
     ) {
-        super(locators, element)
+        super(locators, driver, element)
     }
 
     /**
@@ -547,7 +550,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
 
         if ((replace && klass.includes('collapsed')) || (!replace && !klass.includes('collapsed'))) {
             await btn.addValue([' '])
-            const repl = await browser.$(this.locators.replacePart)
+            const repl = await this._driver.$(this.locators.replacePart)
             await repl.waitForExist({ timeout: 2000 })
             if (replace) {
                 await repl.waitForDisplayed({ timeout: 2000 })
@@ -562,8 +565,8 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * @param text text to fill in
      */
     async setSearchText (text: string): Promise<void> {
-        await browser.keys([CMD_KEY, 'f'])
-        await browser.keys(text)
+        await this._driver.keys([CMD_KEY, 'f'])
+        await this._driver.keys(text)
     }
 
     /**
@@ -598,7 +601,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Next match'
      */
     async nextMatch (): Promise<void> {
-        const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Next match' : 'Next Match'
+        const name = (await this._driver.getVSCodeVersion()) < '1.59.0' ? 'Next match' : 'Next Match'
         await this.clickButton(name, 'find')
     }
 
@@ -606,7 +609,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Previous match'
      */
     async previousMatch (): Promise<void> {
-        const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Previous match' : 'Previous Match'
+        const name = (await this._driver.getVSCodeVersion()) < '1.59.0' ? 'Previous match' : 'Previous Match'
         await this.clickButton(name, 'find')
     }
 
@@ -714,7 +717,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
         const btn = await element.$(this.locators.button(title))
         await btn.click()
         // eslint-disable-next-line wdio/no-pause
-        await browser.pause(100)
+        await this._driver.pause(100)
     }
 
     private async setText (text: string, composite: WebdriverIO.Element) {
