@@ -3,7 +3,7 @@ import clipboard from 'clipboardy'
 import { Workbench, BottomBarPanel, ContentAssist } from '../..'
 import { TextView, ChannelView } from './AbstractViews'
 import {
-    ElementWithContextMenu, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
+    ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap
 } from '../utils'
 import {
     OutputView as OutputViewLocators,
@@ -11,7 +11,7 @@ import {
     TerminalView as TerminalViewLocators
 } from '../../locators/1.61.0'
 
-export interface OutputView extends IPluginDecorator<typeof OutputViewLocators> {}
+export interface OutputView extends IPageDecorator<typeof OutputViewLocators> {}
 /**
  * Output view of the bottom panel
  *
@@ -36,7 +36,7 @@ export interface OutputView extends IPluginDecorator<typeof OutputViewLocators> 
  *
  * @category BottomBar
  */
-@PluginDecorator(OutputViewLocators)
+@PageDecorator(OutputViewLocators)
 export class OutputView extends TextView<typeof OutputViewLocators> {
     /**
      * @private
@@ -53,14 +53,14 @@ export class OutputView extends TextView<typeof OutputViewLocators> {
     }
 }
 
-export interface DebugConsoleView extends IPluginDecorator<typeof DebugConsoleViewLocators> {}
+export interface DebugConsoleView extends IPageDecorator<typeof DebugConsoleViewLocators> {}
 /**
  * Debug Console view on the bottom panel
  * Most functionality will only be available when a debug session is running
  *
  * @category BottomBar
  */
-@PluginDecorator(DebugConsoleViewLocators)
+@PageDecorator(DebugConsoleViewLocators)
 export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsoleViewLocators> {
     /**
      * @private
@@ -127,13 +127,13 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
     }
 }
 
-export interface TerminalView extends IPluginDecorator<typeof TerminalViewLocators> {}
+export interface TerminalView extends IPageDecorator<typeof TerminalViewLocators> {}
 /**
  * Terminal view on the bottom panel
  *
  * @category BottomBar
  */
-@PluginDecorator(TerminalViewLocators)
+@PageDecorator(TerminalViewLocators)
 export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
     /**
      * @private

@@ -1,6 +1,6 @@
 import { ViewSection } from '../ViewSection'
 import { ExtensionsViewItem, AllViewSectionLocators } from '../..'
-import { PluginDecorator, IPluginDecorator } from '../../utils'
+import { PageDecorator, IPageDecorator } from '../../utils'
 import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0'
 import { CMD_KEY } from '../../../constants'
 
@@ -15,13 +15,13 @@ enum ExtensionCategory {
     Recommended = '@recommended'
 }
 
-export interface ExtensionsViewSection extends IPluginDecorator<AllViewSectionLocators> { }
+export interface ExtensionsViewSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
  * View section containing extensions
  *
  * @category Sidebar
  */
-@PluginDecorator(ExtensionsViewSectionLocators)
+@PageDecorator(ExtensionsViewSectionLocators)
 export class ExtensionsViewSection extends ViewSection {
     /**
      * @private

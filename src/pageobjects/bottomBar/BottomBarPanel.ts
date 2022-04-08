@@ -2,10 +2,10 @@ import {
     DebugConsoleView, OutputView, TerminalView, ProblemsView, EditorView, TitleBar,
     StatusBar
 } from '..'
-import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
+import { BasePage, PageDecorator, IPageDecorator } from '../utils'
 import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.61.0'
 
-export interface BottomBarPanel extends IPluginDecorator<typeof BottomBarPanelLocators> {}
+export interface BottomBarPanel extends IPageDecorator<typeof BottomBarPanelLocators> {}
 /**
  * Page object for the bottom view panel
  *
@@ -16,7 +16,7 @@ export interface BottomBarPanel extends IPluginDecorator<typeof BottomBarPanelLo
  *
  * @category BottomBar
  */
-@PluginDecorator(BottomBarPanelLocators)
+@PageDecorator(BottomBarPanelLocators)
 export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
     /**
      * @private

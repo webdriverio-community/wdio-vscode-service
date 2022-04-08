@@ -3,16 +3,16 @@ import { ChainablePromiseElement } from 'webdriverio'
 import {
     TextEditor, Menu, MenuItem, DebugConsoleView
 } from '..'
-import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../utils'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
 import { ContentAssist as ContentAssistLocators } from '../../locators/1.61.0'
 
-export interface ContentAssist extends IPluginDecorator<typeof ContentAssistLocators> {}
+export interface ContentAssist extends IPageDecorator<typeof ContentAssistLocators> {}
 /**
  * Page object representing the content assistant
  *
  * @category Editor
  */
-@PluginDecorator(ContentAssistLocators)
+@PageDecorator(ContentAssistLocators)
 export class ContentAssist extends Menu<typeof ContentAssistLocators> {
     /**
      * @private
@@ -98,13 +98,13 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
     }
 }
 
-export interface ContentAssistItem extends IPluginDecorator<typeof ContentAssistLocators> {}
+export interface ContentAssistItem extends IPageDecorator<typeof ContentAssistLocators> {}
 /**
  * Page object for a content assist item
  *
  * @category Editor
  */
-@PluginDecorator(ContentAssistLocators)
+@PageDecorator(ContentAssistLocators)
 export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
     /**
      * @private

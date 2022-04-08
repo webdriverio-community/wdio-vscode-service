@@ -3,18 +3,18 @@ import {
 } from './ScmView'
 import { ContextMenu } from '../..'
 import {
-    PluginDecorator, IPluginDecorator, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap
 } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0'
 import { CMD_KEY } from '../../../constants'
 
-export interface NewScmView extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface NewScmView extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * New SCM view for code 1.47 onwards
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class NewScmView extends ScmView {
     async getProviders (): Promise<ScmProvider[]> {
         const inputs = await this.inputField$$
@@ -37,13 +37,13 @@ export class NewScmView extends ScmView {
     }
 }
 
-export interface SingleScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface SingleScmProvider extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * Implementation for a single SCM provider
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class SingleScmProvider extends ScmProvider {
     /**
      * There is no title available for a single provider
@@ -105,13 +105,13 @@ export class SingleScmProvider extends ScmProvider {
     }
 }
 
-export interface MultiScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface MultiScmProvider extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * Implementation of an SCM provider when multiple providers are available
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class MultiScmProvider extends ScmProvider {
     async takeAction (title: string): Promise<boolean> {
         const actions = await this.action$$
@@ -191,13 +191,13 @@ export class MultiScmProvider extends ScmProvider {
     }
 }
 
-interface MultiMoreAction extends IPluginDecorator<typeof ScmViewLocators> { }
+interface MultiMoreAction extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * Multi More Action
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 class MultiMoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
     /**
      * @private

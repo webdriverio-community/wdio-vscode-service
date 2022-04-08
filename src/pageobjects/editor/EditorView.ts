@@ -4,20 +4,20 @@ import {
     TextEditor, DiffEditor, SettingsEditor, WebView
 } from '..'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     EditorView as EditorViewLocators,
     Editor as EditorLocatorsObj
 } from '../../locators/1.61.0'
 
-export interface EditorView extends IPluginDecorator<typeof EditorViewLocators> {}
+export interface EditorView extends IPageDecorator<typeof EditorViewLocators> {}
 /**
  * View handling the open editors
  *
  * @category Editor
  */
-@PluginDecorator(EditorViewLocators)
+@PageDecorator(EditorViewLocators)
 export class EditorView extends BasePage<typeof EditorViewLocators> {
     /**
      * @private
@@ -180,13 +180,13 @@ export class EditorView extends BasePage<typeof EditorViewLocators> {
     }
 }
 
-export interface EditorGroup extends IPluginDecorator<typeof EditorViewLocators> {}
+export interface EditorGroup extends IPageDecorator<typeof EditorViewLocators> {}
 /**
  * Page object representing an editor group
  *
  * @category Editor
  */
-@PluginDecorator(EditorViewLocators)
+@PageDecorator(EditorViewLocators)
 export class EditorGroup extends BasePage<typeof EditorViewLocators> {
     /**
      * @private
@@ -361,13 +361,13 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
     }
 }
 
-export interface EditorTab extends IPluginDecorator<typeof EditorLocatorsObj> {}
+export interface EditorTab extends IPageDecorator<typeof EditorLocatorsObj> {}
 /**
  * Page object for editor view tab
  *
  * @category Editor
  */
-@PluginDecorator(EditorLocatorsObj)
+@PageDecorator(EditorLocatorsObj)
 export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> {
     /**
      * @private

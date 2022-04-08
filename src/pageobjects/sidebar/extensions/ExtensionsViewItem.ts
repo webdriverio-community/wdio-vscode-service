@@ -4,16 +4,16 @@ import { ViewItem, ViewItemLocators } from '../ViewItem'
 import { ContextMenu } from '../../menu/ContextMenu'
 import { ExtensionsViewSection } from './ExtensionsViewSection'
 
-import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../../utils'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../utils'
 import { ExtensionsViewItem as ExtensionsViewItemLocators } from '../../../locators/1.61.0'
 
-export interface ExtensionsViewItem extends IPluginDecorator<ViewItemLocators> { }
+export interface ExtensionsViewItem extends IPageDecorator<ViewItemLocators> { }
 /**
  * Page object representing an extension in the extensions view
  *
  * @category Sidebar
  */
-@PluginDecorator(ExtensionsViewItemLocators)
+@PageDecorator(ExtensionsViewItemLocators)
 export class ExtensionsViewItem extends ViewItem {
     /**
      * @private

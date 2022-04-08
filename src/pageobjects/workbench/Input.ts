@@ -1,6 +1,6 @@
 import clipboard from 'clipboardy'
 import {
-    IPluginDecorator, BasePage, PluginDecorator, VSCodeLocatorMap
+    IPageDecorator, BasePage, PageDecorator, VSCodeLocatorMap
 } from '../utils'
 import {
     Input as InputLocators,
@@ -10,7 +10,7 @@ import {
 import { CMD_KEY } from '../../constants'
 
 type AllInputLocators = typeof InputLocators & typeof InputBoxLocators & typeof QuickOpenBoxLocators
-export interface Input extends IPluginDecorator<AllInputLocators> {}
+export interface Input extends IPageDecorator<AllInputLocators> {}
 /**
  * Abstract page object for input fields
  *
@@ -219,13 +219,13 @@ export abstract class Input extends BasePage<AllInputLocators> {
     }
 }
 
-export interface QuickPickItem extends IPluginDecorator<typeof InputLocators> {}
+export interface QuickPickItem extends IPageDecorator<typeof InputLocators> {}
 /**
  * Page object representing a quick pick option in the input box
  *
  * @category Workbench
  */
-@PluginDecorator(InputLocators)
+@PageDecorator(InputLocators)
 export class QuickPickItem extends BasePage<typeof InputLocators> {
     /**
      * @private
@@ -279,13 +279,13 @@ export class QuickPickItem extends BasePage<typeof InputLocators> {
     }
 }
 
-export interface InputBox extends IPluginDecorator<typeof InputBoxLocators> {}
+export interface InputBox extends IPageDecorator<typeof InputBoxLocators> {}
 /**
  * Plain input box variation of the input page object
  *
  * @category Workbench
  */
-@PluginDecorator({ ...InputLocators, ...InputBoxLocators })
+@PageDecorator({ ...InputLocators, ...InputBoxLocators })
 export class InputBox extends Input {
     /**
      * @private
@@ -340,14 +340,14 @@ export class InputBox extends Input {
     }
 }
 
-export interface QuickOpenBox extends IPluginDecorator<AllInputLocators> {}
+export interface QuickOpenBox extends IPageDecorator<AllInputLocators> {}
 /**
  * @deprecated as of VS Code 1.44.0, quick open box has been replaced with input box
  * The quick open box variation of the input
  *
  * @category Workbench
  */
-@PluginDecorator({ ...InputLocators, ...QuickOpenBoxLocators })
+@PageDecorator({ ...InputLocators, ...QuickOpenBoxLocators })
 export class QuickOpenBox extends Input {
     /**
      * @private

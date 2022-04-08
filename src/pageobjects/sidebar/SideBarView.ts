@@ -1,16 +1,16 @@
 import { ViewContent, ViewTitlePart } from '..'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, LocatorComponents
+    PageDecorator, IPageDecorator, BasePage, LocatorComponents
 } from '../utils'
 import { SideBarView as SideBarViewLocators } from '../../locators/1.61.0'
 
-export interface SideBarView<T> extends IPluginDecorator<typeof SideBarViewLocators> { }
+export interface SideBarView<T> extends IPageDecorator<typeof SideBarViewLocators> { }
 /**
  * Page object for the side bar view
  *
  * @category Sidebar
  */
-@PluginDecorator(SideBarViewLocators)
+@PageDecorator(SideBarViewLocators)
 export class SideBarView<T> extends BasePage<T> {
     /**
      * @private

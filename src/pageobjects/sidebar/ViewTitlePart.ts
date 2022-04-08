@@ -1,16 +1,16 @@
 import {
-    ElementWithContextMenu, PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
+    ElementWithContextMenu, PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { SideBarView } from '..'
 import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.61.0'
 
-export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
+export interface ViewTitlePart extends IPageDecorator<typeof ViewTitlePartLocators> { }
 /**
  * Page object representing the top (title) part of a side bar view
  *
  * @category Sidebar
  */
-@PluginDecorator(ViewTitlePartLocators)
+@PageDecorator(ViewTitlePartLocators)
 export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLocators> {
     /**
      * @private
@@ -56,13 +56,13 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
     }
 }
 
-export interface ViewTitlePart extends IPluginDecorator<typeof ViewTitlePartLocators> { }
+export interface ViewTitlePart extends IPageDecorator<typeof ViewTitlePartLocators> { }
 /**
  * Page object representing a button inside the view title part
  *
  * @category Sidebar
  */
-@PluginDecorator(ViewTitlePartLocators)
+@PageDecorator(ViewTitlePartLocators)
 export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
     /**
      * @private

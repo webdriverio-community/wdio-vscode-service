@@ -2,16 +2,16 @@ import { TreeSection } from '../TreeSection'
 import { TreeItem, AllViewSectionLocators } from '../../..'
 import { DefaultTreeItem } from './DefaultTreeItem'
 
-import { PluginDecorator, IPluginDecorator } from '../../../utils'
+import { PageDecorator, IPageDecorator } from '../../../utils'
 import { DefaultTreeSection as DefaultTreeSectionLocators } from '../../../../locators/1.61.0'
 
-export interface DefaultTreeSection extends IPluginDecorator<AllViewSectionLocators> { }
+export interface DefaultTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
  * Default view section
  *
  * @category Sidebar
  */
-@PluginDecorator(DefaultTreeSectionLocators)
+@PageDecorator(DefaultTreeSectionLocators)
 export class DefaultTreeSection extends TreeSection {
     /**
      * @private

@@ -1,16 +1,16 @@
 import { Editor, EditorLocators } from './Editor'
 import { TextEditor } from './TextEditor'
 import { EditorView } from './EditorView'
-import { PluginDecorator, IPluginDecorator } from '../utils'
+import { PageDecorator, IPageDecorator } from '../utils'
 import { DiffEditor as DiffEditorLocators } from '../../locators/1.61.0'
 
-export interface DiffEditor extends IPluginDecorator<EditorLocators> {}
+export interface DiffEditor extends IPageDecorator<EditorLocators> {}
 /**
  * Page object representing a diff editor
  *
  * @category Editor
  */
-@PluginDecorator(DiffEditorLocators)
+@PageDecorator(DiffEditorLocators)
 export class DiffEditor extends Editor<EditorLocators> {
     /**
      * @private

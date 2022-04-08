@@ -43,12 +43,12 @@ type AllLocatorType = typeof allLocatorsTypes
 export type LocatorComponents = keyof AllLocatorType | (keyof AllLocatorType)[]
 export type Locators = Record<string | symbol, string | Function>
 export type VSCodeLocatorMap = Record<keyof AllLocatorType, Locators>
-export type IPluginDecorator<T> = (
+export type IPageDecorator<T> = (
     ClassWithLocators$<T> & ClassWithLocators$$<T> &
     ClassWithFunctionLocators$<T> & ClassWithFunctionLocators$$<T>
 )
 
-export function PluginDecorator<T extends { new(...args: any[]): any }> (locators: Locators) {
+export function PageDecorator<T extends { new(...args: any[]): any }> (locators: Locators) {
     return (ctor: T) => {
         for (const [prop, globalLocator] of Object.entries(locators)) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call

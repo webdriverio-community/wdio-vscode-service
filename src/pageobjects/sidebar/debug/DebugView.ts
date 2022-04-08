@@ -1,14 +1,14 @@
 import { SideBarView } from '../SideBarView'
-import { PluginDecorator, IPluginDecorator } from '../../utils'
+import { PageDecorator, IPageDecorator } from '../../utils'
 import { DebugView as DebugViewLocators } from '../../../locators/1.61.0'
 
-export interface DebugView extends IPluginDecorator<typeof DebugViewLocators> { }
+export interface DebugView extends IPageDecorator<typeof DebugViewLocators> { }
 /**
  * Page object representing the Run/Debug view in the side bar
  *
  * @category Sidebar
  */
-@PluginDecorator(DebugViewLocators)
+@PageDecorator(DebugViewLocators)
 export class DebugView extends SideBarView<typeof DebugViewLocators> {
     /**
      * @private

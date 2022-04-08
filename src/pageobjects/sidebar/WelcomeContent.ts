@@ -2,11 +2,11 @@ import { ChainablePromiseElement } from 'webdriverio'
 
 import { ViewSection } from '..'
 import {
-    BasePage, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
+    BasePage, PageDecorator, IPageDecorator, VSCodeLocatorMap
 } from '../utils'
 import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.61.0'
 
-export interface WelcomeContentButton extends IPluginDecorator<typeof WelcomeContentLocators> {}
+export interface WelcomeContentButton extends IPageDecorator<typeof WelcomeContentLocators> {}
 /**
  * A button that appears in the welcome content and can be clicked to execute a command.
  *
@@ -14,7 +14,7 @@ export interface WelcomeContentButton extends IPluginDecorator<typeof WelcomeCon
  *
  * @category Sidebar
  */
-@PluginDecorator(WelcomeContentLocators)
+@PageDecorator(WelcomeContentLocators)
 export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators> {
     /**
      * @private
@@ -39,7 +39,7 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
     }
 }
 
-export interface WelcomeContentSection extends IPluginDecorator<typeof WelcomeContentLocators> {}
+export interface WelcomeContentSection extends IPageDecorator<typeof WelcomeContentLocators> {}
 /**
  * A section in an empty custom view, see:
  * https://code.visualstudio.com/api/extension-guides/tree-view#welcome-content
@@ -54,7 +54,7 @@ export interface WelcomeContentSection extends IPluginDecorator<typeof WelcomeCo
  *
  * @category Sidebar
  */
-@PluginDecorator(WelcomeContentLocators)
+@PageDecorator(WelcomeContentLocators)
 export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocators> {
     /**
      * @private

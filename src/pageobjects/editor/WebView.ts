@@ -1,16 +1,16 @@
 import { Editor, EditorLocators } from './Editor'
-import { PluginDecorator, IPluginDecorator } from '../utils'
+import { PageDecorator, IPageDecorator } from '../utils'
 import { WebView as WebViewLocators } from '../../locators/1.61.0'
 
 let handle: string | undefined
 
-export interface WebView extends IPluginDecorator<EditorLocators> {}
+export interface WebView extends IPageDecorator<EditorLocators> {}
 /**
  * Page object representing an open editor containing a web view
  *
  * @category Editor
  */
-@PluginDecorator(WebViewLocators)
+@PageDecorator(WebViewLocators)
 export class WebView extends Editor<EditorLocators> {
     /**
      * @private

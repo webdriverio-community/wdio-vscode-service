@@ -3,16 +3,16 @@ import { TreeItem } from '../../ViewItem'
 import { CustomTreeItem } from './CustomTreeItem'
 import { AllViewSectionLocators } from '../../ViewSection'
 
-import { PluginDecorator, IPluginDecorator } from '../../../utils'
+import { PageDecorator, IPageDecorator } from '../../../utils'
 import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.61.0'
 
-export interface CustomTreeSection extends IPluginDecorator<AllViewSectionLocators> { }
+export interface CustomTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
  * Custom tree view, e.g. contributed by an extension
  *
  * @category Sidebar
  */
-@PluginDecorator(CustomTreeSectionLocator)
+@PageDecorator(CustomTreeSectionLocator)
 export class CustomTreeSection extends TreeSection {
     /**
      * @private

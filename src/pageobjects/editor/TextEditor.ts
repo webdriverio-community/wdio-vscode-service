@@ -7,7 +7,7 @@ import { StatusBar } from '../statusBar/StatusBar'
 import { Editor, EditorLocators } from './Editor'
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     TextEditor as TextEditorLocators,
@@ -15,13 +15,13 @@ import {
 } from '../../locators/1.61.0'
 import { CMD_KEY } from '../../constants'
 
-export interface TextEditor extends IPluginDecorator<EditorLocators> {}
+export interface TextEditor extends IPageDecorator<EditorLocators> {}
 /**
  * Page object representing the active text editor
  *
  * @category Editor
  */
-@PluginDecorator(TextEditorLocators)
+@PageDecorator(TextEditorLocators)
 export class TextEditor extends Editor<EditorLocators> {
     /**
      * @private
@@ -443,13 +443,13 @@ export class TextEditor extends Editor<EditorLocators> {
     }
 }
 
-interface Selection extends IPluginDecorator<typeof TextEditorLocators> {}
+interface Selection extends IPageDecorator<typeof TextEditorLocators> {}
 /**
  * Text selection block
  *
  * @category Editor
  */
-@PluginDecorator(TextEditorLocators)
+@PageDecorator(TextEditorLocators)
 class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
     /**
      * @private
@@ -476,13 +476,13 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
     }
 }
 
-export interface CodeLens extends IPluginDecorator<typeof TextEditorLocators> {}
+export interface CodeLens extends IPageDecorator<typeof TextEditorLocators> {}
 /**
  * Page object for Code Lens inside a text editor
  *
  * @category Editor
  */
-@PluginDecorator(TextEditorLocators)
+@PageDecorator(TextEditorLocators)
 export class CodeLens extends BasePage<typeof TextEditorLocators> {
     /**
      * @private
@@ -516,13 +516,13 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
     }
 }
 
-export interface FindWidget extends IPluginDecorator<typeof FindWidgetLocators> {}
+export interface FindWidget extends IPageDecorator<typeof FindWidgetLocators> {}
 /**
  * Text Editor's Find Widget
  *
  * @category Editor
  */
-@PluginDecorator(FindWidgetLocators)
+@PageDecorator(FindWidgetLocators)
 export class FindWidget extends BasePage<typeof FindWidgetLocators> {
     /**
      * @private

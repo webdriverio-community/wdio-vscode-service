@@ -1,16 +1,16 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
 import { Menu, MenuItem } from '..'
-import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../utils'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
 import { ContextMenu as ContextMenuLocators } from '../../locators/1.61.0'
 
-export interface ContextMenu extends IPluginDecorator<typeof ContextMenuLocators> {}
+export interface ContextMenu extends IPageDecorator<typeof ContextMenuLocators> {}
 /**
  * Object representing a context menu
  *
  * @category Menu
  */
-@PluginDecorator(ContextMenuLocators)
+@PageDecorator(ContextMenuLocators)
 export class ContextMenu extends Menu<typeof ContextMenuLocators> {
     /**
      * @private
@@ -89,13 +89,13 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
     }
 }
 
-export interface ContextMenuItem extends IPluginDecorator<typeof ContextMenuLocators> {}
+export interface ContextMenuItem extends IPageDecorator<typeof ContextMenuLocators> {}
 /**
  * Object representing an item of a context menu
  *
  * @category Menu
  */
-@PluginDecorator(ContextMenuLocators)
+@PageDecorator(ContextMenuLocators)
 export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
     /**
      * @private
