@@ -21,7 +21,7 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      * @returns WebView page object
      */
     getWebView (): WebView {
-        return new WebView(this.locatorMap)
+        return this.load(WebView)
     }
 
     /**
@@ -52,6 +52,6 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
         await tab.elem.addValue([CMD_KEY, 'Shift', 's'])
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
         await inputBox.waitForExist({ timeout: 5000 })
-        return new InputBox(this.locatorMap)
+        return this.load(InputBox)
     }
 }

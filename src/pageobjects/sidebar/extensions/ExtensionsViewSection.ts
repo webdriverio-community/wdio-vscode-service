@@ -38,10 +38,10 @@ export class ExtensionsViewSection extends ViewSection {
         for (const row of extensionRows) {
             // add implicit wait to avoid stale element exceptions
             // eslint-disable-next-line wdio/no-pause
-            await browser.pause(100)
+            await this._driver.pause(100)
             extensionViewItems.push(
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                await new ExtensionsViewItem(this.locatorMap, row as any, this).wait()
+                await this.load(ExtensionsViewItem, row as any, this).wait()
             )
         }
 

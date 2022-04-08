@@ -30,7 +30,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async toggle (open: boolean): Promise<void> {
         try {
-            const tab = await new EditorView(this.locatorMap).getActiveTab()
+            const tab = await this.load(EditorView).getActiveTab()
             await tab?.elem.click()
         } catch (err) {
             // ignore and move on
@@ -38,7 +38,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
         const height = await this.elem.getSize('height')
 
         if ((open && height === 0) || (!open && height > 0)) {
-            const statusBar = new StatusBar(this.locatorMap)
+            const statusBar = this.load(StatusBar)
             await statusBar.problems$.click()
 
             if (open) {
@@ -64,7 +64,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openProblemsView (): Promise<ProblemsView> {
         await this.openTab(this.locators.problemsTab)
-        return new ProblemsView(this.locatorMap, this).wait()
+        return this.load(ProblemsView, this).wait()
     }
 
     /**
@@ -73,7 +73,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openOutputView (): Promise<OutputView> {
         await this.openTab(this.locators.outputTab)
-        return new OutputView(this.locatorMap, this).wait()
+        return this.load(OutputView, this).wait()
     }
 
     /**
@@ -82,7 +82,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openDebugConsoleView (): Promise<DebugConsoleView> {
         await this.openTab(this.locators.debugTab)
-        return new DebugConsoleView(this.locatorMap, this).wait()
+        return this.load(DebugConsoleView, this).wait()
     }
 
     /**
@@ -91,7 +91,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openTerminalView (): Promise<TerminalView> {
         await this.openTab(this.locators.terminalTab)
-        return new TerminalView(this.locatorMap, this).wait()
+        return this.load(TerminalView, this).wait()
     }
 
     /**
@@ -122,7 +122,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
                 await label.click()
             }
         } catch (err) {
-            await new TitleBar(this.locatorMap).select('View', title)
+            await this.load(TitleBar).select('View', title)
         }
     }
 

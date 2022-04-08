@@ -22,10 +22,11 @@ export class ExtensionsViewItem extends ViewItem {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         extensionElement: ChainablePromiseElement<WebdriverIO.Element>,
         public section: ExtensionsViewSection
     ) {
-        super(locators, extensionElement, section.elem)
+        super(locators, driver, extensionElement, section.elem)
     }
 
     /**

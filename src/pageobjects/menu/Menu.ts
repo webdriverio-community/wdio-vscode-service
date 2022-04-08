@@ -48,7 +48,7 @@ export abstract class Menu<T> extends BasePage<T> {
         for (const label of path) {
             const item = await parent.getItem(label)
             if (!item) return parent
-            await browser.waitUntil(async () => await item.elem.isDisplayed() && await item.elem.isEnabled())
+            await this._driver.waitUntil(async () => (await item.elem.isDisplayed() && await item.elem.isEnabled()))
             const submenu = await item.select()
             if (submenu) {
                 parent = submenu

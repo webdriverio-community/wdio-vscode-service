@@ -24,10 +24,10 @@ export class DiffEditor extends Editor<EditorLocators> {
      */
     getOriginalEditor (): Promise<TextEditor> {
         const element = this.view.elem.$(this.locators.originalEditor)
-        return new TextEditor(
-            this.locatorMap,
+        return this.load(
+            TextEditor,
             element,
-            new EditorView(this.locatorMap)
+            this.load(EditorView)
         ).wait()
     }
 
@@ -38,10 +38,10 @@ export class DiffEditor extends Editor<EditorLocators> {
      */
     async getModifiedEditor (): Promise<TextEditor> {
         const element = this.view.elem.$(this.locators.modifiedEditor)
-        return new TextEditor(
-            this.locatorMap,
+        return this.load(
+            TextEditor,
             element,
-            new EditorView(this.locatorMap)
+            this.load(EditorView)
         ).wait()
     }
 }

@@ -49,27 +49,27 @@ export class WebView extends Editor<EditorLocators> {
      */
     async switchToFrame (): Promise<void> {
         if (!handle) {
-            handle = await browser.getWindowHandle()
+            handle = await this._driver.getWindowHandle()
         }
 
-        const handles = await browser.getWindowHandles()
+        const handles = await this._driver.getWindowHandles()
         for (const h of handles) {
-            await browser.switchToWindow(h)
+            await this._driver.switchToWindow(h)
 
-            if ((await browser.getTitle()).includes('Virtual Document')) {
-                await browser.switchToFrame(0)
+            if ((await this._driver.getTitle()).includes('Virtual Document')) {
+                await this._driver.switchToFrame(0)
                 return
             }
         }
-        await browser.switchToWindow(handle)
+        await this._driver.switchToWindow(handle)
 
         const reference = await this.elem.$(this.locatorMap.EditorView.webView as string)
         const flowToAttr = await reference.getAttribute('aria-flowto')
-        const container = await browser.$(`#${flowToAttr}`)
+        const container = await this._driver.$(`#${flowToAttr}`)
         await container.waitForExist({ timeout: 5000 })
 
         let tries: WebdriverIO.Element[] = []
-        await browser.waitUntil(async () => {
+        await this._driver.waitUntil(async () => {
             tries = await container.$$(this.locators.iframe)
             if (tries.length > 0) {
                 return true
@@ -77,11 +77,11 @@ export class WebView extends Editor<EditorLocators> {
             return false
         }, { timeout: 5000 })
         const view = tries[0]
-        await browser.switchToFrame(view)
+        await this._driver.switchToFrame(view)
 
         const frame = await this.activeFrame$
         await frame.waitForExist({ timeout: 5000 })
-        await browser.switchToFrame(frame)
+        await this._driver.switchToFrame(frame)
     }
 
     /**
@@ -89,8 +89,8 @@ export class WebView extends Editor<EditorLocators> {
      */
     async switchBack (): Promise<void> {
         if (!handle) {
-            handle = await browser.getWindowHandle()
+            handle = await this._driver.getWindowHandle()
         }
-        return browser.switchToWindow(handle)
+        return this._driver.switchToWindow(handle)
     }
 }

@@ -49,7 +49,7 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
      */
     async openNotificationsCenter (): Promise<NotificationsCenter> {
         await this.toggleNotificationsCentre(true)
-        return new NotificationsCenter(this.locatorMap)
+        return this.load(NotificationsCenter)
     }
 
     /**
@@ -157,7 +157,7 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
     private async toggleNotificationsCentre (open: boolean): Promise<void> {
         let visible = false
         try {
-            const klass = await browser
+            const klass = await this._driver
                 .$(this.locatorMap.Workbench.elem as string)
                 .$(this.locators.notifications)
                 .getAttribute('class')

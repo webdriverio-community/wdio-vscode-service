@@ -29,42 +29,42 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      * Get a title bar handle
      */
     getTitleBar (): TitleBar {
-        return new TitleBar(this.locatorMap)
+        return this.load(TitleBar)
     }
 
     /**
      * Get a side bar handle
      */
     getSideBar (): SideBarView<any> {
-        return new SideBarView<any>(this.locatorMap)
+        return this.load(SideBarView)
     }
 
     /**
      * Get an activity bar handle
      */
     getActivityBar (): ActivityBar {
-        return new ActivityBar(this.locatorMap)
+        return this.load(ActivityBar)
     }
 
     /**
      * Get a status bar handle
      */
     getStatusBar (): StatusBar {
-        return new StatusBar(this.locatorMap)
+        return this.load(StatusBar)
     }
 
     /**
      * Get a bottom bar handle
      */
     getBottomBar (): BottomBarPanel {
-        return new BottomBarPanel(this.locatorMap)
+        return this.load(BottomBarPanel)
     }
 
     /**
      * Get a handle for the editor view
      */
     getEditorView (): EditorView {
-        return new EditorView(this.locatorMap)
+        return this.load(EditorView)
     }
 
     /**
@@ -84,8 +84,8 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
 
             for (const element of elements) {
                 notifications.push(
-                    await new StandaloneNotification(
-                        this.locatorMap,
+                    await this.load(
+                        StandaloneNotification,
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         element as any
                     ).wait()
@@ -109,7 +109,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      * @returns Promise resolving to NotificationsCenter object
      */
     openNotificationsCenter (): Promise<NotificationsCenter> {
-        const statusBar = new StatusBar(this.locatorMap)
+        const statusBar = this.load(StatusBar)
         return statusBar.openNotificationsCenter()
     }
 
@@ -120,10 +120,10 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      */
     async openSettings (): Promise<SettingsEditor> {
         await this.executeCommand('open user settings')
-        await new EditorView(this.locatorMap).openEditor('Settings')
+        await this.load(EditorView).openEditor('Settings')
         await this.elem.$(this.locatorMap.Editor.elem as string).waitForExist()
         await new Promise((res) => setTimeout(res, 500))
-        return new SettingsEditor(this.locatorMap)
+        return this.load(SettingsEditor)
     }
 
     /**
@@ -131,21 +131,24 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object
      */
     async openCommandPrompt (): Promise<QuickOpenBox | InputBox> {
-        const editorView = await new EditorView(this.locatorMap).wait()
+        const editorView = await this.load(EditorView).wait()
         const webview = await editorView.webView$$
         if (webview.length > 0) {
             const tab = await editorView.getActiveTab()
             if (tab) {
                 await tab.elem.addValue(['F1'])
-                const inputBox = new InputBox(this.locatorMap).wait()
+                const inputBox = this.load(InputBox).wait()
                 return inputBox
             }
         }
-        await browser.keys(['F1'])
-        if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.44.0') {
-            return new InputBox(this.locatorMap).wait()
+        await this._driver.keys(['F1'])
+        if (
+            await this._driver.getVSCodeChannel() === 'vscode'
+            && await this._driver.getVSCodeVersion() >= '1.44.0'
+        ) {
+            return this.load(InputBox).wait()
         }
-        return new QuickOpenBox(this.locatorMap).wait()
+        return this.load(QuickOpenBox).wait()
     }
 
     /**

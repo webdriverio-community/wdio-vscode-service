@@ -24,8 +24,8 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      */
     async getItem (name: string): Promise<TitleBarItem | undefined> {
         try {
-            const titleBar = new TitleBarItem(
-                this.locatorMap,
+            const titleBar = this.load(
+                TitleBarItem,
                 this.locators.itemConstructor(name),
                 this
             )
@@ -50,8 +50,8 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
                 continue
             }
 
-            const item = new TitleBarItem(
-                this.locatorMap,
+            const item = this.load(
+                TitleBarItem,
                 await element.getAttribute(this.locators.itemLabel),
                 this
             )
@@ -73,7 +73,7 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      * Get a reference to the WindowControls
      */
     getWindowControls (): WindowControls {
-        return new WindowControls(this.locatorMap, this.elem)
+        return this.load(WindowControls, this.elem)
     }
 }
 
@@ -92,22 +92,23 @@ export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         public label: string,
         public parentMenu: Menu<typeof TitleBarLocators>
     ) {
-        super(locators, (locators.TitleBar.itemConstructor as Function)(label) as string)
+        super(locators, driver, (locators.TitleBar.itemConstructor as Function)(label) as string)
         this.parentMenu = parentMenu
         this.label = label
     }
 
     async select () {
-        const openMenus = await browser.$$(this.locatorMap.ContextMenu.elem as string)
+        const openMenus = await this._driver.$$(this.locatorMap.ContextMenu.elem as string)
         if (openMenus.length > 0 && await openMenus[0].isDisplayed()) {
-            await browser.keys('Escape')
+            await this._driver.keys('Escape')
         }
         await this.elem.click()
 
-        const menu = new ContextMenu(this.locatorMap, this.elem)
+        const menu = this.load(ContextMenu, this.elem)
         await menu.wait()
         return menu
     }

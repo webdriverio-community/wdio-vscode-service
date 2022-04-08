@@ -22,7 +22,7 @@ export class SideBarView<T> extends BasePage<T> {
      * @returns ViewTitlePart object
      */
     getTitlePart (): ViewTitlePart {
-        return new ViewTitlePart(this.locatorMap, this)
+        return this.load(ViewTitlePart, this)
     }
 
     /**
@@ -30,6 +30,6 @@ export class SideBarView<T> extends BasePage<T> {
      * @returns ViewContent object
      */
     getContent (): ViewContent {
-        return new ViewContent(this.locatorMap, this)
+        return this.load(ViewContent, this)
     }
 }

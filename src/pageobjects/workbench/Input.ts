@@ -234,13 +234,13 @@ export class QuickPickItem extends BasePage<typeof InputLocators> {
     private index: number
     public input: Input
 
-    constructor (locators: VSCodeLocatorMap, index: number, inputField: Input) {
+    constructor (locators: VSCodeLocatorMap, driver: WebdriverIO.Browser, index: number, inputField: Input) {
         const quickPickPositionFn = locators.Input.quickPickPosition as Function
         const quickPickIndexFn = locators.Input.quickPickIndex as Function
         const baseParam = inputField instanceof QuickOpenBox
             ? quickPickPositionFn(index) as string
             : quickPickIndexFn(index) as string
-        super(locators, baseParam)
+        super(locators, driver, baseParam)
         this.index = index
         this.input = inputField
     }
@@ -312,8 +312,8 @@ export class InputBox extends Input {
 
         for (const element of elements) {
             if (await element.isDisplayed()) {
-                picks.push(await new QuickPickItem(
-                    this.locatorMap,
+                picks.push(await this.load(
+                    QuickPickItem,
                     parseInt(await element.getAttribute('data-index'), 10),
                     this
                 ).wait())
@@ -362,13 +362,13 @@ export class QuickOpenBox extends Input {
 
     async getQuickPicks (): Promise<QuickPickItem[]> {
         const picks: QuickPickItem[] = []
-        const tree = await browser.$(this.locators.quickList)
+        const tree = await this._driver.$(this.locators.quickList)
         await tree.waitForExist({ timeout: 1000 })
         const elements = await tree.$$(this.locators.row)
         for (const element of elements) {
             const index = parseInt(await element.getAttribute('aria-posinset'), 10)
             if (await element.isDisplayed()) {
-                picks.push(await new QuickPickItem(this.locatorMap, index, this).wait())
+                picks.push(await this.load(QuickPickItem, index, this).wait())
             }
         }
         return picks

@@ -90,3 +90,13 @@ export function getValueSuffix (value: string | boolean) {
 export function isVSCodeCapability (cap: VSCodeCapabilities) {
     return Boolean(cap[VSCODE_CAPABILITY_KEY])
 }
+
+/**
+ * traverse up the scope chain until browser element was reached
+ */
+export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browser): WebdriverIO.Browser {
+    const elemObject = elem as WebdriverIO.Element
+    return elemObject.parent
+        ? getBrowserObject(elemObject.parent)
+        : elem as WebdriverIO.Browser
+}

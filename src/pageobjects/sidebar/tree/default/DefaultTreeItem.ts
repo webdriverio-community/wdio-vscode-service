@@ -20,10 +20,11 @@ export class DefaultTreeItem extends TreeItem {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public viewPart: TreeSection
     ) {
-        super(locators, element, viewPart.elem)
+        super(locators, driver, element, viewPart.elem)
     }
 
     getDescription () {
@@ -47,8 +48,8 @@ export class DefaultTreeItem extends TreeItem {
         const rows = await this.getChildItems(this.locatorMap.DefaultTreeSection.itemRow as string)
         const items = await Promise.all(
             rows.map(async (row) => (
-                new DefaultTreeItem(
-                    this.locatorMap,
+                this.load(
+                    DefaultTreeItem,
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     row as any,
                     this.viewPart

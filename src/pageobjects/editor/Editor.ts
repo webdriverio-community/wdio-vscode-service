@@ -31,10 +31,11 @@ export type EditorLocators = (
 export abstract class Editor<T> extends ElementWithContextMenu<T> {
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element?: ChainablePromiseElement<WebdriverIO.Element> | string,
-        public view: EditorView | EditorGroup = new EditorView(locators)
+        public view: EditorView | EditorGroup = new EditorView(locators, driver)
     ) {
-        super(locators, element)
+        super(locators, driver, element)
         this.setParentElement(this.view.elem)
     }
 

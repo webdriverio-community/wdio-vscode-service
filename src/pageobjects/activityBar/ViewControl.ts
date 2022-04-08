@@ -15,7 +15,7 @@ export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators
  * Page object representing a view container item in the activity bar
  *
  * ```ts
- * const workbench = await browser.getWorkbench()
+ * const workbench = await this._driver.getWorkbench()
  * const viewControls = await workbench.getActivityBar().getViewControls()
  * console.log(await Promise.all(viewControls.map((vc) => vc.getTitle())))
  * // returns: [
@@ -38,10 +38,11 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public bar: ActivityBar
     ) {
-        super(locators, element, bar.elem)
+        super(locators, driver, element, bar.elem)
     }
 
     /**
@@ -53,17 +54,20 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
         if (klass.indexOf(this.locators.klass) < 0) {
             await this.elem.click()
             // eslint-disable-next-line wdio/no-pause
-            await browser.pause(500)
+            await this._driver.pause(500)
         }
-        const view = await new SideBarView(this.locatorMap).wait()
+        const view = await this.load(SideBarView).wait()
         if ((await view.elem.$$(this.locators.scmId)).length > 0) {
-            if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.47.0') {
-                return new NewScmView(this.locatorMap).wait()
+            if (
+                await this._driver.getVSCodeChannel() === 'vscode'
+                && await this._driver.getVSCodeVersion() >= '1.47.0'
+            ) {
+                return this.load(NewScmView).wait()
             }
-            return new ScmView(this.locatorMap).wait()
+            return this.load(ScmView).wait()
         }
         if ((await view.elem.$$(this.locators.debugId)).length > 0) {
-            return new DebugView(this.locatorMap).wait()
+            return this.load(DebugView).wait()
         }
         return view
     }

@@ -6,35 +6,32 @@ import logger from '@wdio/logger'
 import getPort from 'get-port'
 import decamelize from 'decamelize'
 import { WebSocketServer, WebSocket } from 'ws'
-import { Services, Options } from '@wdio/types'
+import { Services, Options, Capabilities } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
 import { Workbench } from './pageobjects'
-import { getLocators, getValueSuffix, isVSCodeCapability } from './utils'
+import {
+    getLocators, getValueSuffix, isVSCodeCapability, getBrowserObject
+} from './utils'
 import {
     VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS,
     SETTINGS_KEY, VSCODE_CAPABILITY_KEY
 } from './constants'
 import type {
     VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
-    PendingMessageResolver, VSCodeProxyOptions, VSCodeOptions
+    PendingMessageResolver, VSCodeOptions
 } from './types'
 
 const log = logger('wdio-vscode-service')
 
 export default class VSCodeWorkerService implements Services.ServiceInstance {
-    private _browser?: WebdriverIO.Browser
+    private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _wss?: WebSocketServer
     private _messageId = 0
     private _pendingMessages = new Map<number, PendingMessageResolver>()
     private _promisedSocket?: Promise<WebSocket>
-    private _proxyOptions: VSCodeProxyOptions
-    private _vscodeOptions: VSCodeOptions
 
-    constructor (_: never, private _capabilities: VSCodeCapabilities) {
-        this._vscodeOptions = this._capabilities[VSCODE_CAPABILITY_KEY] || <VSCodeOptions>{}
-        this._proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...this._vscodeOptions.vscodeProxyOptions }
-    }
+    constructor (_: never, private _capabilities: VSCodeCapabilities) {}
 
     private _handleIncoming (data: Buffer) {
         try {
@@ -53,7 +50,24 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
-    async beforeSession (_: Options.Testrunner, capabilities: VSCodeCapabilities) {
+    /**
+     * helper method to parse either normal or multiremote capabilities into
+     * an array
+     */
+    private _parseCapabilities (capabilities?: Capabilities.RemoteCapability) {
+        return ((capabilities || this._capabilities) as Capabilities.Capabilities).browserName
+            ? [capabilities as VSCodeCapabilities]
+            : Object.values(capabilities || this._capabilities).map((c) => c.capabilities as VSCodeCapabilities)
+    }
+
+    async beforeSession (_: Options.Testrunner, capabilities: Capabilities.RemoteCapability) {
+        const caps = this._parseCapabilities(capabilities)
+        for (const cap of caps) {
+            await this._beforeSession(cap)
+        }
+    }
+
+    private async _beforeSession (capabilities: VSCodeCapabilities) {
         /**
          * only run setup for VSCode capabilities
          */
@@ -61,27 +75,29 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             return
         }
 
+        const vscodeOptions = capabilities[VSCODE_CAPABILITY_KEY] || {} as VSCodeOptions
+        const proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...vscodeOptions.vscodeProxyOptions }
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
         const storagePath = await tmp.dir()
         const userSettingsPath = path.join(storagePath.path, 'settings', 'User')
         const userSettings: Record<string, any> = {
             ...DEFAULT_VSCODE_SETTINGS,
-            ...(this._vscodeOptions.userSettings || {})
+            ...(vscodeOptions.userSettings || {})
         }
 
-        if (!this._vscodeOptions.extensionPath) {
+        if (!vscodeOptions.extensionPath) {
             throw new SevereServiceError('No extension path provided')
         }
 
-        if (this._proxyOptions.enable) {
-            const port = await getPort({ port: this._proxyOptions.port })
+        if (proxyOptions.enable) {
+            const port = await getPort({ port: proxyOptions.port })
             userSettings[SETTINGS_KEY].port = port
             log.info(`Start VSCode proxy server on port ${port}`)
             const wss = this._wss = new WebSocketServer({ port })
             this._promisedSocket = new Promise((resolve, reject) => {
                 const socketTimeout = setTimeout(
                     () => reject(new Error('Connection timeout exceeded')),
-                    this._proxyOptions.connectionTimeout
+                    proxyOptions.connectionTimeout
                 )
                 wss.on('connection', (socket) => {
                     log.info('Connected with VSCode workbench')
@@ -92,11 +108,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             })
         }
 
-        customArgs.extensionDevelopmentPath = slash(this._vscodeOptions.extensionPath)
+        customArgs.extensionDevelopmentPath = slash(vscodeOptions.extensionPath)
         customArgs.extensionTestsPath = slash(path.join(__dirname, 'proxy', 'index.js'))
         customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
         customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
-        customArgs.vscodeBinaryPath = this._vscodeOptions.binary
+        customArgs.vscodeBinaryPath = vscodeOptions.binary
 
         log.info(`Setting up VSCode directory at ${userSettingsPath}`)
         await fs.mkdir(userSettingsPath, { recursive: true })
@@ -106,21 +122,21 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             'utf-8'
         )
 
-        if (this._vscodeOptions.workspacePath) {
-            customArgs.folderUri = `file:${slash(this._vscodeOptions.workspacePath)}`
+        if (vscodeOptions.workspacePath) {
+            customArgs.folderUri = `file:${slash(vscodeOptions.workspacePath)}`
         }
 
-        if (this._vscodeOptions.filePath) {
-            customArgs.fileUri = `file:${slash(this._vscodeOptions.filePath)}`
+        if (vscodeOptions.filePath) {
+            customArgs.fileUri = `file:${slash(vscodeOptions.filePath)}`
         }
 
-        if (this._vscodeOptions.verboseLogging) {
+        if (vscodeOptions.verboseLogging) {
             customArgs.verbose = true
             customArgs.logExtensionHostCommunication = true
         }
 
         const binary = path.join(__dirname, 'chromium', `index.${process.platform === 'win32' ? 'exe' : 'js'}`)
-        const args = Object.entries({ ...customArgs, ...this._vscodeOptions.vscodeArgs }).reduce(
+        const args = Object.entries({ ...customArgs, ...vscodeOptions.vscodeArgs }).reduce(
             (prev, [key, value]) => [
                 ...prev,
                 `--${decamelize(key, { separator: '-' })}${getValueSuffix(value)}`
@@ -137,7 +153,17 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
     }
 
-    async before (capabilities: VSCodeCapabilities, __: never, browser: WebdriverIO.Browser) {
+    async before (capabilities: Capabilities.RemoteCapability, __: never, browser: WebdriverIO.Browser) {
+        const caps = this._parseCapabilities(capabilities)
+        for (const cap of caps) {
+            await this._before(cap, browser)
+        }
+    }
+
+    private async _before (
+        capabilities: VSCodeCapabilities,
+        browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+    ) {
         /**
          * only run setup for VSCode capabilities
          */
@@ -146,22 +172,50 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
 
         this._browser = browser
-        const locators = await getLocators(capabilities.browserVersion || 'insiders')
-        const workbenchPO = new Workbench(locators)
-        this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
+
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        this._browser.addCommand('getWorkbench', this._getWorkbench.bind(this))
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        this._browser.addCommand('getWorkbench', this._getWorkbench, true)
         this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
         this._browser.addCommand('getVSCodeVersion', () => capabilities.browserVersion)
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
-        await workbenchPO.elem.waitForExist()
+
+        const instances: WebdriverIO.Browser[] = browser.isMultiremote
+            ? Object.keys(browser.capabilities).map((c) => browser[c] as WebdriverIO.Browser)
+            : [browser]
+        for (const driver of instances) {
+            await driver.getWorkbench()
+        }
+    }
+
+    private async _getWorkbench (this: WebdriverIO.Browser | WebdriverIO.Element) {
+        /**
+         * don't allow command on global browser with multiremote
+         */
+        if (this.isMultiremote && !(this as WebdriverIO.Element).selector) {
+            throw new Error('Method "getWorkbench" not supported on global driver in multiremote')
+        }
+        const browserVersion = (this.capabilities as Capabilities.Capabilities).browserVersion || 'insiders'
+        const locators = await getLocators(browserVersion)
+        const workbenchPO = new Workbench(locators, getBrowserObject(this))
+        return workbenchPO.wait()
     }
 
     async after () {
+        const caps = this._parseCapabilities()
+        for (const cap of caps) {
+            await this._after(cap)
+        }
+    }
+
+    private async _after (capabilities: VSCodeCapabilities) {
         if (
-            !isVSCodeCapability(this._capabilities)
+            !isVSCodeCapability(capabilities)
             || !this._browser
-            || !this._capabilities[VSCODE_CAPABILITY_KEY]?.verboseLogging
+            || !capabilities[VSCODE_CAPABILITY_KEY]?.verboseLogging
         ) {
             return
         }
@@ -187,11 +241,13 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
-    private async _executeVSCode (fn: Function | string, ...params: any[]) {
+    private async _executeVSCode (capabilities: VSCodeCapabilities, fn: Function | string, ...params: any[]) {
         if (!this._promisedSocket) {
             throw new Error('VSCode API proxy not enabled, see "vscodeProxyOptions" option in service docs')
         }
 
+        const vscodeOptions = capabilities[VSCODE_CAPABILITY_KEY] || {} as VSCodeOptions
+        const proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...vscodeOptions.vscodeProxyOptions }
         const socket = await this._promisedSocket
 
         const proxyFn = typeof fn === 'function'
@@ -207,7 +263,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         const returnVal = new Promise((resolve, reject) => {
             const cmdTimeout = setTimeout(
                 () => reject(new Error('Remote command timeout exceeded')),
-                this._proxyOptions.commandTimeout
+                proxyOptions.commandTimeout
             )
             this._pendingMessages.set(this._messageId, (error: string | undefined, result: any) => {
                 clearTimeout(cmdTimeout)

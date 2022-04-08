@@ -48,8 +48,8 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
         for (const element of elements) {
             const classProperty = await element.getAttribute('class')
             if (classProperty.indexOf('disabled') < 0) {
-                const item = new ContextMenuItem(
-                    this.locatorMap,
+                const item = this.load(
+                    ContextMenuItem,
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     element as any,
                     this
@@ -66,7 +66,7 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
      * @returns Promise resolving when the menu is closed
      */
     async close (): Promise<void> {
-        await browser.keys('Escape')
+        await this._driver.keys('Escape')
         await this.elem.waitForDisplayed({ reverse: true })
         // Todo(Christian): maybe handle stale element exception
     }
@@ -77,7 +77,7 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
     async wait (timeout = 5000): Promise<this> {
         await (await this.elem).waitForDisplayed({ timeout })
         let items = (await this.getItems()).length
-        await browser.waitUntil(async () => {
+        await this._driver.waitUntil(async () => {
             const temp = (await this.getItems()).length
             if (temp === items) {
                 return true
@@ -105,17 +105,18 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         base: ChainablePromiseElement<WebdriverIO.Element>,
         public parentMenu: Menu<typeof ContextMenuLocators>
     ) {
-        super(locators, base, parentMenu.elem)
+        super(locators, driver, base, parentMenu.elem)
     }
 
     async select () {
         await this.elem.click()
         await new Promise((res) => setTimeout(res, 500))
         if (await this.isNesting()) {
-            await new ContextMenu(this.locatorMap, this.elem).wait()
+            await this.load(ContextMenu, this.elem).wait()
         }
         return undefined
     }

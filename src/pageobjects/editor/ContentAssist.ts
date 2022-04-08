@@ -21,9 +21,10 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         parent: TextEditor | DebugConsoleView
     ) {
-        super(locators)
+        super(locators, driver)
         this.setParentElement(parent.elem)
     }
 
@@ -67,7 +68,7 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
      * @returns Promise resolving to array of ContentAssistItem objects
      */
     async getItems (): Promise<ContentAssistItem[]> {
-        await browser.waitUntil(() => this.isLoaded())
+        await this._driver.waitUntil(() => this.isLoaded())
 
         const elements = await this.elem
             .$(this.locators.itemRows)
@@ -76,7 +77,7 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
 
         for (const item of elements) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            items.push(await new ContentAssistItem(this.locatorMap, item as any, this).wait())
+            items.push(await this.load(ContentAssistItem, item as any, this).wait())
         }
         return items
     }
@@ -115,10 +116,11 @@ export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         item: string | ChainablePromiseElement<WebdriverIO.Element>,
         contentAssist: ContentAssist
     ) {
-        super(locators, item)
+        super(locators, driver, item)
         this.parentMenu = contentAssist
     }
 

@@ -45,7 +45,7 @@ export class ScmView extends SideBarView<typeof ScmViewLocators> {
         const headers = await this.providerHeader$$
         const sections = await Promise.all(headers.map(async (header) => header.$(this.locators.providerRelative)))
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        return Promise.all(sections.map((section) => new ScmProvider(this.locatorMap, section as any, this)))
+        return Promise.all(sections.map((section) => this.load(ScmProvider, section as any, this)))
     }
 
     /**
@@ -77,10 +77,11 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public view: ScmView
     ) {
-        super(locators, element, view.elem)
+        super(locators, driver, element, view.elem)
     }
 
     /**
@@ -128,10 +129,10 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     async openMoreActions (): Promise<ContextMenu> {
         const header = await this.providerHeader$
         if ((await header.getAttribute('class')).indexOf('hidden') > -1) {
-            return new MoreAction(this.locatorMap, this.view).openContextMenu()
+            return this.load(MoreAction, this.view).openContextMenu()
         }
         await this.elem.moveTo()
-        return new MoreAction(this.locatorMap, this).openContextMenu()
+        return this.load(MoreAction, this).openContextMenu()
     }
 
     /**
@@ -173,7 +174,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         }
         return Promise.all(
             elements.map((element) => (
-                new ScmChange(this.locatorMap, element, this).wait()
+                this.load(ScmChange, element, this).wait()
             ))
         )
     }
@@ -211,10 +212,11 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         row: ChainablePromiseElement<WebdriverIO.Element>,
         public provider: ScmProvider
     ) {
-        super(locators, row, provider.elem)
+        super(locators, driver, row, provider.elem)
     }
 
     /**
@@ -308,22 +310,24 @@ export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         public scm: ScmProvider | ScmView
     ) {
-        super(locators, locators.ScmView.more as string, scm.elem)
+        super(locators, driver, locators.ScmView.more as string, scm.elem)
     }
 
     async openContextMenu (): Promise<ContextMenu> {
         await this.elem.click()
         const shadowRootHost = await this.scm.elem.$$('shadow-root-host')
-        await browser.keys('Escape')
+        await this._driver.keys('Escape')
 
         if (shadowRootHost.length > 0) {
             if (await this.elem.getAttribute('aria-expanded') !== 'true') {
                 await this.elem.click()
             }
-            const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
-            return new ContextMenu(this.locatorMap, shadowRoot).wait()
+            const selector: string = await this._driver.execute('return arguments[0].shadowRoot', shadowRootHost[0])
+            const shadowRoot = $(selector)
+            return this.load(ContextMenu, shadowRoot).wait()
         }
         return super.openContextMenu()
     }
