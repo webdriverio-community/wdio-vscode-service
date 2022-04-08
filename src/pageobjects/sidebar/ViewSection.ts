@@ -32,10 +32,11 @@ export interface ViewSection extends IPluginDecorator<AllViewSectionLocators> { 
 export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public content: ViewContent
     ) {
-        super(locators, panel)
+        super(locators, driver, panel)
     }
 
     /**
@@ -57,7 +58,7 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
         if (!await this.isExpanded()) {
             const panel = await this.header$
             await panel.click()
-            await browser.waitUntil(async () => (
+            await this._driver.waitUntil(async () => (
                 await panel.getAttribute(this.locators.headerExpanded) === 'true'
             ), { timeout: 1000 })
         }
@@ -74,7 +75,7 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
         if (await this.isExpanded()) {
             const panel = await this.header$
             await panel.click()
-            await browser.waitUntil(async () => (
+            await this._driver.waitUntil(async () => (
                 await panel.getAttribute(this.locators.headerExpanded) === 'false'
             ), { timeout: 1000 })
         }
@@ -101,7 +102,7 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
                 return undefined
             }
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            return new WelcomeContentSection(this.locatorMap, res as any, this)
+            return this.load(WelcomeContentSection, res as any, this)
         } catch (_err) {
             return undefined
         }
@@ -156,9 +157,8 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
 
             for (const element of elements) {
                 actions.push(
-                    await new ViewPanelAction(
-                        this.locatorMap,
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                    await this.load(
+                        ViewPanelAction,
                         element as any,
                         this
                     ).wait()
@@ -194,7 +194,6 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
             return undefined
         }
         const section = this
-        const self = this
         const btn = new class extends ElementWithContextMenu<typeof ViewSectionLocators> {
             locatorKey = 'ViewSection' as const
 
@@ -202,12 +201,16 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
                 await this.elem.click()
                 const shadowRootHost = await section.elem.$$('.shadow-root-host')
                 if (shadowRootHost.length > 0) {
-                    const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
-                    return new ContextMenu(self.locatorMap, shadowRoot).wait()
+                    const selector: string = await this._driver.execute(
+                        'return arguments[0].shadowRoot',
+                        shadowRootHost[0]
+                    )
+                    const shadowRoot = $(selector)
+                    return this.load(ContextMenu, shadowRoot).wait()
                 }
                 return super.openContextMenu()
             }
-        }(this.locatorMap, more.elem, this.elem)
+        }(this.locatorMap, this._driver, more.elem, this.elem)
         return btn.openContextMenu()
     }
 
@@ -231,10 +234,11 @@ export class ViewPanelAction extends BasePage<typeof ViewSectionLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         viewPart: ViewSection
     ) {
-        super(locators, element, viewPart.elem)
+        super(locators, driver, element, viewPart.elem)
     }
 
     /**

@@ -31,9 +31,10 @@ class NotificationButton extends BasePage<typeof NotificationLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         title: string
     ) {
-        super(locators, (locators.Notification.buttonConstructor as Function)(title) as string)
+        super(locators, driver, (locators.Notification.buttonConstructor as Function)(title) as string)
         this.title = title
     }
 
@@ -100,7 +101,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
          * make button interactable given they only contain
          * text on hover
          */
-        await browser.execute(
+        await this._driver.execute(
             (btnSection) => { btnSection.style.display = 'block' },
             await this.btnSection$ as any as HTMLLinkElement
         )
@@ -119,10 +120,12 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
             .$$(this.locators.action)
 
         for (const button of elements) {
-            buttons.push(await new NotificationButton(
-                this.locatorMap,
-                await button.getAttribute(this.locators.actionLabel)
-            ).wait())
+            buttons.push(
+                await this.load(
+                    NotificationButton,
+                    await button.getAttribute(this.locators.actionLabel)
+                ).wait()
+            )
         }
         return buttons
     }
@@ -133,8 +136,8 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      * @returns Promise resolving when the select button is pressed
      */
     async takeAction (title: string): Promise<void> {
-        await new NotificationButton(
-            this.locatorMap,
+        await this.load(
+            NotificationButton,
             title
         ).elem.click()
     }
@@ -165,9 +168,10 @@ export class StandaloneNotification extends Notification {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         notification: ChainablePromiseElement<WebdriverIO.Element>
     ) {
-        super(locators, notification, locators.Notification.standaloneContainer as string)
+        super(locators, driver, notification, locators.Notification.standaloneContainer as string)
     }
 }
 

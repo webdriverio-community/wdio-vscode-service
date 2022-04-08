@@ -19,9 +19,10 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
 
     constructor (
         locators: VSCodeLocatorMap,
-        public view: SideBarView<any> = new SideBarView(locators)
+        driver: WebdriverIO.Browser,
+        public view: SideBarView<any> = new SideBarView(locators, driver)
     ) {
-        super(locators)
+        super(locators, driver)
     }
 
     /**
@@ -41,7 +42,7 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
         const elements = await this.action$$
         for (const element of elements) {
             const title = await element.getAttribute(this.locators.actionLabel)
-            actions.push(await new TitleActionButton(this.locatorMap, title, this).wait())
+            actions.push(await this.load(TitleActionButton, title, this).wait())
         }
         return actions
     }
@@ -52,7 +53,7 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
      * @returns Promise resolving to TitleActionButton object
      */
     async getAction (title: string): Promise<TitleActionButton> {
-        return new TitleActionButton(this.locatorMap, title, this).wait()
+        return this.load(TitleActionButton, title, this).wait()
     }
 }
 
@@ -69,8 +70,18 @@ export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
      */
     public locatorKey = 'ViewTitlePart' as const
 
-    constructor (locators: VSCodeLocatorMap, private title: string, viewTitle: ViewTitlePart) {
-        super(locators, (locators.ViewTitlePart.actionContstructor as Function)(title) as string, viewTitle.elem)
+    constructor (
+        locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
+        private title: string,
+        viewTitle: ViewTitlePart
+    ) {
+        super(
+            locators,
+            driver,
+            (locators.ViewTitlePart.actionContstructor as Function)(title) as string,
+            viewTitle.elem
+        )
         this.title = title
     }
 

@@ -141,7 +141,7 @@ export abstract class TreeItem extends ViewItem {
 
         for (const item of items) {
             const label = await item.getAttribute(this.locators.actionTitle)
-            actions.push(new ViewItemAction(this.locatorMap, label, this))
+            actions.push(this.load(ViewItemAction, label, this))
         }
         return actions
     }
@@ -213,10 +213,11 @@ export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         label: string,
         viewItem: TreeItem
     ) {
-        super(locators, (locators.ViewSection.actionConstructor as Function)(label) as string, viewItem.elem)
+        super(locators, driver, (locators.ViewSection.actionConstructor as Function)(label) as string, viewItem.elem)
         this.label = label
     }
 

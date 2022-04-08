@@ -27,10 +27,11 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
      */
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         public welcomeSection: WelcomeContentSection
     ) {
-        super(locators, panel)
+        super(locators, driver, panel)
     }
 
     /** Return the title displayed on this button */
@@ -67,10 +68,11 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
      */
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         panel: ChainablePromiseElement<WebdriverIO.Element>,
         parent: ViewSection
     ) {
-        super(locators, panel, parent.elem)
+        super(locators, driver, panel, parent.elem)
     }
 
     /**
@@ -86,14 +88,14 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            return new WelcomeContentButton(this.locatorMap, e as any, this)
+            return this.load(WelcomeContentButton, e as any, this)
         }))
     }
 
     /** Finds all buttons in the welcome content */
     public getButtons (): Promise<WelcomeContentButton[]> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        return this.button$$.map((elem) => new WelcomeContentButton(this.locatorMap, elem as any, this))
+        return this.button$$.map((elem) => this.load(WelcomeContentButton, elem as any, this))
     }
 
     /**

@@ -47,7 +47,7 @@ export class NotificationsCenter extends BasePage<typeof NotificationsCenterLoca
 
         for (const element of elements) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            const not = new CenterNotification(this.locatorMap, element as any)
+            const not = this.load(CenterNotification, element as any)
             if (type === NotificationType.Any || await not.getType() === type) {
                 notifications.push(await not.wait())
             }

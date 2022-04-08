@@ -22,9 +22,10 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        public view: SideBarView<any> = new SideBarView(locators)
+        driver: WebdriverIO.Browser,
+        public view: SideBarView<any> = new SideBarView(locators, driver)
     ) {
-        super(locators, view.elem)
+        super(locators, driver, view.elem)
     }
 
     /**
@@ -81,8 +82,8 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
     }
 
     private async createSection (panel: WebdriverIO.Element): Promise<ViewSection> {
-        const section: ViewSection = new DefaultTreeSection(
-            this.locatorMap,
+        const section: ViewSection = this.load(
+            DefaultTreeSection,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             panel as any,
             this
@@ -92,16 +93,16 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
             return section
         }
         if (await section.elem.$(this.locators.extensionsView).isExisting()) {
-            return new ExtensionsViewSection(
-                this.locatorMap,
+            return this.load(
+                ExtensionsViewSection,
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 panel as any,
                 this
             )
         }
 
-        return new CustomTreeSection(
-            this.locatorMap,
+        return this.load(
+            CustomTreeSection,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             panel as any,
             this

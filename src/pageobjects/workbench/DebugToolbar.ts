@@ -19,7 +19,7 @@ export class DebugToolbar extends BasePage<typeof DebugToolbarLocators> {
      * Wait for the execution to pause at the next breakpoint
      */
     async waitForBreakPoint (): Promise<void> {
-        await browser.waitUntil(async () => {
+        await this._driver.waitUntil(async () => {
             const btn = await this.button$('continue')
             return btn.isEnabled()
         })

@@ -20,10 +20,11 @@ export class CustomTreeItem extends TreeItem {
 
     constructor (
         locators: VSCodeLocatorMap,
+        driver: WebdriverIO.Browser,
         element: ChainablePromiseElement<WebdriverIO.Element>,
         public viewPart: TreeSection
     ) {
-        super(locators, element, viewPart.elem)
+        super(locators, driver, element, viewPart.elem)
     }
 
     async getLabel (): Promise<string> {
@@ -48,7 +49,7 @@ export class CustomTreeItem extends TreeItem {
         const items = await Promise.all(
             rows.map(async (row) => (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new CustomTreeItem(this.locatorMap, row as any, this.viewPart).wait()
+                this.load(CustomTreeItem, row as any, this.viewPart).wait()
             ))
         )
         return items

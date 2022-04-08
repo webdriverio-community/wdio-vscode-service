@@ -73,6 +73,12 @@ export function PluginDecorator<T extends { new(...args: any[]): any }> (locator
     }
 }
 
+/**
+ * remove the first two elements of a tuple
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type Tail<T extends any[]> = T extends [infer A, infer B, ...infer R] ? R : never
+
 export abstract class BasePage<PageLocators, LocatorMap extends Record<string, Locators> = VSCodeLocatorMap> {
     /**
      * @private
@@ -84,6 +90,7 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
      */
     constructor (
         protected _locators: LocatorMap,
+        protected _driver: WebdriverIO.Browser,
         private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
         private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
     ) {}
@@ -123,15 +130,15 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
         const baseLocator = (this.locators as any as Locators).elem
         if (this._baseElem) {
             return typeof this._baseElem === 'string'
-                ? browser.$(this._baseElem)
+                ? this._driver.$(this._baseElem)
                 : this._baseElem
         }
 
         if (typeof baseLocator === 'string') {
-            return browser.$(baseLocator)
+            return this._driver.$(baseLocator)
         }
 
-        return browser.$('html')
+        return this._driver.$('html')
     }
 
     /**
@@ -140,10 +147,10 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
     get parent () {
         if (this._parentElem) {
             return typeof this._parentElem === 'string'
-                ? browser.$(this._parentElem)
+                ? this._driver.$(this._parentElem)
                 : this._parentElem
         }
-        return browser.$('html')
+        return this._driver.$('html')
     }
 
     /**
@@ -162,6 +169,13 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
         await this.elem.waitForDisplayed({ timeout })
         return this
     }
+
+    load <T extends new (...params: any[]) => InstanceType<T>>(
+        PageObject: T,
+        ...params: Tail<ConstructorParameters<T>>) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        return new PageObject(this.locatorMap, this._driver, ...params)
+    }
 }
 
 /**
@@ -173,13 +187,13 @@ export abstract class ElementWithContextMenu<T> extends BasePage<T> {
      */
     async openContextMenu (): Promise<ContextMenu> {
         const contextMenuLocators = this.locatorMap.ContextMenu as AllLocatorType['ContextMenu']
-        const workbench = browser.$((this.locatorMap.Workbench as AllLocatorType['Workbench']).elem)
-        const menus = await browser.$$(contextMenuLocators.contextView)
+        const workbench = this._driver.$((this.locatorMap.Workbench as AllLocatorType['Workbench']).elem)
+        const menus = await this._driver.$$(contextMenuLocators.contextView)
 
         if (menus.length < 1) {
             await this.elem.click({ button: 2 })
-            await browser.$(contextMenuLocators.contextView).waitForExist({ timeout: 2000 })
-            return new ContextMenu(this.locatorMap, workbench).wait()
+            await this._driver.$(contextMenuLocators.contextView).waitForExist({ timeout: 2000 })
+            return this.load(ContextMenu, workbench)
         }
 
         if (await workbench.$$(contextMenuLocators.viewBlock).length > 0) {
@@ -188,6 +202,6 @@ export abstract class ElementWithContextMenu<T> extends BasePage<T> {
         }
 
         await this.elem.click({ button: 2 })
-        return new ContextMenu(this.locatorMap).wait()
+        return this.load(ContextMenu).wait()
     }
 }
