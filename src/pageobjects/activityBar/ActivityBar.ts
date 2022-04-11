@@ -1,14 +1,14 @@
 import { ViewControl, ActionsControl } from '..'
-import { PluginDecorator, IPluginDecorator, ElementWithContextMenu } from '../utils'
+import { PageDecorator, IPageDecorator, ElementWithContextMenu } from '../utils'
 import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
 
-export interface ActivityBar extends IPluginDecorator<typeof ActivityBarLocators> {}
+export interface ActivityBar extends IPageDecorator<typeof ActivityBarLocators> {}
 /**
  * Page object representing the left side activity bar in VS Code
  *
  * @category ActivityBar
  */
-@PluginDecorator(ActivityBarLocators)
+@PageDecorator(ActivityBarLocators)
 export class ActivityBar extends ElementWithContextMenu<typeof ActivityBarLocators> {
     /**
      * @private

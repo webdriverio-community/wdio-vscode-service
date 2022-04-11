@@ -1,15 +1,15 @@
 import { Editor, InputBox, WebView } from '..'
-import { PluginDecorator, IPluginDecorator } from '../utils'
+import { PageDecorator, IPageDecorator } from '../utils'
 import { Editor as EditorLocators } from '../../locators/1.61.0'
 import { CMD_KEY } from '../../constants'
 
-export interface CustomEditor extends IPluginDecorator<typeof EditorLocators> {}
+export interface CustomEditor extends IPageDecorator<typeof EditorLocators> {}
 /**
  * Page object for custom editors
  *
  * @category Editor
  */
-@PluginDecorator(EditorLocators)
+@PageDecorator(EditorLocators)
 export class CustomEditor extends Editor<typeof EditorLocators> {
     /**
      * @private

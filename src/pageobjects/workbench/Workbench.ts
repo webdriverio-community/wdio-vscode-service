@@ -9,16 +9,16 @@ import { NotificationsCenter } from './NotificationsCenter'
 import { QuickOpenBox, InputBox } from './Input'
 import { SettingsEditor } from '../editor/SettingsEditor'
 
-import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
+import { PageDecorator, IPageDecorator, BasePage } from '../utils'
 import { Workbench as WorkbenchLocators } from '../../locators/1.61.0'
 
-export interface Workbench extends IPluginDecorator<typeof WorkbenchLocators> {}
+export interface Workbench extends IPageDecorator<typeof WorkbenchLocators> {}
 /**
  * Page object representing the custom VSCode title bar
  *
  * @category Workbench
  */
-@PluginDecorator(WorkbenchLocators)
+@PageDecorator(WorkbenchLocators)
 export class Workbench extends BasePage<typeof WorkbenchLocators> {
     /**
      * @private

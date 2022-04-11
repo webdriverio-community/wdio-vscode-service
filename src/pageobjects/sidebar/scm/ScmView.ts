@@ -3,18 +3,18 @@ import type { ChainablePromiseElement } from 'webdriverio'
 import { SideBarView } from '../SideBarView'
 import { ContextMenu } from '../..'
 import {
-    ElementWithContextMenu, VSCodeLocatorMap, PluginDecorator, IPluginDecorator, BasePage
+    ElementWithContextMenu, VSCodeLocatorMap, PageDecorator, IPageDecorator, BasePage
 } from '../../utils'
 import { ScmView as ScmViewLocators } from '../../../locators/1.61.0'
 import { CMD_KEY } from '../../../constants'
 
-export interface ScmView extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface ScmView extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * Page object representing the Source Control view
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class ScmView extends SideBarView<typeof ScmViewLocators> {
     /**
      * @private
@@ -62,14 +62,14 @@ export class ScmView extends SideBarView<typeof ScmViewLocators> {
     }
 }
 
-export interface ScmProvider extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface ScmProvider extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * Page object representing a repository in the source control view
  * Maps roughly to a view section of the source control view
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     /**
      * @private
@@ -196,13 +196,13 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     }
 }
 
-export interface ScmChange extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface ScmChange extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * Page object representing a SCM change tree item
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
     /**
      * @private
@@ -293,13 +293,13 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
     }
 }
 
-export interface MoreAction extends IPluginDecorator<typeof ScmViewLocators> { }
+export interface MoreAction extends IPageDecorator<typeof ScmViewLocators> { }
 /**
  * More Action
  *
  * @category Sidebar
  */
-@PluginDecorator(ScmViewLocators)
+@PageDecorator(ScmViewLocators)
 export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
     /**
      * @private

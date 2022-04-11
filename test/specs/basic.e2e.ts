@@ -4,7 +4,7 @@
 
 import path from 'path'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, BottomBarPanel,
+    PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType, ProblemsView, EditorView
 } from '../..'
 
@@ -20,8 +20,8 @@ const locators = {
     }
 }
 
-interface TestPageObject extends IPluginDecorator<typeof locators.marquee> {}
-@PluginDecorator(locators.marquee)
+interface TestPageObject extends IPageDecorator<typeof locators.marquee> {}
+@PageDecorator(locators.marquee)
 class TestPageObject extends BasePage<typeof locators.marquee, typeof locators> {
     public locatorKey = 'marquee' as const
 
@@ -33,7 +33,7 @@ class TestPageObject extends BasePage<typeof locators.marquee, typeof locators> 
 describe('WDIO VSCode Service', () => {
     describe('page objects', () => {
         it('exports necessary components for custom pageobjects', () => {
-            expect(typeof PluginDecorator).toBe('function')
+            expect(typeof PageDecorator).toBe('function')
             expect(typeof BasePage).toBe('function')
         })
 

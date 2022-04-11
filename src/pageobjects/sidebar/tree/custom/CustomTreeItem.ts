@@ -2,16 +2,16 @@ import type { ChainablePromiseElement } from 'webdriverio'
 
 import { TreeSection } from '../TreeSection'
 import { TreeItem, ViewItemLocators } from '../../ViewItem'
-import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../../../utils'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../../utils'
 import { CustomTreeItem as CustomTreeItemLocator } from '../../../../locators/1.61.0'
 
-export interface CustomTreeItem extends IPluginDecorator<ViewItemLocators> { }
+export interface CustomTreeItem extends IPageDecorator<ViewItemLocators> { }
 /**
  * View item in a custom-made content section (e.g. an extension tree view)
  *
  * @category Sidebar
  */
-@PluginDecorator(CustomTreeItemLocator)
+@PageDecorator(CustomTreeItemLocator)
 export class CustomTreeItem extends TreeItem {
     /**
      * @private

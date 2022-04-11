@@ -4,7 +4,7 @@ import {
     ContextMenu, ViewContent, ViewItem, WelcomeContentSection
 } from '..'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     ViewSection as ViewSectionLocators,
@@ -23,7 +23,7 @@ export type AllViewSectionLocators = (
     typeof DefaultTreeSectionLocators
 )
 
-export interface ViewSection extends IPluginDecorator<AllViewSectionLocators> { }
+export interface ViewSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
  * Page object representing a collapsible content section of the side bar view
  *
@@ -216,13 +216,13 @@ export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
     }
 }
 
-export interface ViewPanelAction extends IPluginDecorator<typeof ViewSectionLocators> { }
+export interface ViewPanelAction extends IPageDecorator<typeof ViewSectionLocators> { }
 /**
  * Action button on the header of a view section
  *
  * @category Sidebar
  */
-@PluginDecorator(ViewSectionLocators)
+@PageDecorator(ViewSectionLocators)
 export class ViewPanelAction extends BasePage<typeof ViewSectionLocators> {
     /**
      * @private

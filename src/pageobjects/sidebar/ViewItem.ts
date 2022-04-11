@@ -1,5 +1,5 @@
 import {
-    IPluginDecorator, BasePage, ElementWithContextMenu, PluginDecorator, VSCodeLocatorMap
+    IPageDecorator, BasePage, ElementWithContextMenu, PageDecorator, VSCodeLocatorMap
 } from '../utils'
 import {
     ViewSection as ViewSectionLocators,
@@ -21,7 +21,7 @@ export type ViewItemLocators = (
     typeof ExtensionsViewItemLocators
 )
 
-export interface ViewItem extends IPluginDecorator<ViewItemLocators> { }
+export interface ViewItem extends IPageDecorator<ViewItemLocators> { }
 /**
  * Arbitrary item in the side bar view
  *
@@ -38,7 +38,7 @@ export abstract class ViewItem extends ElementWithContextMenu<ViewItemLocators> 
     }
 }
 
-export interface TreeItem extends IPluginDecorator<ViewItemLocators> { }
+export interface TreeItem extends IPageDecorator<ViewItemLocators> { }
 /**
  * TreeItem abstract class
  *
@@ -197,13 +197,13 @@ export abstract class TreeItem extends ViewItem {
     }
 }
 
-export interface ViewItemAction extends IPluginDecorator<typeof ViewSectionLocators> { }
+export interface ViewItemAction extends IPageDecorator<typeof ViewSectionLocators> { }
 /**
  * Action button bound to a view item
  *
  * @category Sidebar
  */
-@PluginDecorator(ViewSectionLocators)
+@PageDecorator(ViewSectionLocators)
 export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
     /**
      * @private

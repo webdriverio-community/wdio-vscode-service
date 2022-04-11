@@ -3,17 +3,17 @@ import { ContextMenu } from '../menu/ContextMenu'
 import { EditorView, EditorGroup } from '..'
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.61.0'
 
-export interface SettingsEditor extends IPluginDecorator<EditorLocators> {}
+export interface SettingsEditor extends IPageDecorator<EditorLocators> {}
 /**
  * Page object representing the internal VSCode settings editor
  *
  * @category Editor
  */
-@PluginDecorator(SettingsEditorLocators)
+@PageDecorator(SettingsEditorLocators)
 export class SettingsEditor extends Editor<EditorLocators> {
     /**
      * @private
@@ -122,7 +122,7 @@ export class SettingsEditor extends Editor<EditorLocators> {
     }
 }
 
-export interface Setting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+export interface Setting extends IPageDecorator<typeof SettingsEditorLocators> {}
 /**
  * Abstract item representing a Setting with title, description and
  * an input element (combo/textbox/checkbox/link)
@@ -186,7 +186,7 @@ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
  *
  * @category Editor
  */
-@PluginDecorator(SettingsEditorLocators)
+@PageDecorator(SettingsEditorLocators)
 export class ComboSetting extends Setting {
     /**
      * @private
@@ -251,13 +251,13 @@ export class ComboSetting extends Setting {
     }
 }
 
-export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+export interface TextSetting extends IPageDecorator<typeof SettingsEditorLocators> {}
 /**
  * Setting with a text box input
  *
  * @category Editor
  */
-@PluginDecorator(SettingsEditorLocators)
+@PageDecorator(SettingsEditorLocators)
 export class TextSetting extends Setting {
     /**
      * @private
@@ -274,13 +274,13 @@ export class TextSetting extends Setting {
     }
 }
 
-export interface TextSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+export interface TextSetting extends IPageDecorator<typeof SettingsEditorLocators> {}
 /**
  * Setting with a checkbox
  *
  * @category Editor
  */
-@PluginDecorator(SettingsEditorLocators)
+@PageDecorator(SettingsEditorLocators)
 export class CheckboxSetting extends Setting {
     /**
      * @private
@@ -302,13 +302,13 @@ export class CheckboxSetting extends Setting {
     }
 }
 
-export interface LinkSetting extends IPluginDecorator<typeof SettingsEditorLocators> {}
+export interface LinkSetting extends IPageDecorator<typeof SettingsEditorLocators> {}
 /**
  * Setting with no value, with a link to settings.json instead
  *
  * @category Editor
  */
-@PluginDecorator(SettingsEditorLocators)
+@PageDecorator(SettingsEditorLocators)
 export class LinkSetting extends Setting {
     /**
      * @private

@@ -6,11 +6,11 @@ import {
 import { NewScmView } from '../sidebar/scm/NewScmView'
 
 import {
-    PluginDecorator, IPluginDecorator, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import { ViewControl as ViewControlLocators } from '../../locators/1.61.0'
 
-export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators> { }
+export interface ViewControl extends IPageDecorator<typeof ViewControlLocators> { }
 /**
  * Page object representing a view container item in the activity bar
  *
@@ -29,7 +29,7 @@ export interface ViewControl extends IPluginDecorator<typeof ViewControlLocators
  *
  * @category ActivityBar
  */
-@PluginDecorator(ViewControlLocators)
+@PageDecorator(ViewControlLocators)
 export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocators> {
     /**
      * @private

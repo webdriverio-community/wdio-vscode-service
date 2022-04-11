@@ -1,16 +1,16 @@
-import { PluginDecorator, IPluginDecorator, VSCodeLocatorMap } from '../utils'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
 import { WindowControls, ContextMenu } from '..'
 import { Menu } from './Menu'
 import { MenuItem } from './MenuItem'
 import { TitleBar as TitleBarLocators } from '../../locators/1.61.0'
 
-export interface TitleBar extends IPluginDecorator<typeof TitleBarLocators> {}
+export interface TitleBar extends IPageDecorator<typeof TitleBarLocators> {}
 /**
  * Page object representing the custom VSCode title bar
  *
  * @category Menu
  */
-@PluginDecorator(TitleBarLocators)
+@PageDecorator(TitleBarLocators)
 export class TitleBar extends Menu<typeof TitleBarLocators> {
     /**
      * @private
@@ -77,13 +77,13 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
     }
 }
 
-export interface TitleBarItem extends IPluginDecorator<typeof TitleBarLocators> {}
+export interface TitleBarItem extends IPageDecorator<typeof TitleBarLocators> {}
 /**
  * Page object representing an item of the custom VSCode title bar
  *
  * @category Menu
  */
-@PluginDecorator(TitleBarLocators)
+@PageDecorator(TitleBarLocators)
 export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
     /**
      * @private

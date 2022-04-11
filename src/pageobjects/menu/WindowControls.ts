@@ -1,18 +1,18 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
 import {
-    PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { TitleBar } from '../..'
 import { WindowControls as WindowControlsLocators } from '../../locators/1.61.0'
 
-export interface WindowControls extends IPluginDecorator<typeof WindowControlsLocators> {}
+export interface WindowControls extends IPageDecorator<typeof WindowControlsLocators> {}
 /**
  * Page object for the windows controls part of the title bar
  *
  * @category Menu
  */
-@PluginDecorator(WindowControlsLocators)
+@PageDecorator(WindowControlsLocators)
 export class WindowControls extends BasePage<typeof WindowControlsLocators> {
     /**
      * @private

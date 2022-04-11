@@ -1,14 +1,14 @@
 import { Notification, CenterNotification, NotificationType } from './Notification'
-import { BasePage, PluginDecorator, IPluginDecorator } from '../utils'
+import { BasePage, PageDecorator, IPageDecorator } from '../utils'
 import { NotificationsCenter as NotificationsCenterLocator } from '../../locators/1.61.0'
 
-export interface NotificationsCenter extends IPluginDecorator<typeof NotificationsCenterLocator> {}
+export interface NotificationsCenter extends IPageDecorator<typeof NotificationsCenterLocator> {}
 /**
  * Notifications center page object
  *
  * @category Workbench
  */
-@PluginDecorator(NotificationsCenterLocator)
+@PageDecorator(NotificationsCenterLocator)
 export class NotificationsCenter extends BasePage<typeof NotificationsCenterLocator> {
     /**
      * @private

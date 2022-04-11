@@ -1,14 +1,14 @@
-import { PluginDecorator, IPluginDecorator, BasePage } from '../utils'
+import { PageDecorator, IPageDecorator, BasePage } from '../utils'
 import { StatusBar as StatusBarLocators } from '../../locators/1.61.0'
 import { NotificationsCenter } from '..'
 
-export interface StatusBar extends IPluginDecorator<typeof StatusBarLocators> {}
+export interface StatusBar extends IPageDecorator<typeof StatusBarLocators> {}
 /**
  * Page object for the status bar at the bottom
  *
  * @category Statusbar
  */
-@PluginDecorator(StatusBarLocators)
+@PageDecorator(StatusBarLocators)
 export class StatusBar extends BasePage<typeof StatusBarLocators> {
     /**
      * @private

@@ -3,17 +3,17 @@ import { DefaultTreeSection } from './tree/default/DefaultTreeSection'
 import { CustomTreeSection } from './tree/custom/CustomTreeSection'
 import { ExtensionsViewSection } from './extensions/ExtensionsViewSection'
 import {
-    PluginDecorator, IPluginDecorator, BasePage, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { ViewContent as ViewContentLocators } from '../../locators/1.61.0'
 
-export interface ViewContent extends IPluginDecorator<typeof ViewContentLocators> { }
+export interface ViewContent extends IPageDecorator<typeof ViewContentLocators> { }
 /**
  * Page object representing the view container of a side bar view
  *
  * @category Sidebar
  */
-@PluginDecorator(ViewContentLocators)
+@PageDecorator(ViewContentLocators)
 export class ViewContent extends BasePage<typeof ViewContentLocators> {
     /**
      * @private

@@ -2,11 +2,11 @@ import type { ChainablePromiseElement } from 'webdriverio'
 
 import { BottomBarPanel } from '..'
 import {
-    BasePage, ElementWithContextMenu, PluginDecorator, IPluginDecorator, VSCodeLocatorMap
+    BasePage, ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap
 } from '../utils'
 import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.61.0'
 
-export interface ProblemsView extends IPluginDecorator<typeof ProblemsViewLocators> {}
+export interface ProblemsView extends IPageDecorator<typeof ProblemsViewLocators> {}
 /**
  * Problems view in the bottom panel.
  *
@@ -18,7 +18,7 @@ export interface ProblemsView extends IPluginDecorator<typeof ProblemsViewLocato
  *
  * @category BottomBar
  */
-@PluginDecorator(ProblemsViewLocators)
+@PageDecorator(ProblemsViewLocators)
 export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
     /**
      * @private
@@ -91,13 +91,13 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
     }
 }
 
-export interface Marker extends IPluginDecorator<typeof MarkerLocators> {}
+export interface Marker extends IPageDecorator<typeof MarkerLocators> {}
 /**
  * Page object for marker in problems view
  *
  * @category BottomBar
  */
-@PluginDecorator(MarkerLocators)
+@PageDecorator(MarkerLocators)
 export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
     /**
      * @private
@@ -150,13 +150,13 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
     }
 }
 
-export interface Problem extends IPluginDecorator<typeof MarkerLocators> {}
+export interface Problem extends IPageDecorator<typeof MarkerLocators> {}
 /**
  * Page object for marker in problems view
  *
  * @category BottomBar
  */
-@PluginDecorator(MarkerLocators)
+@PageDecorator(MarkerLocators)
 export class Problem extends ElementWithContextMenu<typeof MarkerLocators> {
     /**
      * @private
