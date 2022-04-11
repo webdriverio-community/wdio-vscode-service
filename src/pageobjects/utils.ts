@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 import type { ChainablePromiseElement, ChainablePromiseArray } from 'webdriverio'
 
 import * as allLocatorsTypes from '../locators/insiders'
@@ -51,24 +52,30 @@ export type IPageDecorator<T> = (
 export function PageDecorator<T extends { new(...args: any[]): any }> (locators: Locators) {
     return (ctor: T) => {
         for (const [prop, globalLocator] of Object.entries(locators)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            ctor.prototype.__defineGetter__(`${prop}$`, function (this: LocatorProperties<any> & BasePage<any>) {
-                const locator: Locators[string] = this.locators[prop] || globalLocator
-                if (typeof locator === 'function') {
-                    return (...args: string[]) => this.elem.$(locator(...args) as string)
+            Object.defineProperties(ctor.prototype, {
+                [`${prop}$`]: {
+                    get: function (this: LocatorProperties<any> & BasePage<any>) {
+                        const locator: Locators[string] = this.locators[prop] || globalLocator
+                        if (typeof locator === 'function') {
+                            return (...args: string[]) => this.elem.$(locator(...args) as string)
+                        }
+                        return this.elem.$(locator)
+                    }
+                },
+                [`${prop}$$`]: {
+                    get: function (this: LocatorProperties<any> & BasePage<any>) {
+                        const locator: Locators[string] = this.locators[prop] || globalLocator
+                        if (typeof locator === 'function') {
+                            return (...args: string[]) => this.elem.$$(locator(...args) as string)
+                        }
+                        return this.elem.$$(locator)
+                    }
                 }
-                return this.elem.$(locator)
-            })
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            ctor.prototype.__defineGetter__(`${prop}$$`, function (this: LocatorProperties<any> & BasePage<any>) {
-                const locator: Locators[string] = this.locators[prop] || globalLocator
-                if (typeof locator === 'function') {
-                    return (...args: string[]) => this.elem.$$(locator(...args) as string)
-                }
-                return this.elem.$$(locator)
             })
         }
 
+        Object.seal(ctor)
+        Object.seal(ctor.prototype)
         return ctor
     }
 }
