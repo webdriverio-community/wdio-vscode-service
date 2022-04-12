@@ -159,3 +159,11 @@ export interface WebStandaloneResponse {
     timestamp: number
     sha256hash: string
 }
+
+export interface TemplateOptions {
+    baseUrl: string
+    webConfiguration: string
+    authSession: string
+    builtinExtensions: string
+    main: string
+}

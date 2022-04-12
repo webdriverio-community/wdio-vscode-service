@@ -34,7 +34,7 @@ export default async function startServer (sourcePath: string, options: VSCodeOp
         }
     })
 
-    app.addHook('preHandler', async (req, reply, done) => {
+    app.addHook('preHandler', async (_, reply, done) => {
         await reply.header('Access-Control-Allow-Origin', '*')
         done()
     })
