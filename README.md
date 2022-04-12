@@ -18,6 +18,7 @@ This WebdriverIO service allows you to seamlessly test your VSCode extensions fr
 - ⬇️ Downloading Chromedriver specific to given VSCode version
 - 🚀 Access to VSCode API from your tests
 - 🖥️ Starting VSCode with custom user settings (including support for VSCode on Ubuntu, MacOS and Windows)
+- 🌐 Also supports testing web extensions through the browser
 - 📔 Bootstraping page objects with locators matching your VSCode version
 
 This project was highly inspired by the [vscode-extension-tester](https://www.npmjs.com/package/vscode-extension-tester) project which is based on Selenium. This package takes the idea and adapts it for WebdriverIO.
@@ -38,7 +39,7 @@ For more information on how to install `WebdriverIO`, please check the [project 
 
 ## Example Configuration
 
-To use the service you need to add `vscode` to your list of services, optionally followed by a configuration object:
+To use the service you need to add `vscode` to your list of services, optionally followed by a configuration object. This will make WebdriverIO download given VSCode binaries and appropiate Chromedriver version:
 
 ```js
 // wdio.conf.ts
@@ -64,6 +65,28 @@ export const config = {
     // ...
 };
 ```
+
+If you define `wdio:vscodeOptions` with any other `browserName` but `vscode`, e.g. `chrome`, the service will serve the extension as web extension. Make sure you add a driver service to your config, e.g.:
+
+```js
+// wdio.conf.ts
+export const config = {
+    outputDir: 'trace',
+    // ...
+    capabilities: [{
+        browserName: 'chrome',
+        'wdio:vscodeOptions': {
+            extensionPath: __dirname
+        }
+    }],
+    services: ['vscode', 'chromedriver'],
+    // ...
+};
+```
+
+_Note:_ when testing web extensions you can only choose between `stable` or `insiders` as `browserVersion`.
+
+### TypeScript Setup
 
 In your `tsconfig.json` make sure to add `wdio-vscode-service` to your list of types:
 

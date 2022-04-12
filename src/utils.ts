@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 import child_process from 'child_process'
+import type { Dirent, Stats } from 'fs'
 
 import { VSCODE_CAPABILITY_KEY } from './constants'
 import type { VSCodeLocatorMap } from './pageobjects/utils'
@@ -80,6 +81,15 @@ export function fileExist (filepath: string) {
     return fs.access(filepath).then(() => true, () => false)
 }
 
+export async function directoryExists (directoryPath: string) {
+    try {
+        const stats = await fs.stat(directoryPath)
+        return stats.isDirectory()
+    } catch {
+        return false
+    }
+}
+
 export function getValueSuffix (value: string | boolean) {
     if (typeof value === 'boolean' && value) {
         return ''
@@ -89,4 +99,27 @@ export function getValueSuffix (value: string | boolean) {
 
 export function isVSCodeCapability (cap: VSCodeCapabilities) {
     return Boolean(cap[VSCODE_CAPABILITY_KEY])
+}
+
+enum FileType {
+    Unknown = 0,
+    File = 1,
+    Directory = 2,
+    SymbolicLink = 64
+}
+
+export function getFileType (stats: Stats | Dirent) {
+    if (stats.isFile()) {
+        return FileType.File
+    }
+
+    if (stats.isDirectory()) {
+        return FileType.Directory
+    }
+
+    if (stats.isSymbolicLink()) {
+        return FileType.SymbolicLink
+    }
+
+    return FileType.Unknown
 }

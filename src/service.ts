@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import util from 'util'
 import path from 'path'
 import slash from 'slash'
 import tmp from 'tmp-promise'
@@ -53,12 +54,23 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
-    async beforeSession (_: Options.Testrunner, capabilities: VSCodeCapabilities) {
+    async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
         /**
          * only run setup for VSCode capabilities
          */
         if (!isVSCodeCapability(capabilities)) {
             return
+        }
+
+        /**
+         * if we run tests for a web extension
+         */
+        if (capabilities.browserName !== 'vscode') {
+            option.baseUrl = util.format(
+                'http://%s:%s',
+                capabilities[VSCODE_CAPABILITY_KEY]?.serverOptions.hostname,
+                capabilities[VSCODE_CAPABILITY_KEY]?.serverOptions.port.toString()
+            )
         }
 
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
@@ -143,6 +155,13 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
          */
         if (!isVSCodeCapability(capabilities)) {
             return
+        }
+
+        /**
+         * open VSCode web when testing web extensions
+         */
+        if (capabilities.browserName !== 'vscode') {
+            await browser.url('/')
         }
 
         this._browser = browser
