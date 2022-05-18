@@ -85,6 +85,12 @@ export interface VSCodeOptions {
      */
     binary?: string
     /**
+     * VSCode version, e.g. 'insiders', 'stable' or '1.66.0'
+     *
+     * @default `stable`
+     */
+    version?: 'insiders' | 'stable' | string
+    /**
      * Define the directory to the extension you want to test
      * @required
      */
@@ -166,4 +172,10 @@ export interface TemplateOptions {
     authSession: string
     builtinExtensions: string
     main: string
+}
+
+export interface Bundle {
+    path: string
+    vscodeVersion: string
+    version: string
 }

@@ -70,5 +70,7 @@ export default function getWorkbench (opts: TemplateOptions) {
         performance.mark('code/willLoadWorkbenchMain');
     </script>
     ${opts.main}
+    <script src="${opts.baseUrl}/out/vs/workbench/workbench.web.main.js"></script>
+    <script src="${opts.baseUrl}/out/vs/code/browser/workbench/workbench.js"></script>
 </html>`
 }

@@ -53,6 +53,7 @@
     "slash": "^3.0.0",
     "tmp-promise": "^3.0.3",
     "undici": "^4.15.1",
+    "vscode-uri": "^3.0.3",
     "wdio-chromedriver-service": "^7.3.2",
     "ws": "^8.5.0",
     "yargs-parser": "^21.0.1"

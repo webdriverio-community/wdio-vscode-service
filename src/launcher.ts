@@ -19,7 +19,8 @@ import {
     VSCODE_WEB_STANDALONE
 } from './constants'
 import type {
-    ServiceOptions, ServiceCapability, VSCodeCapabilities, WebStandaloneResponse
+    ServiceOptions, ServiceCapability, VSCodeCapabilities, WebStandaloneResponse,
+    Bundle
 } from './types'
 
 interface BundeInformation {
@@ -43,6 +44,7 @@ const VERSIONS_TXT = 'versions.txt'
 const log = logger('wdio-vscode-service/launcher')
 export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     private _cachePath: string
+    private _vscodeServerPort?: number
 
     constructor (
         private _options: ServiceOptions,
@@ -75,7 +77,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 continue
             }
 
-            const version = cap.browserVersion || DEFAULT_CHANNEL
+            const version = cap[VSCODE_CAPABILITY_KEY].version || cap.browserVersion || DEFAULT_CHANNEL
 
             /**
              * setup VSCode Desktop
@@ -104,10 +106,16 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         version: string,
         cap: VSCodeCapabilities
     ) {
-        const vscodeStandalone = await this._fetchVSCodeWebStandalone(version)
+        /**
+         * no need to do any work if we already started the server
+         */
+        if (this._vscodeServerPort) {
+            return
+        }
 
+        const vscodeStandalone = await this._fetchVSCodeWebStandalone(version)
         try {
-            const port = await startServer(vscodeStandalone.path, cap[VSCODE_CAPABILITY_KEY]!)
+            const port = await startServer(vscodeStandalone, cap[VSCODE_CAPABILITY_KEY]!)
             cap[VSCODE_CAPABILITY_KEY]!.serverOptions = {
                 ...(cap[VSCODE_CAPABILITY_KEY]!.serverOptions || {}),
                 port
@@ -277,8 +285,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
     /**
      * Fetches VSCode Web files
+     * ToDo(Christian): allow to define a local VSCode development path
+     *                  to be able to skip this part
      */
-    private async _fetchVSCodeWebStandalone (vscodeVersion: string) {
+    private async _fetchVSCodeWebStandalone (vscodeVersion: string): Promise<Bundle> {
         if (vscodeVersion !== 'stable' && vscodeVersion !== 'insiders') {
             throw new Error('Running VSCode in the browser is only supported for "stable" and "insiders" version')
         }
