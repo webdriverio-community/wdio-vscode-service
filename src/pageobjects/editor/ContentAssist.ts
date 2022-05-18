@@ -3,7 +3,9 @@ import { ChainablePromiseElement } from 'webdriverio'
 import {
     TextEditor, Menu, MenuItem, DebugConsoleView
 } from '..'
-import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
+import {
+    PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
+} from '../utils'
 import { ContentAssist as ContentAssistLocators } from '../../locators/1.66.0'
 
 export interface ContentAssist extends IPageDecorator<typeof ContentAssistLocators> {}
@@ -55,7 +57,7 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
             }
             if (!lastItem) {
                 await scrollable.addValue(['PageDown'])
-                await new Promise((res) => setTimeout(res, 100))
+                await sleep(100)
             }
         }
 

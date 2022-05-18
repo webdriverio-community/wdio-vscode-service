@@ -45,10 +45,16 @@ function run (p: NodeJS.Process, execFile: typeof childProcess.execFile) {
         cwd: p.cwd()
     })
 
-    // eslint-disable-next-line no-console
-    cp.stderr?.on('data', (msg) => console.log(`[FAKE VSCode Binary] STDERR: ${msg}`))
-    // eslint-disable-next-line no-console
-    cp.stdout?.on('data', (msg) => console.log(`[FAKE VSCode Binary] STDOUT: ${msg}`))
+    cp.stderr?.on(
+        'data',
+        // eslint-disable-next-line no-console
+        (msg) => console.log(`[FAKE VSCode Binary] STDERR: ${msg}`)
+    )
+    cp.stdout?.on(
+        'data',
+        // eslint-disable-next-line no-console
+        (msg) => console.log(`[FAKE VSCode Binary] STDOUT: ${msg}`)
+    )
 
     return cp
 }

@@ -1,6 +1,6 @@
 import clipboard from 'clipboardy'
 import {
-    IPageDecorator, BasePage, PageDecorator, VSCodeLocatorMap
+    IPageDecorator, BasePage, PageDecorator, VSCodeLocatorMap, sleep
 } from '../utils'
 import {
     Input as InputLocators,
@@ -34,7 +34,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
     async setText (text: string): Promise<void> {
         const input = await this.inputBox$.$(this.locators.input)
         await this.clear()
-        await new Promise((res) => setTimeout(res, 200))
+        await sleep(200)
         if ((await this.getText())?.length > 0) {
             await input.addValue(['End', 'Shift', 'Home'])
         }

@@ -202,3 +202,9 @@ export abstract class ElementWithContextMenu<T> extends BasePage<T> {
         return new ContextMenu(this.locatorMap).wait()
     }
 }
+
+export function sleep (ms = 500) {
+    return new Promise<void>((res) => {
+        setTimeout(res, ms)
+    })
+}
