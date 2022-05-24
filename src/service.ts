@@ -14,7 +14,7 @@ import { Workbench } from './pageobjects'
 import { getLocators, getValueSuffix, isVSCodeCapability } from './utils'
 import {
     VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS,
-    SETTINGS_KEY, VSCODE_CAPABILITY_KEY
+    SETTINGS_KEY, VSCODE_CAPABILITY_KEY, DEFAULT_VSCODE_WEB_PORT
 } from './constants'
 import type {
     VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
@@ -31,6 +31,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _promisedSocket?: Promise<WebSocket>
     private _proxyOptions: VSCodeProxyOptions
     private _vscodeOptions: VSCodeOptions
+    private _isWebSession = false
 
     constructor (_: never, private _capabilities: VSCodeCapabilities) {
         this._vscodeOptions = this._capabilities[VSCODE_CAPABILITY_KEY] || <VSCodeOptions>{}
@@ -55,6 +56,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
+        this._isWebSession = capabilities.browserName !== 'vscode'
+
         /**
          * only run setup for VSCode capabilities
          */
@@ -65,12 +68,15 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         /**
          * if we run tests for a web extension
          */
-        if (capabilities.browserName !== 'vscode') {
+        if (this._isWebSession) {
+            const serverOptions = capabilities[VSCODE_CAPABILITY_KEY]?.serverOptions
             option.baseUrl = util.format(
                 'http://%s:%s',
-                capabilities[VSCODE_CAPABILITY_KEY]?.serverOptions.hostname,
-                capabilities[VSCODE_CAPABILITY_KEY]?.serverOptions.port.toString()
+                serverOptions?.hostname || 'localhost',
+                (serverOptions?.port || DEFAULT_VSCODE_WEB_PORT as number).toString()
             )
+            log.info(`Run VSCode as web app on ${option.baseUrl}`)
+            return
         }
 
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
@@ -170,6 +176,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
         this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
         this._browser.addCommand('getVSCodeVersion', () => capabilities.browserVersion)
+        this._browser.addCommand('isVSCodeWebSession', () => this._isWebSession)
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
@@ -248,6 +255,7 @@ interface VSCodeCommands {
     executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T) => Promise<T>
     getVSCodeVersion: () => Promise<string>
     getVSCodeChannel: () => Promise<string>
+    isVSCodeWebSession: () => Promise<boolean>
 }
 
 declare global {

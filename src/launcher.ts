@@ -77,7 +77,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 continue
             }
 
-            const version = cap[VSCODE_CAPABILITY_KEY].version || cap.browserVersion || DEFAULT_CHANNEL
+            const version = cap[VSCODE_CAPABILITY_KEY]!.version || cap.browserVersion || DEFAULT_CHANNEL
 
             /**
              * setup VSCode Desktop
@@ -113,11 +113,11 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             return
         }
 
-        const vscodeStandalone = await this._fetchVSCodeWebStandalone(version)
         try {
+            const vscodeStandalone = await this._fetchVSCodeWebStandalone(version)
             const port = await startServer(vscodeStandalone, cap[VSCODE_CAPABILITY_KEY]!)
             cap[VSCODE_CAPABILITY_KEY]!.serverOptions = {
-                ...(cap[VSCODE_CAPABILITY_KEY]!.serverOptions || {}),
+                ...(cap[VSCODE_CAPABILITY_KEY]!.serverOptions! || {}),
                 port
             }
         } catch (err: any) {
@@ -298,11 +298,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             const info: WebStandaloneResponse = await body.json()
             const folder = path.join(this._cachePath, `vscode-web-${vscodeVersion}-${info.version}`)
 
-            if (await directoryExists(folder)) {
-                return { path: folder, vscodeVersion, version: info.version }
+            if (!(await directoryExists(folder))) {
+                await downloadBundle(info.url, folder, { extract: true, strip: 1 })
             }
 
-            await downloadBundle(info.url, this._cachePath, { extract: true, strip: 1 })
             return { path: folder, vscodeVersion, version: info.version }
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't set up VSCode Web: ${err.message}`)

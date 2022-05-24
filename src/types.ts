@@ -171,7 +171,6 @@ export interface TemplateOptions {
     webConfiguration: string
     authSession: string
     builtinExtensions: string
-    main: string
 }
 
 export interface Bundle {

@@ -49,11 +49,12 @@ export default function getWorkbench (opts: TemplateOptions) {
     <script src="${opts.baseUrl}/out/vs/loader.js"></script>
     <script src="${opts.baseUrl}/out/vs/webPackagePaths.js"></script>
     <script>
+        let baseUrl = '${opts.baseUrl}';
         Object.keys(self.webPackagePaths).map(function (key, index) {
-            self.webPackagePaths[key] = '${opts.baseUrl}/node_modules/' + key + '/' + self.webPackagePaths[key];
+            self.webPackagePaths[key] = baseUrl + '/node_modules/' + key + '/' + self.webPackagePaths[key];
         });
         require.config({
-            baseUrl: '${opts.baseUrl}/out',
+            baseUrl: baseUrl + '/out',
             recordStats: true,
             trustedTypesPolicy: window.trustedTypes?.createPolicy('amdLoader', {
                 createScriptURL(value) {
@@ -69,7 +70,7 @@ export default function getWorkbench (opts: TemplateOptions) {
     <script>
         performance.mark('code/willLoadWorkbenchMain');
     </script>
-    ${opts.main}
+    <script src="${opts.baseUrl}/out/vs/workbench/workbench.web.main.nls.js"></script>
     <script src="${opts.baseUrl}/out/vs/workbench/workbench.web.main.js"></script>
     <script src="${opts.baseUrl}/out/vs/code/browser/workbench/workbench.js"></script>
 </html>`
