@@ -59,10 +59,14 @@
     "yargs-parser": "^21.0.1"
   },
   "peerDependencies": {
+    "chromedriver": "^101.0.0",
     "webdriverio": "^7.19.2"
   },
   "peerDependenciesMeta": {
     "webdriverio": {
+      "optional": false
+    },
+    "chromedriver": {
       "optional": false
     }
   },
