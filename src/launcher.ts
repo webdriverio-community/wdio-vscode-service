@@ -16,7 +16,7 @@ import { validatePlatform, fileExist, directoryExists } from './utils'
 import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, CHROMEDRIVER_RELEASES,
     CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY,
-    VSCODE_WEB_STANDALONE
+    VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME
 } from './constants'
 import type {
     ServiceOptions, ServiceCapability, VSCodeCapabilities, WebStandaloneResponse,
@@ -77,7 +77,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 continue
             }
 
-            const version = cap[VSCODE_CAPABILITY_KEY]!.version || cap.browserVersion || DEFAULT_CHANNEL
+            const version = cap[VSCODE_CAPABILITY_KEY].version || cap.browserVersion || DEFAULT_CHANNEL
 
             /**
              * setup VSCode Desktop
@@ -109,15 +109,17 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         /**
          * no need to do any work if we already started the server
          */
-        if (this._vscodeServerPort) {
+        if (this._vscodeServerPort || !cap[VSCODE_CAPABILITY_KEY]) {
             return
         }
 
         try {
             const vscodeStandalone = await this._fetchVSCodeWebStandalone(version)
-            const port = await startServer(vscodeStandalone, cap[VSCODE_CAPABILITY_KEY]!)
-            cap[VSCODE_CAPABILITY_KEY]!.serverOptions = {
-                ...(cap[VSCODE_CAPABILITY_KEY]!.serverOptions! || {}),
+            const port = await startServer(vscodeStandalone, cap[VSCODE_CAPABILITY_KEY])
+            cap[VSCODE_CAPABILITY_KEY].serverOptions = {
+                ...(cap[VSCODE_CAPABILITY_KEY].serverOptions || {
+                    hostname: DEFAULT_VSCODE_WEB_HOSTNAME
+                }),
                 port
             }
         } catch (err: any) {
@@ -137,6 +139,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         version: string,
         cap: VSCodeCapabilities
     ) {
+        if (!cap[VSCODE_CAPABILITY_KEY]) {
+            throw new Error(`No key "${VSCODE_CAPABILITY_KEY}" found in caps`)
+        }
+
         if (versionsFileExist) {
             const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
             const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
@@ -152,7 +158,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 )
 
                 Object.assign(cap, this.options)
-                cap[VSCODE_CAPABILITY_KEY]!.binary = await this._downloadVSCode(content[version]!.vscode)
+                cap[VSCODE_CAPABILITY_KEY].binary = await this._downloadVSCode(content[version]?.vscode as string)
                 this.chromedriverCustomPath = chromedriverPath
                 return
             }
@@ -168,7 +174,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             }
         }
         Object.assign(cap, this.options)
-        cap[VSCODE_CAPABILITY_KEY]!.binary = serviceArgs.vscode.path
+        cap[VSCODE_CAPABILITY_KEY].binary = serviceArgs.vscode.path
         await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
     }
 
@@ -273,8 +279,12 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             const manifest: Manifest = await body.json()
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
 
+            if (!chromium) {
+                throw new Error('Can\'t find chromium version in manifest response')
+            }
+
             const { body: chromedriverVersion } = await request(
-                format(CHROMEDRIVER_RELEASES, chromium!.version.split('.')[0]),
+                format(CHROMEDRIVER_RELEASES, chromium.version.split('.')[0]),
                 {}
             )
             return await chromedriverVersion.text()
