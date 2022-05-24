@@ -8,7 +8,7 @@
 
 Tested on:
 
-[![](https://img.shields.io/badge/VSCode%20Version-insiders%20%2F%20stable%20%2F%20v1.65.0-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml) [![](https://img.shields.io/badge/Platform-windows%20%2F%20macos%20%2F%20ubuntu-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
+[![VSCode Version](https://img.shields.io/badge/VSCode%20Version-insiders%20%2F%20stable%20%2F%20v1.65.0-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml) [![CI Status](https://img.shields.io/badge/Platform-windows%20%2F%20macos%20%2F%20ubuntu-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
 
 > WebdriverIO service for testing VSCode extensions.
 

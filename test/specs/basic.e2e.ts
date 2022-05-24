@@ -50,7 +50,13 @@ describe('WDIO VSCode Service', () => {
             const workbench = await browser.getWorkbench()
             const title = await workbench.getTitleBar().getTitle()
             expect(title).toContain('README.md')
-            expect(title).toContain('wdio-vscode-service')
+
+            /**
+             * doesn't work in web session
+             */
+            if (!await browser.isVSCodeWebSession()) {
+                expect(title).toContain('wdio-vscode-service')
+            }
         })
 
         it('is able to read guinea pig notification', async () => {
@@ -84,7 +90,7 @@ describe('WDIO VSCode Service', () => {
             expect(await selectedView.getTitle()).toBe('Search')
         })
 
-        it('can access VSCode API through service interface', async () => {
+        it('can access VSCode API through service interface @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await browser.executeWorkbench((vscode) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -191,7 +197,9 @@ describe('WDIO VSCode Service', () => {
             const channels = await outputView.getChannelNames()
             expect(channels).toContain('Tasks')
             expect(channels).toContain('Extensions')
-            expect(channels).toContain('Log (Extension Host)')
+            expect(channels).toContain(await browser.isVSCodeWebSession()
+                ? 'Log (Worker Extension Host)'
+                : 'Log (Extension Host)')
 
             const currentChannel = await outputView.getCurrentChannel()
             expect(currentChannel).toEqual(channels[0])
@@ -249,14 +257,17 @@ describe('WDIO VSCode Service', () => {
             tab = await editorView.openEditor('README.md') as TextEditor
         })
 
-        it('getFilePath', async () => {
+        it('getFilePath @skipWeb', async () => {
             expect(await tab.getFilePath())
                 .toContain(`wdio-vscode-service${path.sep}README.md`)
         })
 
         it('getFileUri', async () => {
-            expect(await tab.getFileUri())
-                .toContain('wdio-vscode-service/README.md')
+            expect(await tab.getFileUri()).toContain(
+                await browser.isVSCodeWebSession()
+                    ? 'vscode-test-web://mount/README.md'
+                    : 'wdio-vscode-service/README.md'
+            )
         })
 
         it('getText', async () => {
@@ -358,7 +369,7 @@ describe('WDIO VSCode Service', () => {
             expect(await problemsView.getAllMarkers()).toHaveLength(0)
         })
 
-        it('should create problems', async () => {
+        it('should create problems @skipWeb', async () => {
             await browser.executeWorkbench(async (vscode) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const doc = await vscode.workspace.openTextDocument(
@@ -381,7 +392,7 @@ describe('WDIO VSCode Service', () => {
             })
         })
 
-        it('can access problem information', async () => {
+        it('can access problem information @skipWeb', async () => {
             const [marker] = await problemsView.getAllMarkers()
             expect(await marker.getFileName()).toBe('wdio.conf.ts')
             expect(await marker.getText()).toContain('problems in file wdio.conf.ts of folder test')

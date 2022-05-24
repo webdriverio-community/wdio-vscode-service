@@ -123,3 +123,6 @@ export function getFileType (stats: Stats | Dirent) {
 
     return FileType.Unknown
 }
+
+export const isMultiremote = (obj: any) => typeof obj === 'object' && !Array.isArray(obj)
+export const isChrome = (cap: VSCodeCapabilities) => cap.browserName && cap.browserName.toLowerCase() === 'chrome'

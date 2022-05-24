@@ -12,7 +12,10 @@ import { launcher as ChromedriverServiceLauncher } from 'wdio-chromedriver-servi
 import type { Options, Capabilities } from '@wdio/types'
 
 import startServer from './server'
-import { validatePlatform, fileExist, directoryExists } from './utils'
+import {
+    validatePlatform, fileExist, directoryExists, isMultiremote,
+    isChrome
+} from './utils'
 import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, CHROMEDRIVER_RELEASES,
     CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY,
@@ -48,10 +51,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
     constructor (
         private _options: ServiceOptions,
-        capabilities: Capabilities.Capabilities,
+        private _capabilities: Capabilities.Capabilities,
         config: Options.Testrunner
     ) {
-        super(_options, capabilities, config)
+        super(_options, _capabilities, config)
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
         // @ts-expect-error overwrite private method
         this._mapCapabilities = () => {}
@@ -91,6 +94,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
              * setup VSCode Web
              */
             await this._setupVSCodeWeb(version, cap)
+            this._mapBrowserCapabilities()
         }
 
         return super.onPrepare()
@@ -340,5 +344,17 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             JSON.stringify({ ...content, ...newContent }, null, 4),
             'utf-8'
         )
+    }
+
+    private _mapBrowserCapabilities () {
+        if (isMultiremote(this.capabilities)) {
+            throw new SevereServiceError('This service deson\'t support multiremote yet')
+        }
+
+        for (const cap of this._capabilities as any as Capabilities.Capabilities[]) {
+            if (isChrome(cap)) {
+                Object.assign(cap, this.options)
+            }
+        }
     }
 }

@@ -66,7 +66,18 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      * @returns Promise resolving to the window title
      */
     async getTitle (): Promise<string> {
-        return this.title$.getText()
+        const title = await this.title$.getText()
+
+        /**
+         * when testing VSCode on the web the element is not
+         * visible and the text will be "", therefor we need
+         * to fetch the HTML
+         */
+        if (title.length === 0) {
+            return this.title$.getHTML(false)
+        }
+
+        return title
     }
 
     /**

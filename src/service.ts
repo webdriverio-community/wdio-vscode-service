@@ -181,6 +181,20 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
         await workbenchPO.elem.waitForExist()
+
+        /**
+         * VSCode in the browser doesn't allow to have a file directly opened,
+         * therefore we need to open it automatically
+         */
+        if (this._isWebSession && this._vscodeOptions.filePath && this._vscodeOptions.workspacePath) {
+            const sections = this._vscodeOptions.filePath.replace(this._vscodeOptions.workspacePath, '')
+                .split('/').filter(Boolean)
+            const fileExplorer = await browser.$('.explorer-folders-view')
+            while (sections.length > 0) {
+                const entry = sections.shift()
+                await fileExplorer.$(`span=${entry}`).click()
+            }
+        }
     }
 
     async after () {
@@ -214,8 +228,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     private async _executeVSCode (fn: Function | string, ...params: any[]) {
-        if (!this._promisedSocket) {
-            throw new Error('VSCode API proxy not enabled, see "vscodeProxyOptions" option in service docs')
+        if (!this._promisedSocket || this._isWebSession) {
+            const errorMessage = this._isWebSession
+                ? 'not support when testing web extensions'
+                : 'see "vscodeProxyOptions" option in service docs'
+            throw new Error(`VSCode API proxy not enabled, ${errorMessage}`)
         }
 
         const socket = await this._promisedSocket
