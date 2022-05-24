@@ -79,7 +79,7 @@ export const config = {
             extensionPath: __dirname
         }
     }],
-    services: ['vscode', 'chromedriver'],
+    services: ['vscode'],
     // ...
 };
 ```
