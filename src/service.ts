@@ -166,7 +166,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         /**
          * open VSCode web when testing web extensions
          */
-        if (capabilities.browserName !== 'vscode') {
+        if (this._isWebSession) {
             await browser.url('/')
         }
 
