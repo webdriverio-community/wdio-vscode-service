@@ -270,24 +270,24 @@ describe('WDIO VSCode Service', () => {
             )
         })
 
-        it('getText', async () => {
+        it('getText @skipWebCI', async () => {
             expect(await tab.getText())
                 .toContain('For more information on WebdriverIO check out the project')
         })
 
-        it('setText', async () => {
+        it('setText @skipWebCI', async () => {
             await tab.setText('Hello World!\n\nThis is an automated text change.\n\nEnd of conversation.')
             const newText = await tab.getText()
             expect(newText).not.toContain('For more information on WebdriverIO check out the project')
             expect(newText).toContain('Hello World')
         })
 
-        it('getTextAtLine', async () => {
+        it('getTextAtLine @skipWebCI', async () => {
             const textOnLine3 = await tab.getTextAtLine(3)
             expect(textOnLine3).toBe('This is an automated text change.')
         })
 
-        it('setTextAtLine', async () => {
+        it('setTextAtLine @skipWebCI', async () => {
             const err = await tab.setTextAtLine(99, 'foobar')
                 .catch((error) => error as Error)
             expect(err?.message).toBe('Line number 99 does not exist')
@@ -296,32 +296,32 @@ describe('WDIO VSCode Service', () => {
             expect(await tab.getTextAtLine(3)).toBe('foobar')
         })
 
-        it('getLineOfText', async () => {
+        it('getLineOfText @skipWebCI', async () => {
             expect(await tab.getLineOfText('foobar')).toBe(3)
         })
 
-        it('selectText / getSelectedText', async () => {
+        it('selectText / getSelectedText @skipWebCI', async () => {
             await tab.selectText('foobar')
             expect(await tab.getSelectedText()).toBe('foobar')
         })
 
-        it('typeTextAt', async () => {
+        it('typeTextAt @skipWebCI', async () => {
             await tab.typeTextAt(3, 4, 'loo')
             expect(await tab.getTextAtLine(3)).toBe('fooloobar')
         })
 
-        it('typeText', async () => {
+        it('typeText @skipWebCI', async () => {
             await tab.moveCursor(3, 7)
             await tab.typeText('boo')
             expect(await tab.getTextAtLine(3)).toBe('foolooboobar')
         })
 
-        it('getCoordinates', async () => {
+        it('getCoordinates @skipWebCI', async () => {
             await tab.moveCursor(3, 7)
             expect(await tab.getCoordinates()).toEqual([3, 7])
         })
 
-        it('getNumberOfLines', async () => {
+        it('getNumberOfLines @skipWebCI', async () => {
             expect(await tab.getNumberOfLines()).toBe(5)
         })
 
@@ -345,11 +345,11 @@ describe('WDIO VSCode Service', () => {
                     .toBe('automated text')
             })
 
-            it('getResultCount', async () => {
+            it('getResultCount @skipWebCI', async () => {
                 expect(await findWidget.getResultCount()).toEqual([1, 1])
             })
 
-            it('setReplaceText', async () => {
+            it('setReplaceText @skipWebCI', async () => {
                 await findWidget.setReplaceText('manual text')
                 await findWidget.replace()
                 expect(await tab.getTextAtLine(3)).toBe('This is an manual text change.')
