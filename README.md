@@ -8,7 +8,7 @@
 
 Tested on:
 
-[![VSCode Version](https://img.shields.io/badge/VSCode%20Version-insiders%20%2F%20stable%20%2F%20v1.65.0-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml) [![CI Status](https://img.shields.io/badge/Platform-windows%20%2F%20macos%20%2F%20ubuntu-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
+[![VSCode Version](https://img.shields.io/badge/VSCode%20Version-insiders%20/%20stable%20/%20v1.65.0%20/%20web-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml) [![CI Status](https://img.shields.io/badge/Platform-windows%20%2F%20macos%20%2F%20ubuntu-brightgreen)](https://github.com/webdriverio-community/wdio-vscode-service/actions/workflows/ci.yml)
 
 > WebdriverIO service for testing VSCode extensions.
 
@@ -18,7 +18,7 @@ This WebdriverIO service allows you to seamlessly test your VSCode extensions fr
 - ⬇️ Downloading Chromedriver specific to given VSCode version
 - 🚀 Enables you to access the VSCode API from your tests
 - 🖥️ Starting VSCode with custom user settings (including support for VSCode on Ubuntu, MacOS and Windows)
-- 🌐 Or serves VSCode from a server to be accessed by any browser
+- 🌐 Or serves VSCode from a server to be accessed by any browser for testing [web extensions](https://code.visualstudio.com/api/extension-guides/web-extensions)
 - 📔 Bootstraping page objects with locators matching your VSCode version
 
 This project was highly inspired by the [vscode-extension-tester](https://www.npmjs.com/package/vscode-extension-tester) project which is based on Selenium. This package takes the idea and adapts it for WebdriverIO.
