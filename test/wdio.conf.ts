@@ -3,8 +3,9 @@ import path from 'path'
 import type { Options } from '@wdio/types'
 import type { VSCodeCapabilities } from '../dist/types'
 
+const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
 const capabilities: VSCodeCapabilities = {
-    ...(process.env.VSCODE_WEB_TESTS
+    ...(isWebTest
         ? {
             browserName: 'chrome',
             'goog:chromeOptions': {
@@ -179,7 +180,7 @@ export const config: Options.Testrunner = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
-        ...(process.env.VSCODE_WEB_TESTS
+        ...(isWebTest
             ? {
                 grep: 'skipWeb',
                 invert: true
