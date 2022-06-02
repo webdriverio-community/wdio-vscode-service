@@ -362,7 +362,7 @@ describe('WDIO VSCode Service', () => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const doc = await vscode.workspace.openTextDocument(
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                    vscode.Uri.file(`${vscode.workspace.rootPath}/.eslintrc.json`)
+                    vscode.Uri.file(`${vscode.workspace.rootPath}/test/wdio.conf.ts`)
                 )
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return vscode.window.showTextDocument(doc, {
@@ -371,8 +371,8 @@ describe('WDIO VSCode Service', () => {
             })
             const workbench = await browser.getWorkbench()
             editorView = workbench.getEditorView()
-            const tab = await editorView.openEditor('.eslintrc.json') as TextEditor
-            await tab.setText('I am creating problem')
+            const tab = await editorView.openEditor('wdio.conf.ts') as TextEditor
+            await tab.setText('I am creating problems')
 
             await browser.waitUntil(async () => {
                 const markers = await problemsView.getAllMarkers()
@@ -382,15 +382,15 @@ describe('WDIO VSCode Service', () => {
 
         it('can access problem information', async () => {
             const [marker] = await problemsView.getAllMarkers()
-            expect(await marker.getFileName()).toBe('.eslintrc.json')
-            expect(await marker.getText()).toBe('1 problems in file .eslintrc.json of folder .')
+            expect(await marker.getFileName()).toBe('wdio.conf.ts')
+            expect(await marker.getText()).toContain('problems in file wdio.conf.ts of folder test')
 
-            expect(await marker.problems[0].getText()).toBe('Expected a JSON object, array or literal.')
-            expect(await marker.problems[0].getSource()).toBe('jsonc')
+            expect(await marker.problems[0].getText()).toBe('Unexpected keyword or identifier.')
+            expect(await marker.problems[0].getSource()).toBe('ts')
             expect(await marker.problems[0].getLocation()).toEqual([1, 1])
             expect(await marker.problems[0].getType()).toBe(MarkerType.Error)
 
-            await editorView.closeEditor('.eslintrc.json')
+            await editorView.closeEditor('wdio.conf.ts')
         })
     })
 })
