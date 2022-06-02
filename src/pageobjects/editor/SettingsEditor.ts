@@ -135,7 +135,8 @@ export abstract class Setting extends BasePage<typeof SettingsEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        title: string, category: string,
+        title: string,
+        category: string,
         public settings: SettingsEditor
     ) {
         super(locators, (locators.SettingsEditor.settingConstructor as Function)(title, category) as string)
