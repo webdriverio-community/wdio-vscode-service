@@ -88,13 +88,18 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
         const title = await this.badge$.getAttribute('aria-label')
         if (!includeKeyboardShortcuts) {
             /**
-             * title label can be:
-             * - "Source Control (⌃⇧G)
-             * or
-             * - "Source Control (⌃⇧G) - 8 pending
-             * both needs to be stripped so we can only have to deal with "Source Control"
+             * first strip out possible pending annotation, e.g.
+             * "Source Control (⌃⇧G) - 8 pending
              */
-            return title.split(' - ')[0].split(' ').slice(0, -1).join(' ')
+            const [label] = title.split(' - ')
+
+            /**
+             * next, strip out possible keyboard shortcuts, e.g.
+             * "Source Control (⌃⇧G)
+             */
+            return label.endsWith(')')
+                ? label.split(' ').slice(0, -1).join(' ')
+                : label
         }
 
         return title
