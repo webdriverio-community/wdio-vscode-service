@@ -16,7 +16,7 @@ jobs:
         vscodeVersion:
           - insiders
           - stable
-          - 1.65.0
+          - 1.66.0
     runs-on: ${{ matrix.os }}
 
     steps:
