@@ -3,6 +3,15 @@ import type { Capabilities } from '@wdio/types'
 import type { VSCODE_CAPABILITY_KEY } from './constants'
 
 /**
+ * extend WebdriverIO capabilities object
+ */
+export interface WDIOVSCodeServiceOptions {
+    [VSCODE_CAPABILITY_KEY]?: VSCodeOptions
+}
+
+export interface VSCodeCapabilities extends Capabilities.Capabilities, WDIOVSCodeServiceOptions {}
+
+/**
  * Settings to handle VSCode Proxy API
  */
 export interface VSCodeProxyOptions {
@@ -97,10 +106,6 @@ export interface VSCodeOptions {
      * VSCode API proxy configurations
      */
     vscodeProxyOptions: Partial<VSCodeProxyOptions>
-}
-
-export interface VSCodeCapabilities extends Capabilities.Capabilities {
-    [VSCODE_CAPABILITY_KEY]?: VSCodeOptions
 }
 
 export interface WDIOLogs {

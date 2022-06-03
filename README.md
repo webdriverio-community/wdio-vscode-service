@@ -277,6 +277,26 @@ describe('my extension', () => {
 })
 ```
 
+## TypeScript Support
+
+If you use WebdriverIO with TypeScript make sure to add `wdio-vscode-service` to your `types` in your `tsconfig.json`, e.g.:
+
+```json
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "types": [
+            "webdriverio/async",
+            "@wdio/mocha-framework",
+            "expect-webdriverio",
+            // add this service to your types
+            "wdio-devtools-service"
+        ],
+        "target": "es2019"
+    }
+}
+```
+
 ---
 
 For more information on WebdriverIO check out the project [homepage](https://webdriver.io).

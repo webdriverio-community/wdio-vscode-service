@@ -223,14 +223,21 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 }
 
+interface VSCodeCommands {
+    getWorkbench: () => Promise<Workbench>
+    // Todo(Christian): properly type VSCode object here
+    executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T) => Promise<T>
+    getVSCodeVersion: () => Promise<string>
+    getVSCodeChannel: () => Promise<string>
+}
+
 declare global {
     namespace WebdriverIO {
-        interface Browser {
-            getWorkbench: () => Promise<Workbench>
-            // Todo(Christian): properly type VSCode object here
-            executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T) => Promise<T>
-            getVSCodeVersion: () => Promise<string>
-            getVSCodeChannel: () => Promise<string>
-        }
+        interface Browser extends VSCodeCommands {}
+    }
+
+    namespace WebdriverIOAsync {
+        interface Browser extends VSCodeCommands {}
+        interface MultiRemoteBrowser extends VSCodeCommands { }
     }
 }
