@@ -188,7 +188,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
          */
         if (this._isWebSession && this._vscodeOptions.filePath && this._vscodeOptions.workspacePath) {
             const sections = this._vscodeOptions.filePath.replace(this._vscodeOptions.workspacePath, '')
-                .split('/').filter(Boolean)
+                .split(path.sep).filter(Boolean)
             const fileExplorer = await browser.$('.explorer-folders-view')
             while (sections.length > 0) {
                 const entry = sections.shift()
