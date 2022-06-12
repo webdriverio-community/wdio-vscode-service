@@ -66,7 +66,7 @@ export const config = {
 };
 ```
 
-If you define `wdio:vscodeOptions` with any other `browserName` but `vscode`, e.g. `chrome`, the service will serve the extension as web extension. Make sure you add a driver service to your config, e.g.:
+If you define `wdio:vscodeOptions` with any other `browserName` but `vscode`, e.g. `chrome`, the service will serve the extension as web extension. If you test on Chrome no additional driver service is required, e.g.:
 
 ```js
 // wdio.conf.ts

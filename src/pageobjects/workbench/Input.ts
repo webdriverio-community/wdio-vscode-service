@@ -9,7 +9,7 @@ import {
 } from '../../locators/1.66.0'
 import { CMD_KEY } from '../../constants'
 
-const HOME_KEY = process.platform !== 'win32'
+const HOME_KEY = process.platform === 'win32'
     ? 'a'
     : 'Home'
 
