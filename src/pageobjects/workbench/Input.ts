@@ -45,11 +45,11 @@ export abstract class Input extends BasePage<AllInputLocators> {
         await input.addValue(text)
 
         // fallback to clipboard if the text gets malformed
-        if ((await this.getText()) !== text) {
+        const currentText = await this.getText()
+        if (currentText !== text) {
             await clipboard.write(text)
-            await input.addValue(['End'])
-            await input.addValue(['Shift', HOME_KEY])
-            await input.addValue([CMD_KEY, 'v'])
+            const backSpaces = new Array(currentText.length).fill('Backspace')
+            await input.addValue(backSpaces)
             await clipboard.write('')
         }
     }
