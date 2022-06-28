@@ -297,6 +297,12 @@ If you use WebdriverIO with TypeScript make sure to add `wdio-vscode-service` to
 }
 ```
 
+## Learn More
+
+If you want to learn more about testing VSCode Extensions, check out [Christian Bromanns](https://twitter.com/bromann) talk at OpenJS World 2022:
+
+[![Testing VSCode Extensions at OpenJS World 2022](https://img.youtube.com/vi/PhGNTioBUiU/sddefault.jpg)](https://www.youtube.com/watch?v=PhGNTioBUiU)
+
 ---
 
 For more information on WebdriverIO check out the project [homepage](https://webdriver.io).
