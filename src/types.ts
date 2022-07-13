@@ -67,9 +67,10 @@ export interface VSCodeOptions {
     /**
      * Path to custom VSCode installation
      */
-    binary: string
+    binary?: string
     /**
      * Define the directory to the extension you want to test
+     * @required
      */
     extensionPath: string
     /**
@@ -105,7 +106,7 @@ export interface VSCodeOptions {
     /**
      * VSCode API proxy configurations
      */
-    vscodeProxyOptions: Partial<VSCodeProxyOptions>
+    vscodeProxyOptions?: Partial<VSCodeProxyOptions>
 }
 
 export interface WDIOLogs {

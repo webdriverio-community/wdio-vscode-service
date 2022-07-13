@@ -96,7 +96,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         customArgs.extensionTestsPath = slash(path.join(__dirname, 'proxy', 'index.js'))
         customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
         customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
-        customArgs.vscodeBinaryPath = this._vscodeOptions.binary
+        customArgs.vscodeBinaryPath = this._vscodeOptions.binary as string
 
         log.info(`Setting up VSCode directory at ${userSettingsPath}`)
         await fs.mkdir(userSettingsPath, { recursive: true })
