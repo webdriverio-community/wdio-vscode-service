@@ -83,7 +83,7 @@ describe('WDIO VSCode Service', () => {
             expect(await workbench.hasNotifications()).toBe(false)
         })
 
-        skip('linux')('executeCommand', async () => {
+        skip('linux')('executeCommand @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await workbench.executeCommand('Find in Files')
             const selectedView = await workbench.getActivityBar().getSelectedViewAction()
@@ -118,7 +118,7 @@ describe('WDIO VSCode Service', () => {
         })
     })
 
-    describe('settings', () => {
+    describe('settings @skipWeb', () => {
         let settings: SettingsEditor
 
         skip('linux')('openSettings', async () => {
