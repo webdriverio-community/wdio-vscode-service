@@ -1,7 +1,7 @@
 import { ViewSection } from '../ViewSection'
 import { ExtensionsViewItem, AllViewSectionLocators } from '../..'
 import { PageDecorator, IPageDecorator } from '../../utils'
-import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.61.0'
+import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.66.0'
 import { CMD_KEY } from '../../../constants'
 
 /**

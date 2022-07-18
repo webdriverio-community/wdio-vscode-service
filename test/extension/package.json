@@ -26,6 +26,10 @@
       {
         "command": "test-extension.callme",
         "title": "Call Me!"
+      },
+      {
+        "command": "test-extension.openWebView",
+        "title": "Test Extension: Open WebView"
       }
     ]
   },

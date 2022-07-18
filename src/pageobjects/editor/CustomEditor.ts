@@ -1,6 +1,6 @@
-import { Editor, InputBox, WebView } from '..'
+import { Editor, InputBox } from '..'
 import { PageDecorator, IPageDecorator } from '../utils'
-import { Editor as EditorLocators } from '../../locators/1.61.0'
+import { Editor as EditorLocators } from '../../locators/1.66.0'
 import { CMD_KEY } from '../../constants'
 
 export interface CustomEditor extends IPageDecorator<typeof EditorLocators> {}
@@ -15,14 +15,6 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      * @private
      */
     public locatorKey = 'Editor' as const
-
-    /**
-     * Get the WebView object contained in the editor
-     * @returns WebView page object
-     */
-    getWebView (): WebView {
-        return new WebView(this.locatorMap)
-    }
 
     /**
      * Check if the editor has unsaved changes

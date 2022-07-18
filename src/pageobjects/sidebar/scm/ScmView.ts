@@ -5,7 +5,7 @@ import { ContextMenu } from '../..'
 import {
     ElementWithContextMenu, VSCodeLocatorMap, PageDecorator, IPageDecorator, BasePage
 } from '../../utils'
-import { ScmView as ScmViewLocators } from '../../../locators/1.61.0'
+import { ScmView as ScmViewLocators } from '../../../locators/1.66.0'
 import { CMD_KEY } from '../../../constants'
 
 export interface ScmView extends IPageDecorator<typeof ScmViewLocators> { }

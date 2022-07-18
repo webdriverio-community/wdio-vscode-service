@@ -4,7 +4,7 @@ import { BottomBarPanel } from '..'
 import {
     BasePage, ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap
 } from '../utils'
-import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.61.0'
+import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.66.0'
 
 export interface ProblemsView extends IPageDecorator<typeof ProblemsViewLocators> {}
 /**

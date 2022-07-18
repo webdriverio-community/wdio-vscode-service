@@ -3,7 +3,7 @@ import { TreeItem, AllViewSectionLocators } from '../../..'
 import { DefaultTreeItem } from './DefaultTreeItem'
 
 import { PageDecorator, IPageDecorator } from '../../../utils'
-import { DefaultTreeSection as DefaultTreeSectionLocators } from '../../../../locators/1.61.0'
+import { DefaultTreeSection as DefaultTreeSectionLocators } from '../../../../locators/1.66.0'
 
 export interface DefaultTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**

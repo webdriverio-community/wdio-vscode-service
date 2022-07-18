@@ -1,6 +1,6 @@
 import { ViewControl, ActionsControl } from '..'
 import { PageDecorator, IPageDecorator, ElementWithContextMenu } from '../utils'
-import { ActivityBar as ActivityBarLocators } from '../../locators/1.61.0'
+import { ActivityBar as ActivityBarLocators } from '../../locators/1.66.0'
 
 export interface ActivityBar extends IPageDecorator<typeof ActivityBarLocators> {}
 /**

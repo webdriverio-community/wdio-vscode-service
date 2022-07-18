@@ -4,7 +4,7 @@ import {
     TextEditor, Menu, MenuItem, DebugConsoleView
 } from '..'
 import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
-import { ContentAssist as ContentAssistLocators } from '../../locators/1.61.0'
+import { ContentAssist as ContentAssistLocators } from '../../locators/1.66.0'
 
 export interface ContentAssist extends IPageDecorator<typeof ContentAssistLocators> {}
 /**
