@@ -25,8 +25,8 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      */
     public async open () {
         await browser.switchToFrame(this.elem)
-        await this.activeFrame.waitForExist()
-        await browser.switchToFrame(this.activeFrame)
+        await (await this.activeFrame).waitForExist()
+        await browser.switchToFrame(await this.activeFrame)
     }
 
     /**
