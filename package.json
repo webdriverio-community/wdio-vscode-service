@@ -15,7 +15,7 @@
     "build:ts": "tsc -b .",
     "build:compile": "pkg --target win --out-path ./dist/chromium ./dist/chromium/index.js",
     "build:chmod": "chmod +x ./dist/chromium/index.js",
-    "ci": "run-s lint build test",
+    "ci": "run-s test:lint build test",
     "clean": "rimraf ./node_modules yarn-lock.yaml ./dist",
     "docs": "typedoc",
     "prepare": "husky install",
