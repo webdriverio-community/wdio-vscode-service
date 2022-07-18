@@ -3,6 +3,40 @@ import path from 'path'
 import type { Options } from '@wdio/types'
 import type { VSCodeCapabilities } from '../dist/types'
 
+const grep = []
+const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
+const capabilities: VSCodeCapabilities = {
+    ...(isWebTest
+        ? {
+            browserName: 'chrome',
+            'goog:chromeOptions': {
+                args: ['--headless', '--disable-gpu', '--window-size=1440,735']
+            }
+        }
+        : {
+            browserName: 'vscode',
+            browserVersion: process.env.VSCODE_VERSION || 'stable'
+        }
+    ),
+    'wdio:vscodeOptions': {
+        extensionPath: path.join(__dirname, 'extension'),
+        workspacePath: path.join(__dirname, '..'),
+        filePath: path.join(__dirname, '..', 'README.md')
+        // verboseLogging: true
+    }
+}
+
+if (isWebTest) {
+    grep.push('skipWeb')
+
+    /**
+     * some test only fail in CI when running wbe tests
+     */
+    if (process.env.CI) {
+        grep.push('skipWebCI')
+    }
+}
+
 export const config: Options.Testrunner = {
     //
     // ====================
@@ -81,16 +115,7 @@ export const config: Options.Testrunner = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [{
-        browserName: 'vscode',
-        browserVersion: process.env.VSCODE_VERSION || 'stable',
-        'wdio:vscodeOptions': {
-            extensionPath: path.join(__dirname, 'extension'),
-            workspacePath: path.join(__dirname, '..'),
-            filePath: path.join(__dirname, '..', 'README.md')
-            // verboseLogging: true
-        }
-    } as VSCodeCapabilities],
+    capabilities: [capabilities],
     //
     // ===================
     // Test Configurations
@@ -167,7 +192,7 @@ export const config: Options.Testrunner = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
-        grep: process.platform,
+        grep: grep.join('|'),
         invert: true
     },
     //

@@ -11,13 +11,19 @@ import { SevereServiceError } from 'webdriverio'
 import { launcher as ChromedriverServiceLauncher } from 'wdio-chromedriver-service'
 import type { Options, Capabilities } from '@wdio/types'
 
-import { validatePlatform, fileExist } from './utils'
+import startServer from './server'
+import {
+    validatePlatform, fileExist, directoryExists, isMultiremote,
+    isChrome
+} from './utils'
 import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, CHROMEDRIVER_RELEASES,
-    CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY
+    CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY,
+    VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME, VSCODE_LATEST_RELEASE
 } from './constants'
 import type {
-    ServiceOptions, ServiceCapability, VSCodeCapabilities, VSCodeOptions
+    ServiceOptions, ServiceCapability, VSCodeCapabilities, WebStandaloneResponse,
+    Bundle
 } from './types'
 
 interface BundeInformation {
@@ -41,13 +47,14 @@ const VERSIONS_TXT = 'versions.txt'
 const log = logger('wdio-vscode-service/launcher')
 export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     private _cachePath: string
+    private _vscodeServerPort?: number
 
     constructor (
         private _options: ServiceOptions,
-        capabilities: Capabilities.Capabilities,
+        private _capabilities: Capabilities.Capabilities,
         config: Options.Testrunner
     ) {
-        super(_options, capabilities, config)
+        super(_options, _capabilities, config)
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
         // @ts-expect-error overwrite private method
         this._mapCapabilities = () => {}
@@ -69,51 +76,110 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             /**
              * skip setup if user is not using VSCode as capability
              */
-            if (typeof cap.browserName !== 'string' || cap.browserName.toLowerCase() !== 'vscode') {
+            if (typeof cap.browserName !== 'string' || !cap[VSCODE_CAPABILITY_KEY]) {
                 continue
             }
 
-            if (!cap[VSCODE_CAPABILITY_KEY]) {
-                cap[VSCODE_CAPABILITY_KEY] = <VSCodeOptions>{}
+            const version = cap[VSCODE_CAPABILITY_KEY].version || cap.browserVersion || DEFAULT_CHANNEL
+
+            /**
+             * setup VSCode Desktop
+             */
+            if (cap.browserName === 'vscode') {
+                await this._setupVSCodeDesktop(versionsFileExist, versionsFilePath, version, cap)
+                continue
             }
 
-            const version = cap.browserVersion || DEFAULT_CHANNEL
-            if (versionsFileExist) {
-                const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
-                const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
-                const vscodePath = (
-                    cap[VSCODE_CAPABILITY_KEY]?.binary
-                    || path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
-                )
-
-                if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
-                    log.info(
-                        `Skipping download, bundles for VSCode v${content[version]?.vscode} `
-                        + `and Chromedriver v${content[version]?.chromedriver} already exist`
-                    )
-
-                    Object.assign(cap, this.options)
-                    cap[VSCODE_CAPABILITY_KEY]!.binary = await this._setupVSCode(content[version]!.vscode)
-                    this.chromedriverCustomPath = chromedriverPath
-                    continue
-                }
-            }
-
-            const [vscodeVersion, chromedriverVersion, chromedriverPath] = await this._setupChromedriver(version)
-            this.chromedriverCustomPath = chromedriverPath
-            const serviceArgs: ServiceCapability = {
-                chromedriver: { version: chromedriverVersion, path: chromedriverPath },
-                vscode: {
-                    version: vscodeVersion,
-                    path: cap[VSCODE_CAPABILITY_KEY]?.binary || await this._setupVSCode(vscodeVersion)
-                }
-            }
-            Object.assign(cap, this.options)
-            cap[VSCODE_CAPABILITY_KEY]!.binary = serviceArgs.vscode.path
-            await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
+            /**
+             * setup VSCode Web
+             */
+            await this._setupVSCodeWeb(version, cap)
+            this._mapBrowserCapabilities()
         }
 
         return super.onPrepare()
+    }
+
+    /**
+     * Set up VSCode for web testing
+     * @param versionsFileExist true if we already have information stored about cached VSCode and Chromedriver bundles
+     * @param versionsFilePath string with path to cached directory
+     * @param cap capabilities used for this test run
+     */
+    private async _setupVSCodeWeb (
+        version: string,
+        cap: VSCodeCapabilities
+    ) {
+        /**
+         * no need to do any work if we already started the server
+         */
+        if (this._vscodeServerPort || !cap[VSCODE_CAPABILITY_KEY]) {
+            return
+        }
+
+        try {
+            const vscodeStandalone = await this._fetchVSCodeWebStandalone(version)
+            const port = await startServer(vscodeStandalone, cap[VSCODE_CAPABILITY_KEY])
+            cap[VSCODE_CAPABILITY_KEY].serverOptions = {
+                ...(cap[VSCODE_CAPABILITY_KEY].serverOptions || {
+                    hostname: DEFAULT_VSCODE_WEB_HOSTNAME
+                }),
+                port
+            }
+        } catch (err: any) {
+            throw new SevereServiceError(`Couldn't start server for VSCode Web: ${err.message}`)
+        }
+    }
+
+    /**
+     * Set up VSCode for desktop testing
+     * @param versionsFileExist true if we already have information stored about cached VSCode and Chromedriver bundles
+     * @param versionsFilePath string with path to cached directory
+     * @param cap capabilities used for this test run
+     */
+    private async _setupVSCodeDesktop (
+        versionsFileExist: boolean,
+        versionsFilePath: string,
+        version: string,
+        cap: VSCodeCapabilities
+    ) {
+        if (!cap[VSCODE_CAPABILITY_KEY]) {
+            throw new Error(`No key "${VSCODE_CAPABILITY_KEY}" found in caps`)
+        }
+
+        if (versionsFileExist) {
+            const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
+            const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
+            const vscodePath = (
+                cap[VSCODE_CAPABILITY_KEY]?.binary
+                || path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
+            )
+
+            if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
+                log.info(
+                    `Skipping download, bundles for VSCode v${content[version]?.vscode} `
+                    + `and Chromedriver v${content[version]?.chromedriver} already exist`
+                )
+
+                Object.assign(cap, this.options)
+                cap[VSCODE_CAPABILITY_KEY].binary = await this._downloadVSCode(content[version]?.vscode as string)
+                this.chromedriverCustomPath = chromedriverPath
+                return
+            }
+        }
+
+        const [vscodeVersion, chromedriverVersion, chromedriverPath] = await this._setupChromedriver(version)
+        this.chromedriverCustomPath = chromedriverPath
+        const serviceArgs: ServiceCapability = {
+            chromedriver: { version: chromedriverVersion, path: chromedriverPath },
+            vscode: {
+                version: vscodeVersion,
+                path: cap[VSCODE_CAPABILITY_KEY]?.binary || await this._downloadVSCode(vscodeVersion)
+            }
+        }
+        Object.assign(cap, this.options)
+        cap[VSCODE_CAPABILITY_KEY].binary = serviceArgs.vscode.path
+        await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
     }
 
     /**
@@ -123,9 +189,27 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      * @returns "insiders" if `desiredReleaseChannel` is set to this otherwise a concrete version
      */
     private async _setupChromedriver (desiredReleaseChannel: string) {
-        const version = await this._fetchVSCodeVersion(desiredReleaseChannel)
+        let version = await this._fetchVSCodeVersion(desiredReleaseChannel)
 
         try {
+            /**
+             * if testing insiders fetch from latest release rather than from main
+             * branch given that there could be a situation where the VSCode team
+             * updates Electron but haven't released a stable VSCode version yet causing
+             * the service to download a wrong Chromedriver version
+             */
+            if (version === 'main') {
+                log.info(`Fetch latest GitHub release from ${VSCODE_LATEST_RELEASE}`)
+                const { body: versions } = await request(VSCODE_LATEST_RELEASE, {
+                    headers: {
+                        Accept: 'application/vnd.github.v3+json',
+                        'User-Agent': 'webdriverio-community/wdio-vscode-service'
+                    }
+                })
+                const response: { tag_name: string } = await versions.json()
+                version = response.tag_name
+            }
+
             const chromedriverVersion = await this._fetchChromedriverVersion(version)
 
             log.info(`Download Chromedriver (v${chromedriverVersion})`)
@@ -155,9 +239,9 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      * @param version VSCode version
      * @returns path to downloaded VSCode bundle
      */
-    private async _setupVSCode (version: string) {
+    private async _downloadVSCode (version: string) {
         try {
-            log.info(`Download VSCode (${version})`)
+            log.info(`Download VSCode binary (${version})`)
             return await download({
                 cachePath: this._cachePath,
                 version
@@ -217,13 +301,42 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             const manifest: Manifest = await body.json()
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
 
+            if (!chromium) {
+                throw new Error('Can\'t find chromium version in manifest response')
+            }
+
             const { body: chromedriverVersion } = await request(
-                format(CHROMEDRIVER_RELEASES, chromium!.version.split('.')[0]),
+                format(CHROMEDRIVER_RELEASES, chromium.version.split('.')[0]),
                 {}
             )
             return await chromedriverVersion.text()
         } catch (err: any) {
             throw new SevereServiceError(`Couldn't fetch Chromedriver version: ${err.message}`)
+        }
+    }
+
+    /**
+     * Fetches VSCode Web files
+     * ToDo(Christian): allow to define a local VSCode development path
+     *                  to be able to skip this part
+     */
+    private async _fetchVSCodeWebStandalone (vscodeVersion: string): Promise<Bundle> {
+        if (vscodeVersion !== 'stable' && vscodeVersion !== 'insiders') {
+            throw new Error('Running VSCode in the browser is only supported for "stable" and "insiders" version')
+        }
+
+        try {
+            const { body } = await request(format(VSCODE_WEB_STANDALONE, vscodeVersion), {})
+            const info: WebStandaloneResponse = await body.json()
+            const folder = path.join(this._cachePath, `vscode-web-${vscodeVersion}-${info.version}`)
+
+            if (!(await directoryExists(folder))) {
+                await downloadBundle(info.url, folder, { extract: true, strip: 1 })
+            }
+
+            return { path: folder, vscodeVersion, version: info.version }
+        } catch (err: any) {
+            throw new SevereServiceError(`Couldn't set up VSCode Web: ${err.message}`)
         }
     }
 
@@ -249,5 +362,17 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             JSON.stringify({ ...content, ...newContent }, null, 4),
             'utf-8'
         )
+    }
+
+    private _mapBrowserCapabilities () {
+        if (isMultiremote(this.capabilities)) {
+            throw new SevereServiceError('This service deson\'t support multiremote yet')
+        }
+
+        for (const cap of this._capabilities as any as Capabilities.Capabilities[]) {
+            if (isChrome(cap)) {
+                Object.assign(cap, this.options)
+            }
+        }
     }
 }

@@ -10,7 +10,9 @@ import { QuickOpenBox, InputBox } from './Input'
 import { SettingsEditor } from '../editor/SettingsEditor'
 import { WebView } from './WebView'
 
-import { PageDecorator, IPageDecorator, BasePage } from '../utils'
+import {
+    PageDecorator, IPageDecorator, BasePage, sleep
+} from '../utils'
 import { Workbench as WorkbenchLocators } from '../../locators/1.66.0'
 
 export interface Workbench extends IPageDecorator<typeof WorkbenchLocators> {}
@@ -170,7 +172,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
         await this.executeCommand('open user settings')
         await new EditorView(this.locatorMap).openEditor('Settings')
         await this.elem.$(this.locatorMap.Editor.elem as string).waitForExist()
-        await new Promise((res) => setTimeout(res, 500))
+        await sleep(500)
         return new SettingsEditor(this.locatorMap)
     }
 

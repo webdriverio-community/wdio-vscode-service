@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import util from 'util'
 import path from 'path'
 import slash from 'slash'
 import tmp from 'tmp-promise'
@@ -13,7 +14,7 @@ import { Workbench } from './pageobjects'
 import { getLocators, getValueSuffix, isVSCodeCapability } from './utils'
 import {
     VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS,
-    SETTINGS_KEY, VSCODE_CAPABILITY_KEY
+    SETTINGS_KEY, VSCODE_CAPABILITY_KEY, DEFAULT_VSCODE_WEB_PORT
 } from './constants'
 import type {
     VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
@@ -30,6 +31,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _promisedSocket?: Promise<WebSocket>
     private _proxyOptions: VSCodeProxyOptions
     private _vscodeOptions: VSCodeOptions
+    private _isWebSession = false
 
     constructor (_: never, private _capabilities: VSCodeCapabilities) {
         this._vscodeOptions = this._capabilities[VSCODE_CAPABILITY_KEY] || <VSCodeOptions>{}
@@ -53,11 +55,27 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
-    async beforeSession (_: Options.Testrunner, capabilities: VSCodeCapabilities) {
+    async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
+        this._isWebSession = capabilities.browserName !== 'vscode'
+
         /**
          * only run setup for VSCode capabilities
          */
         if (!isVSCodeCapability(capabilities)) {
+            return
+        }
+
+        /**
+         * if we run tests for a web extension
+         */
+        if (this._isWebSession) {
+            const serverOptions = capabilities[VSCODE_CAPABILITY_KEY]?.serverOptions
+            option.baseUrl = util.format(
+                'http://%s:%s',
+                serverOptions?.hostname || 'localhost',
+                (serverOptions?.port || DEFAULT_VSCODE_WEB_PORT as number).toString()
+            )
+            log.info(`Run VSCode as web app on ${option.baseUrl}`)
             return
         }
 
@@ -145,16 +163,38 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             return
         }
 
+        /**
+         * open VSCode web when testing web extensions
+         */
+        if (this._isWebSession) {
+            await browser.url('/')
+        }
+
         this._browser = browser
         const locators = await getLocators(capabilities.browserVersion || 'insiders')
         const workbenchPO = new Workbench(locators)
         this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
         this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
         this._browser.addCommand('getVSCodeVersion', () => capabilities.browserVersion)
+        this._browser.addCommand('isVSCodeWebSession', () => this._isWebSession)
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
         await workbenchPO.elem.waitForExist()
+
+        /**
+         * VSCode in the browser doesn't allow to have a file directly opened,
+         * therefore we need to open it automatically
+         */
+        if (this._isWebSession && this._vscodeOptions.filePath && this._vscodeOptions.workspacePath) {
+            const sections = this._vscodeOptions.filePath.replace(this._vscodeOptions.workspacePath, '')
+                .split(path.sep).filter(Boolean)
+            const fileExplorer = await browser.$('.explorer-folders-view')
+            while (sections.length > 0) {
+                const entry = sections.shift()
+                await fileExplorer.$(`span=${entry}`).click()
+            }
+        }
     }
 
     async after () {
@@ -188,8 +228,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     private async _executeVSCode (fn: Function | string, ...params: any[]) {
-        if (!this._promisedSocket) {
-            throw new Error('VSCode API proxy not enabled, see "vscodeProxyOptions" option in service docs')
+        if (!this._promisedSocket || this._isWebSession) {
+            const errorMessage = this._isWebSession
+                ? 'not support when testing web extensions'
+                : 'see "vscodeProxyOptions" option in service docs'
+            throw new Error(`VSCode API proxy not enabled, ${errorMessage}`)
         }
 
         const socket = await this._promisedSocket
@@ -229,6 +272,7 @@ interface VSCodeCommands {
     executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T) => Promise<T>
     getVSCodeVersion: () => Promise<string>
     getVSCodeChannel: () => Promise<string>
+    isVSCodeWebSession: () => Promise<boolean>
 }
 
 declare global {

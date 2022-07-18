@@ -36,7 +36,7 @@
     "node/no-missing-import": "off", // duped by import
     "node/no-unsupported-features/es-syntax": 0,
     "import/no-extraneous-dependencies": "off",
-    "import/no-import-module-exports": 0,
+    "import/no-import-module-exports": "off",
     "node/no-extraneous-import": "off",
     "@typescript-eslint/indent": [2, 4],
     "@typescript-eslint/ban-types": 0,

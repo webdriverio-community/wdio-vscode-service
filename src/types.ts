@@ -38,6 +38,22 @@ export interface VSCodeProxyOptions {
     commandTimeout?: number
 }
 
+/**
+ * Options when testing VSCode web extensions
+ */
+export interface ServerOptions {
+    /**
+     * The host name the server is opened on
+     * @default localhost
+     */
+    hostname: string
+    /**
+     * The port the server is opened on
+     * @default 3000
+     */
+    port: number
+}
+
 export type ArgsParams = Record<string, string | boolean>
 
 /**
@@ -68,6 +84,12 @@ export interface VSCodeOptions {
      * Path to custom VSCode installation
      */
     binary?: string
+    /**
+     * VSCode version, e.g. 'insiders', 'stable' or '1.66.0'
+     *
+     * @default `stable`
+     */
+    version?: 'insiders' | 'stable' | string
     /**
      * Define the directory to the extension you want to test
      * @required
@@ -107,6 +129,10 @@ export interface VSCodeOptions {
      * VSCode API proxy configurations
      */
     vscodeProxyOptions?: Partial<VSCodeProxyOptions>
+    /**
+     * Define options when testing VSCode web extensions
+     */
+    serverOptions?: ServerOptions
 }
 
 export interface WDIOLogs {
@@ -129,3 +155,26 @@ export interface RemoteResponse {
 }
 
 export type PendingMessageResolver = (error: string | undefined, result: any) => void
+
+export interface WebStandaloneResponse {
+    url: string
+    name: string
+    version: string
+    productVersion: string
+    hash: string
+    timestamp: number
+    sha256hash: string
+}
+
+export interface TemplateOptions {
+    baseUrl: string
+    webConfiguration: string
+    authSession: string
+    builtinExtensions: string
+}
+
+export interface Bundle {
+    path: string
+    vscodeVersion: string
+    version: string
+}

@@ -28,10 +28,14 @@ export const DEFAULT_VSCODE_SETTINGS = {
     [SETTINGS_KEY]: {}
 }
 export const VSCODE_RELEASES = 'https://update.code.visualstudio.com/api/releases/stable'
+export const VSCODE_LATEST_RELEASE = 'https://api.github.com/repos/microsoft/vscode/releases/latest'
 export const VSCODE_MANIFEST_URL = 'https://raw.githubusercontent.com/microsoft/vscode/%s/cgmanifest.json'
+export const VSCODE_WEB_STANDALONE = 'https://update.code.visualstudio.com/api/update/web-standalone/%s/latest'
 export const CHROMEDRIVER_RELEASES = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE_%s'
 export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleapis.com/%s/chromedriver_%s.zip'
 
+export const DEFAULT_VSCODE_WEB_HOSTNAME = 'localhost'
+export const DEFAULT_VSCODE_WEB_PORT = 3000
 export const DEFAULT_CACHE_PATH = path.join(process.cwd(), '.wdio-vscode-service')
 export const CMD_KEY = process.platform === 'darwin' ? 'Meta' : 'Control'
 export const DEFAULT_PROXY_OPTIONS: VSCodeProxyOptions = {

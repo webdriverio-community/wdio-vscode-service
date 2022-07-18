@@ -50,7 +50,13 @@ describe('WDIO VSCode Service', () => {
             const workbench = await browser.getWorkbench()
             const title = await workbench.getTitleBar().getTitle()
             expect(title).toContain('README.md')
-            expect(title).toContain('wdio-vscode-service')
+
+            /**
+             * doesn't work in web session
+             */
+            if (!await browser.isVSCodeWebSession()) {
+                expect(title).toContain('wdio-vscode-service')
+            }
         })
 
         it('is able to read guinea pig notification', async () => {
@@ -77,14 +83,14 @@ describe('WDIO VSCode Service', () => {
             expect(await workbench.hasNotifications()).toBe(false)
         })
 
-        skip('linux')('executeCommand', async () => {
+        skip('linux')('executeCommand @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await workbench.executeCommand('Find in Files')
             const selectedView = await workbench.getActivityBar().getSelectedViewAction()
             expect(await selectedView.getTitle()).toBe('Search')
         })
 
-        it('can access VSCode API through service interface', async () => {
+        it('can access VSCode API through service interface @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await browser.executeWorkbench((vscode) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -112,7 +118,7 @@ describe('WDIO VSCode Service', () => {
         })
     })
 
-    describe('settings', () => {
+    describe('settings @skipWeb', () => {
         let settings: SettingsEditor
 
         skip('linux')('openSettings', async () => {
@@ -191,7 +197,9 @@ describe('WDIO VSCode Service', () => {
             const channels = await outputView.getChannelNames()
             expect(channels).toContain('Tasks')
             expect(channels).toContain('Extensions')
-            expect(channels).toContain('Log (Extension Host)')
+            expect(channels).toContain(await browser.isVSCodeWebSession()
+                ? 'Log (Worker Extension Host)'
+                : 'Log (Extension Host)')
 
             const currentChannel = await outputView.getCurrentChannel()
             expect(currentChannel).toEqual(channels[0])
@@ -249,34 +257,37 @@ describe('WDIO VSCode Service', () => {
             tab = await editorView.openEditor('README.md') as TextEditor
         })
 
-        it('getFilePath', async () => {
+        it('getFilePath @skipWeb', async () => {
             expect(await tab.getFilePath())
                 .toContain(`wdio-vscode-service${path.sep}README.md`)
         })
 
         it('getFileUri', async () => {
-            expect(await tab.getFileUri())
-                .toContain('wdio-vscode-service/README.md')
+            expect(await tab.getFileUri()).toContain(
+                await browser.isVSCodeWebSession()
+                    ? 'vscode-test-web://mount/README.md'
+                    : 'wdio-vscode-service/README.md'
+            )
         })
 
-        it('getText', async () => {
+        it('getText @skipWebCI', async () => {
             expect(await tab.getText())
                 .toContain('For more information on WebdriverIO check out the project')
         })
 
-        it('setText', async () => {
+        it('setText @skipWebCI', async () => {
             await tab.setText('Hello World!\n\nThis is an automated text change.\n\nEnd of conversation.')
             const newText = await tab.getText()
             expect(newText).not.toContain('For more information on WebdriverIO check out the project')
             expect(newText).toContain('Hello World')
         })
 
-        it('getTextAtLine', async () => {
+        it('getTextAtLine @skipWebCI', async () => {
             const textOnLine3 = await tab.getTextAtLine(3)
             expect(textOnLine3).toBe('This is an automated text change.')
         })
 
-        it('setTextAtLine', async () => {
+        it('setTextAtLine @skipWebCI', async () => {
             const err = await tab.setTextAtLine(99, 'foobar')
                 .catch((error) => error as Error)
             expect(err?.message).toBe('Line number 99 does not exist')
@@ -285,36 +296,36 @@ describe('WDIO VSCode Service', () => {
             expect(await tab.getTextAtLine(3)).toBe('foobar')
         })
 
-        it('getLineOfText', async () => {
+        it('getLineOfText @skipWebCI', async () => {
             expect(await tab.getLineOfText('foobar')).toBe(3)
         })
 
-        it('selectText / getSelectedText', async () => {
+        it('selectText / getSelectedText @skipWebCI', async () => {
             await tab.selectText('foobar')
             expect(await tab.getSelectedText()).toBe('foobar')
         })
 
-        it('typeTextAt', async () => {
+        it('typeTextAt @skipWebCI', async () => {
             await tab.typeTextAt(3, 4, 'loo')
             expect(await tab.getTextAtLine(3)).toBe('fooloobar')
         })
 
-        it('typeText', async () => {
+        it('typeText @skipWebCI', async () => {
             await tab.moveCursor(3, 7)
             await tab.typeText('boo')
             expect(await tab.getTextAtLine(3)).toBe('foolooboobar')
         })
 
-        it('getCoordinates', async () => {
+        it('getCoordinates @skipWebCI', async () => {
             await tab.moveCursor(3, 7)
             expect(await tab.getCoordinates()).toEqual([3, 7])
         })
 
-        it('getNumberOfLines', async () => {
+        it('getNumberOfLines @skipWebCI', async () => {
             expect(await tab.getNumberOfLines()).toBe(5)
         })
 
-        it('clearText', async () => {
+        it('clearText @skipWeb', async () => {
             await tab.clearText()
             const clearedText = await tab.getText()
             expect(clearedText).toBe('')
@@ -334,11 +345,11 @@ describe('WDIO VSCode Service', () => {
                     .toBe('automated text')
             })
 
-            it('getResultCount', async () => {
+            it('getResultCount @skipWebCI', async () => {
                 expect(await findWidget.getResultCount()).toEqual([1, 1])
             })
 
-            it('setReplaceText', async () => {
+            it('setReplaceText @skipWebCI', async () => {
                 await findWidget.setReplaceText('manual text')
                 await findWidget.replace()
                 expect(await tab.getTextAtLine(3)).toBe('This is an manual text change.')
@@ -358,7 +369,7 @@ describe('WDIO VSCode Service', () => {
             expect(await problemsView.getAllMarkers()).toHaveLength(0)
         })
 
-        it('should create problems', async () => {
+        it('should create problems @skipWeb', async () => {
             await browser.executeWorkbench(async (vscode) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const doc = await vscode.workspace.openTextDocument(
@@ -381,7 +392,7 @@ describe('WDIO VSCode Service', () => {
             })
         })
 
-        it('can access problem information', async () => {
+        it('can access problem information @skipWeb', async () => {
             const [marker] = await problemsView.getAllMarkers()
             expect(await marker.getFileName()).toBe('wdio.conf.ts')
             expect(await marker.getText()).toContain('problems in file wdio.conf.ts of folder test')
@@ -403,7 +414,7 @@ describe('WDIO VSCode Service', () => {
             expect(await workbench.getAllWebviews()).toHaveLength(0)
         })
 
-        it('should be able to open webview', async () => {
+        it('should be able to open webview @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await workbench.executeCommand('Test Extension: Open WebView')
 
@@ -416,12 +427,12 @@ describe('WDIO VSCode Service', () => {
             await expect($('h1')).toHaveText('Hello World!')
         })
 
-        it('should be able to leave the webview context', async () => {
+        it('should be able to leave the webview context @skipWeb', async () => {
             await webviews[0].close()
             expect(await browser.getPageSource()).not.toContain('My WebView')
         })
 
-        it('should be able to find webview by title', async () => {
+        it('should be able to find webview by title @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             const webview = await workbench.getWebviewByTitle('My WebView')
             await webview.open()

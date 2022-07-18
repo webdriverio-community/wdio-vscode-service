@@ -3,7 +3,7 @@ import { ContextMenu } from '../menu/ContextMenu'
 import { EditorView, EditorGroup } from '..'
 
 import {
-    PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap, sleep
 } from '../utils'
 import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.66.0'
 
@@ -50,7 +50,7 @@ export class SettingsEditor extends Editor<EditorLocators> {
         let textCount = await count.getText()
 
         await browser.waitUntil(async () => {
-            await new Promise((res) => setTimeout(res, 1500))
+            await sleep(1500)
             const text = await count.getText()
             if (text !== textCount) {
                 textCount = text
@@ -320,7 +320,7 @@ export class LinkSetting extends Setting {
         throw new Error('Method getValue is not available for LinkSetting')
     }
 
-    setValue (value: string | boolean): Promise<void> {
+    setValue (): Promise<void> {
         throw new Error('Method setValue is not available for LinkSetting')
     }
 

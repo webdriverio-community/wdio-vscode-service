@@ -3,7 +3,8 @@ import clipboard from 'clipboardy'
 import { Workbench, BottomBarPanel, ContentAssist } from '../..'
 import { TextView, ChannelView } from './AbstractViews'
 import {
-    ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap
+    ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap,
+    sleep
 } from '../utils'
 import {
     OutputView as OutputViewLocators,
@@ -170,7 +171,7 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
             if (timeout > 0 && timer > timeout) {
                 throw new Error(`Timeout of ${timeout}ms exceeded`)
             }
-            await new Promise((res) => setTimeout(res, 500))
+            await sleep(500)
             timer += 500
             style = await input.getCSSProperty('left')
         } while (style.value === '0px')

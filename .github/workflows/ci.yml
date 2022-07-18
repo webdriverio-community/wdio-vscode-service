@@ -16,7 +16,8 @@ jobs:
         vscodeVersion:
           - insiders
           - stable
-          - 1.66.0
+          - 1.67.0
+          - web
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -35,6 +36,7 @@ jobs:
           run: yarn test
         env:
           VSCODE_VERSION: ${{ matrix.vscodeVersion }}
+          VSCODE_WEB_TESTS: ${{ matrix.vscodeVersion == 'web' && '1' || '0' }}
       - uses: actions/upload-artifact@v3
         if: failure()
         with:

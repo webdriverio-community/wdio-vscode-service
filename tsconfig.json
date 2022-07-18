@@ -33,5 +33,6 @@
     ]
   },
   "include": ["src/**/*"],
+  "exclude": ["src/server/fs-provider/fsExtensionMain.js"],
   "ignore": ["node_modules", "dist"]
 }

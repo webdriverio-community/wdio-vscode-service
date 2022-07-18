@@ -1,13 +1,16 @@
 import clipboard from 'clipboardy'
 import {
-    IPageDecorator, BasePage, PageDecorator, VSCodeLocatorMap
+    IPageDecorator, BasePage, PageDecorator, VSCodeLocatorMap, sleep
 } from '../utils'
 import {
     Input as InputLocators,
     InputBox as InputBoxLocators,
     QuickOpenBox as QuickOpenBoxLocators
 } from '../../locators/1.66.0'
-import { CMD_KEY } from '../../constants'
+
+const HOME_KEY = process.platform === 'win32'
+    ? 'a'
+    : 'Home'
 
 type AllInputLocators = typeof InputLocators & typeof InputBoxLocators & typeof QuickOpenBoxLocators
 export interface Input extends IPageDecorator<AllInputLocators> {}
@@ -34,18 +37,18 @@ export abstract class Input extends BasePage<AllInputLocators> {
     async setText (text: string): Promise<void> {
         const input = await this.inputBox$.$(this.locators.input)
         await this.clear()
-        await new Promise((res) => setTimeout(res, 200))
+        await sleep(200)
         if ((await this.getText())?.length > 0) {
-            await input.addValue(['End', 'Shift', 'Home'])
+            await input.addValue(['End', 'Shift', HOME_KEY])
         }
         await input.addValue(text)
 
         // fallback to clipboard if the text gets malformed
-        if ((await this.getText()) !== text) {
+        const currentText = await this.getText()
+        if (currentText !== text) {
             await clipboard.write(text)
-            await input.addValue(['End'])
-            await input.addValue(['Shift', 'Home'])
-            await input.addValue([CMD_KEY, 'v'])
+            const backSpaces = new Array(currentText.length).fill('Backspace')
+            await input.addValue(backSpaces)
             await clipboard.write('')
         }
     }
@@ -84,11 +87,11 @@ export abstract class Input extends BasePage<AllInputLocators> {
         const input = await this.inputBox$.$(this.locators.input)
         // VS Code 1.40 breaks the default clear method, use select all + back space instead
         await input.addValue(['End'])
-        await input.addValue(['Shift', 'Home'])
+        await input.addValue(['Shift', HOME_KEY])
         await input.addValue(['Backspace'])
         if ((await input.getAttribute('value'))?.length > 0) {
             await input.addValue(['End'])
-            await input.addValue(['Shift', 'Home'])
+            await input.addValue(['Shift', HOME_KEY])
             await input.addValue(['Backspace'])
         }
     }

@@ -1,7 +1,9 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
 import { Menu, MenuItem } from '..'
-import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
+import {
+    PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
+} from '../utils'
 import { ContextMenu as ContextMenuLocators } from '../../locators/1.66.0'
 
 export interface ContextMenu extends IPageDecorator<typeof ContextMenuLocators> {}
@@ -113,7 +115,7 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
 
     async select () {
         await this.elem.click()
-        await new Promise((res) => setTimeout(res, 500))
+        await sleep(500)
         if (await this.isNesting()) {
             await new ContextMenu(this.locatorMap, this.elem).wait()
         }
