@@ -414,7 +414,7 @@ describe('WDIO VSCode Service', () => {
             expect(await workbench.getAllWebviews()).toHaveLength(0)
         })
 
-        it('should be able to open webview', async () => {
+        it('should be able to open webview @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await workbench.executeCommand('Test Extension: Open WebView')
 
@@ -427,12 +427,12 @@ describe('WDIO VSCode Service', () => {
             await expect($('h1')).toHaveText('Hello World!')
         })
 
-        it('should be able to leave the webview context', async () => {
+        it('should be able to leave the webview context @skipWeb', async () => {
             await webviews[0].close()
             expect(await browser.getPageSource()).not.toContain('My WebView')
         })
 
-        it('should be able to find webview by title', async () => {
+        it('should be able to find webview by title @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             const webview = await workbench.getWebviewByTitle('My WebView')
             await webview.open()
