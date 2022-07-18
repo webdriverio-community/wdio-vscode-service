@@ -12,6 +12,10 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      */
     public locatorKey = 'WebView' as const
 
+    get activeFrame () {
+        return $(this._locators.WebView.activeFrame as string)
+    }
+
     /**
      * Switch WebDriver context to given webview so subsequent element
      * calls are targeting elements within the webview.
@@ -21,10 +25,8 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      */
     public async open () {
         await browser.switchToFrame(this.elem)
-
-        const activeFrame = await $(this._locators.WebView.activeFrame as string)
-        await activeFrame.waitForExist()
-        await browser.switchToFrame(activeFrame)
+        await this.activeFrame.waitForExist()
+        await browser.switchToFrame(this.activeFrame)
     }
 
     /**
