@@ -86,11 +86,24 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
         }
 
         const foundTitles: string[] = []
+        const getTitle = () => document.title
         for (const webview of webviews) {
+            /**
+             * jump into webview
+             */
             await webview.open()
 
-            const webviewTitle = await browser.getTitle()
+            /**
+             * get the title of webview
+             */
+            const webviewTitle = await browser.execute(getTitle)
             foundTitles.push(webviewTitle)
+
+            /**
+             * jump out of webview
+             */
+            await webview.close()
+
             if (webviewTitle.match(title)) {
                 return webview
             }

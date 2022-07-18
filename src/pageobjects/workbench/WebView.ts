@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { PageDecorator, IPageDecorator, BasePage } from '../index'
+import { BasePage, PageDecorator, IPageDecorator } from '../utils'
 import { WebView as WebViewLocators } from '../../locators/1.66.0'
 import type { VSCodeLocatorMap } from '../utils'
 
@@ -20,10 +20,11 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      * context before using other page objects.
      */
     public async open () {
-        await this.elem.waitForExist()
         await browser.switchToFrame(this.elem)
-        await this.activeFrame$.waitForExist()
-        await browser.switchToFrame(await this.activeFrame$)
+
+        const activeFrame = await $(this._locators.WebView.activeFrame as string)
+        await activeFrame.waitForExist()
+        await browser.switchToFrame(activeFrame)
     }
 
     /**
