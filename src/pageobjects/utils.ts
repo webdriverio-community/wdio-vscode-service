@@ -49,7 +49,12 @@ export type IPageDecorator<T> = (
     ClassWithFunctionLocators$<T> & ClassWithFunctionLocators$$<T>
 )
 
-export function PageDecorator<T extends { new(...args: any[]): any }> (locators: Locators) {
+type PageObjectClass = {
+    new(...args: any[]): any
+    [staticMethod: string]: any
+}
+
+export function PageDecorator<T extends PageObjectClass> (locators: Locators) {
     return (ctor: T) => {
         for (const [prop, globalLocator] of Object.entries(locators)) {
             Object.defineProperties(ctor.prototype, {

@@ -3,7 +3,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 import { TreeItem, ViewItemLocators } from '../../ViewItem'
 import { TreeSection } from '../TreeSection'
 import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../../utils'
-import { DefaultTreeItem as DefaultTreeItemLocators } from '../../../../locators/1.61.0'
+import { DefaultTreeItem as DefaultTreeItemLocators } from '../../../../locators/1.66.0'
 
 export interface DefaultTreeItem extends IPageDecorator<ViewItemLocators> { }
 /**

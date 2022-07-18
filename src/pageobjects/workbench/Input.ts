@@ -6,7 +6,7 @@ import {
     Input as InputLocators,
     InputBox as InputBoxLocators,
     QuickOpenBox as QuickOpenBoxLocators
-} from '../../locators/1.61.0'
+} from '../../locators/1.66.0'
 import { CMD_KEY } from '../../constants'
 
 type AllInputLocators = typeof InputLocators & typeof InputBoxLocators & typeof QuickOpenBoxLocators

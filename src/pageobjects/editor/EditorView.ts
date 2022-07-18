@@ -1,15 +1,13 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
-import {
-    TextEditor, DiffEditor, SettingsEditor, WebView
-} from '..'
+import { TextEditor, DiffEditor, SettingsEditor } from '..'
 import {
     PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
 import {
     EditorView as EditorViewLocators,
     Editor as EditorLocatorsObj
-} from '../../locators/1.61.0'
+} from '../../locators/1.66.0'
 
 export interface EditorView extends IPageDecorator<typeof EditorViewLocators> {}
 /**
@@ -206,21 +204,13 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
      * @param title title of the tab
      * @returns Promise resolving to Editor object
      */
-    async openEditor (title: string): Promise<SettingsEditor | WebView | DiffEditor | TextEditor> {
+    async openEditor (title: string): Promise<SettingsEditor | DiffEditor | TextEditor> {
         const tab = await this.getTabByTitle(title)
         await tab.select()
 
         if (await this.settingsEditor$.isExisting()) {
             return new SettingsEditor(
                 this.locatorMap,
-                this
-            ).wait()
-        }
-
-        if (await this.webView$.isExisting()) {
-            return new WebView(
-                this.locatorMap,
-                this.locatorMap.Editor.elem as string,
                 this
             ).wait()
         }

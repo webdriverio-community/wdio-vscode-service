@@ -2,7 +2,7 @@ import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
 import { WindowControls, ContextMenu } from '..'
 import { Menu } from './Menu'
 import { MenuItem } from './MenuItem'
-import { TitleBar as TitleBarLocators } from '../../locators/1.61.0'
+import { TitleBar as TitleBarLocators } from '../../locators/1.66.0'
 
 export interface TitleBar extends IPageDecorator<typeof TitleBarLocators> {}
 /**

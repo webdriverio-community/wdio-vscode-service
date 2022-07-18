@@ -5,7 +5,7 @@ import { EditorView, EditorGroup } from '..'
 import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
-import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.61.0'
+import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.66.0'
 
 export interface SettingsEditor extends IPageDecorator<EditorLocators> {}
 /**

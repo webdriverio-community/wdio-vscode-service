@@ -1,6 +1,6 @@
 import { Notification, CenterNotification, NotificationType } from './Notification'
 import { BasePage, PageDecorator, IPageDecorator } from '../utils'
-import { NotificationsCenter as NotificationsCenterLocator } from '../../locators/1.61.0'
+import { NotificationsCenter as NotificationsCenterLocator } from '../../locators/1.66.0'
 
 export interface NotificationsCenter extends IPageDecorator<typeof NotificationsCenterLocator> {}
 /**

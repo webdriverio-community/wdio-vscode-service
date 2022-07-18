@@ -8,9 +8,10 @@ import { Notification, StandaloneNotification } from './Notification'
 import { NotificationsCenter } from './NotificationsCenter'
 import { QuickOpenBox, InputBox } from './Input'
 import { SettingsEditor } from '../editor/SettingsEditor'
+import { WebView } from './WebView'
 
 import { PageDecorator, IPageDecorator, BasePage } from '../utils'
-import { Workbench as WorkbenchLocators } from '../../locators/1.61.0'
+import { Workbench as WorkbenchLocators } from '../../locators/1.66.0'
 
 export interface Workbench extends IPageDecorator<typeof WorkbenchLocators> {}
 /**
@@ -65,6 +66,40 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      */
     getEditorView (): EditorView {
         return new EditorView(this.locatorMap)
+    }
+
+    /**
+     * Get all available webviews
+     */
+    getAllWebviews () {
+        return WebView.getAllWebViews(this._locators)
+    }
+
+    /**
+     * Get webview by title
+     */
+    async getWebviewByTitle (title: string | RegExp) {
+        const webviews = await this.getAllWebviews()
+
+        if (webviews.length === 0) {
+            throw new Error('No webviews found')
+        }
+
+        const foundTitles: string[] = []
+        for (const webview of webviews) {
+            await webview.open()
+
+            const webviewTitle = await browser.getTitle()
+            foundTitles.push(webviewTitle)
+            if (webviewTitle.match(title)) {
+                return webview
+            }
+        }
+
+        throw new Error(
+            `Couldn't find webview with title "${title}", `
+            + `the following webview titles were found: "${foundTitles.join('", "')}"`
+        )
     }
 
     /**

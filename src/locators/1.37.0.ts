@@ -153,7 +153,7 @@ export const DiffEditor = {
     modifiedEditor: '.modified-in-monaco-diff-editor'
 }
 export const WebView = {
-    iframe: 'iframe[class=\'webview ready\']',
+    outerFrame: 'iframe.webview.ready',
     activeFrame: '#active-frame'
 }
 
@@ -384,4 +384,9 @@ export const WelcomeContent = {
     button: welcomeContentButtonSelector,
     buttonOrText: `${welcomeContentButtonSelector} | ${welcomeContentTextSelector}`,
     text: welcomeContentTextSelector
+}
+
+export const Webview = {
+    outerFrame: '.webview.ready',
+    innerFrame: '#active-frame'
 }

@@ -4,7 +4,7 @@ import { CustomTreeItem } from './CustomTreeItem'
 import { AllViewSectionLocators } from '../../ViewSection'
 
 import { PageDecorator, IPageDecorator } from '../../../utils'
-import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.61.0'
+import { CustomTreeSection as CustomTreeSectionLocator } from '../../../../locators/1.66.0'
 
 export interface CustomTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**

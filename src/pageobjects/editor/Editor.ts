@@ -7,9 +7,8 @@ import {
     SettingsEditor as SettingsEditorLocators,
     TextEditor as TextEditorLocators,
     DiffEditor as DiffEditorLocators,
-    EditorView as EditorViewLocators,
-    WebView as WebViewLocators
-} from '../../locators/1.61.0'
+    EditorView as EditorViewLocators
+} from '../../locators/1.66.0'
 
 /**
  * @hidden
@@ -19,7 +18,6 @@ export type EditorLocators = (
     typeof SettingsEditorLocators &
     typeof TextEditorLocators &
     typeof DiffEditorLocators &
-    typeof WebViewLocators &
     typeof EditorViewLocators
 )
 
