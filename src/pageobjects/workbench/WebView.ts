@@ -1,5 +1,5 @@
-import { PageDecorator, IPageDecorator, BasePage } from 'wdio-vscode-service'
 import { ChainablePromiseElement } from 'webdriverio'
+import { PageDecorator, IPageDecorator, BasePage } from '../index'
 import { WebView as WebViewLocators } from '../../locators/1.66.0'
 import type { VSCodeLocatorMap } from '../utils'
 
