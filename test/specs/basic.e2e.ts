@@ -325,7 +325,7 @@ describe('WDIO VSCode Service', () => {
             expect(await tab.getNumberOfLines()).toBe(5)
         })
 
-        it('clearText', async () => {
+        it('clearText @skipWeb', async () => {
             await tab.clearText()
             const clearedText = await tab.getText()
             expect(clearedText).toBe('')
