@@ -40,13 +40,12 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
         origin: (origin, cb) => cb(null, webviewHostRegexp.test(origin))
     })
 
-    app.addHook('preHandler', async (_, reply, done) => {
+    app.addHook('preHandler', async (_, reply) => {
         await reply.header('Access-Control-Allow-Origin', '*')
-        done()
     })
 
     // COI
-    app.addHook('preHandler', async (req: COIRequest, reply, done) => {
+    app.addHook('preHandler', async (req: COIRequest, reply) => {
         const value = req.query['vscode-coi']
         if (value === '1') {
             await reply.header('Cross-Origin-Opener-Policy', 'same-origin')
@@ -56,7 +55,6 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
             await reply.header('Cross-Origin-Opener-Policy', 'same-origin')
             await reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
         }
-        return done()
     })
 
     if (options.extensionPath) {
