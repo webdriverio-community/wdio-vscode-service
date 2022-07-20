@@ -43,6 +43,18 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      * @returns a list of webview objects
      */
     static async getAllWebViews (locators: VSCodeLocatorMap) {
+        try {
+            /**
+             * webviews might not be immediatelly available when VS Code boots up
+             */
+            await browser.$(locators.WebView.outerFrame as string).waitForExist({
+                timeout: 5000,
+                timeoutMsg: 'no webviews found'
+            })
+        } catch (err: any) {
+            return []
+        }
+
         const frames = await browser.$$(locators.WebView.outerFrame as string)
         return frames.map((f) => (
             new WebView(locators, f as any as ChainablePromiseElement<WebdriverIO.Element>)
