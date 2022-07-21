@@ -47,8 +47,10 @@ export abstract class Input extends BasePage<AllInputLocators> {
         const currentText = await this.getText()
         if (currentText !== text) {
             await clipboard.write(text)
-            const backSpaces = new Array(currentText.length).fill('Backspace')
-            await input.addValue(backSpaces)
+            if (currentText?.length) {
+                const backSpaces = new Array(currentText.length).fill('Backspace')
+                await input.addValue(backSpaces)
+            }
             await clipboard.write('')
         }
     }
