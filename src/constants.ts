@@ -28,7 +28,6 @@ export const DEFAULT_VSCODE_SETTINGS = {
     [SETTINGS_KEY]: {}
 }
 export const VSCODE_RELEASES = 'https://update.code.visualstudio.com/api/releases/stable'
-export const VSCODE_LATEST_RELEASE = 'https://api.github.com/repos/microsoft/vscode/releases/latest'
 export const VSCODE_MANIFEST_URL = 'https://raw.githubusercontent.com/microsoft/vscode/%s/cgmanifest.json'
 export const VSCODE_WEB_STANDALONE = 'https://update.code.visualstudio.com/api/update/web-standalone/%s/latest'
 export const CHROMEDRIVER_RELEASES = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE_%s'

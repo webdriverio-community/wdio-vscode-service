@@ -19,7 +19,7 @@ import {
 import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, CHROMEDRIVER_RELEASES,
     CHROMEDRIVER_DOWNLOAD_PATH, DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY,
-    VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME, VSCODE_LATEST_RELEASE
+    VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME
 } from './constants'
 import type {
     ServiceOptions, ServiceCapability, VSCodeCapabilities, WebStandaloneResponse,
@@ -189,27 +189,9 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      * @returns "insiders" if `desiredReleaseChannel` is set to this otherwise a concrete version
      */
     private async _setupChromedriver (desiredReleaseChannel: string) {
-        let version = await this._fetchVSCodeVersion(desiredReleaseChannel)
+        const version = await this._fetchVSCodeVersion(desiredReleaseChannel)
 
         try {
-            /**
-             * if testing insiders fetch from latest release rather than from main
-             * branch given that there could be a situation where the VSCode team
-             * updates Electron but haven't released a stable VSCode version yet causing
-             * the service to download a wrong Chromedriver version
-             */
-            if (version === 'main') {
-                log.info(`Fetch latest GitHub release from ${VSCODE_LATEST_RELEASE}`)
-                const { body: versions } = await request(VSCODE_LATEST_RELEASE, {
-                    headers: {
-                        Accept: 'application/vnd.github.v3+json',
-                        'User-Agent': 'webdriverio-community/wdio-vscode-service'
-                    }
-                })
-                const response: { tag_name: string } = await versions.json()
-                version = response.tag_name
-            }
-
             const chromedriverVersion = await this._fetchChromedriverVersion(version)
 
             log.info(`Download Chromedriver (v${chromedriverVersion})`)
