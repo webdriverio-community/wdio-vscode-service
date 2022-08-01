@@ -22,7 +22,7 @@ function run (p: NodeJS.Process, execFile: typeof childProcess.execFile) {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { _: positionalParams, ...argv } = argvParser(process.argv.slice(2), {
-        configuration: { 'camel-case-expansion': true }
+        configuration: { 'camel-case-expansion': true, 'boolean-negation': false }
     })
 
     const binaryPath = argv.vscodeBinaryPath as string
