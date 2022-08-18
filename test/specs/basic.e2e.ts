@@ -117,7 +117,7 @@ describe('WDIO VSCode Service', () => {
             })
         })
 
-        it('can send parameters to VSCode API invocation', async () => {
+        it('can send parameters to VSCode API invocation @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             const message = 'I passed this message as a parameter!'
             await browser.executeWorkbench((vscode, msg) => {
