@@ -116,6 +116,22 @@ describe('WDIO VSCode Service', () => {
                 timeoutMsg: 'Could not find another custom notification'
             })
         })
+
+        it('can send parameters to VSCode API invocation @skipWeb', async () => {
+            const workbench = await browser.getWorkbench()
+            const message = 'I passed this message as a parameter!'
+            await browser.executeWorkbench((vscode, msg) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                vscode.window.showInformationMessage(msg)
+            }, message)
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                return messages.includes(message)
+            }, {
+                timeoutMsg: 'Could not find custom notification'
+            })
+        })
     })
 
     describe('settings @skipWeb', () => {

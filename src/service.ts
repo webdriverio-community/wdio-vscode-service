@@ -269,7 +269,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
 interface VSCodeCommands {
     getWorkbench: () => Promise<Workbench>
     // Todo(Christian): properly type VSCode object here
-    executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T) => Promise<T>
+    executeWorkbench: <T>(fn: (vscode: any, ...params: any[]) => T, ...params: any[]) => Promise<T>
     getVSCodeVersion: () => Promise<string>
     getVSCodeChannel: () => Promise<string>
     isVSCodeWebSession: () => Promise<boolean>
