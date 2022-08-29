@@ -162,7 +162,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 )
 
                 Object.assign(cap, this.options)
-                cap[VSCODE_CAPABILITY_KEY].binary = await this._downloadVSCode(content[version]?.vscode as string)
+                cap[VSCODE_CAPABILITY_KEY].binary = (
+                    cap[VSCODE_CAPABILITY_KEY].binary
+                    || await this._downloadVSCode(content[version]?.vscode as string)
+                )
                 this.chromedriverCustomPath = chromedriverPath
                 return
             }
