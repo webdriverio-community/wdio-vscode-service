@@ -32,4 +32,14 @@ exports.activate = function (context) {
         vscode.window.showInformationMessage('I got called!');
     }))
     context.subscriptions.push(vscode.commands.registerCommand('test-extension.openWebView', openWebView))
+
+    context.subscriptions.push(vscode.window.registerTreeDataProvider('testExtensionTreeview', {
+        getChildren: (element) => {
+            return element ? [] : [
+                { label: 'Item 1' },
+                { label: 'Item 2' }
+            ]
+        },
+        getTreeItem: (element) => element,
+    }))
 }
