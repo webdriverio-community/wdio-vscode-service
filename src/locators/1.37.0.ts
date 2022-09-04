@@ -203,12 +203,12 @@ export const ViewContent = {
 }
 export const ViewSection = {
     title: '.title',
-    titleText: 'textContent',
+    titleText: 'title',
     header: '.panel-header',
     headerExpanded: 'aria-expanded',
     actions: '.actions',
     actionConstructor: (label: string) => (
-        `.//a[contains(@class, 'action-label') and @role='button' and @title='${label}']`
+        `.//a[contains(@class, 'action-label') and @role='button' and @aria-label='${label}']`
     ),
     button: './/a[@role=\'button\']',
     buttonLabel: 'title',
@@ -219,7 +219,7 @@ export const ViewSection = {
 export const TreeItem = {
     actions: '.actions-container',
     actionLabel: '.action-label',
-    actionTitle: 'title',
+    actionTitle: 'aria-label',
     twistie: '.monaco-tl-twistie'
 }
 export const DefaultTreeSection = {
