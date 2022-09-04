@@ -6,7 +6,7 @@ import path from 'path'
 import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
-    ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, ViewSection, TreeItem
+    ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, DefaultTreeItem, ViewSection, TreeItem, sleep
 } from '../..'
 
 function skip (param: string | string[] = process.platform) {
@@ -532,6 +532,56 @@ describe('WDIO VSCode Service', () => {
             expect(await childItems[0].getLabel()).toBe('Item 1.1')
             expect(await childItems[0].getTooltip()).toBe('Tooltip for item 1.1')
             expect(await childItems[0].getDescription()).toBe('Description for item 1.1')
+        })
+
+        it('should be able to find the explorer tree view', async () => {
+            const workbench = await browser.getWorkbench()
+
+            const explorerView = await workbench.getActivityBar().getViewControl('Explorer')
+            const explorerSideBarView = await explorerView?.openView()
+            expect(explorerSideBarView).toBeInstanceOf(SideBarView)
+
+            const sidebar = workbench.getSideBar()
+
+            // one would expect 'mount' here (aria-label)
+            treeViewSection = await sidebar.getContent().getSection('/ [TEST FILES]')
+            expect(treeViewSection).toBePresent()
+
+            expect(await treeViewSection.getTitle()).toBe('mount')
+
+            await treeViewSection.expand()
+            expect(await treeViewSection.isExpanded()).toBe(true)
+        })
+
+        it('should be able to iterate over the (default) tree items', async () => {
+            if (treeViewSection !== undefined) {
+                const visItems = await treeViewSection.getVisibleItems()
+                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+                expect(visItems.length).toBeGreaterThanOrEqual(1) // at least README.md
+
+                /* gives a read ECONNRESET RequestError... often
+                const labels = await Promise.all(visItems.map(
+                    async (item) => [await (item as TreeItem).getLabel(), item]
+                )) */
+                let readmeItem: TreeItem | undefined
+                for (const visItem of visItems as TreeItem[]) {
+                    // slow down a bit to avoid ECONNRESET... (todo investigate better way)
+                    await sleep(50)
+                    const label = await visItem.getLabel()
+                    if (label === 'README.md') {
+                        readmeItem = visItem
+                        break
+                    }
+                }
+                expect(readmeItem).toBeDefined()
+                if (readmeItem !== undefined) {
+                    expect(readmeItem).toBeInstanceOf(DefaultTreeItem)
+                    expect(await readmeItem.isExpandable()).toBe(false)
+                    expect(await readmeItem.hasChildren()).toBe(false)
+                    expect(await readmeItem.getTooltip()).toBe('/README.md')
+                    expect(await readmeItem.getDescription()).toBeUndefined()
+                }
+            }
         })
     })
 })
