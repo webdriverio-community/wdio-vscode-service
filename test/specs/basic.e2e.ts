@@ -521,5 +521,17 @@ describe('WDIO VSCode Service', () => {
                 })
             }
         })
+
+        it('should be able to iterate over child items from tree item element', async () => {
+            expect(await customTreeItem.isExpandable()).toBe(true)
+            await customTreeItem.expand()
+            expect(await customTreeItem.isExpanded()).toBe(true)
+            expect(await customTreeItem.hasChildren()).toBe(true)
+            const childItems = await customTreeItem.getChildren()
+            expect(childItems.length).toBe(1)
+            expect(await childItems[0].getLabel()).toBe('Item 1.1')
+            expect(await childItems[0].getTooltip()).toBe('Tooltip for item 1.1')
+            expect(await childItems[0].getDescription()).toBe('Description for item 1.1')
+        })
     })
 })

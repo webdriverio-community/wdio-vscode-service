@@ -35,8 +35,12 @@ exports.activate = function (context) {
 
     context.subscriptions.push(vscode.window.registerTreeDataProvider('testExtensionTreeview', {
         getChildren: (element) => {
-            return element ? [] : [
-                { label: 'Item 1' },
+            return element ? (element.children || []) : [
+                {
+                    label: 'Item 1',
+                    children: [{ label: 'Item 1.1', tooltip: 'Tooltip for item 1.1', description: 'Description for item 1.1' }],
+                    collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+                },
                 { label: 'Item 2' }
             ]
         },
