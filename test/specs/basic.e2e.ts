@@ -6,7 +6,7 @@ import path from 'path'
 import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
-    ProblemsView, EditorView, WebView
+    ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, ViewSection, TreeItem
 } from '../..'
 
 function skip (param: string | string[] = process.platform) {
@@ -178,7 +178,7 @@ describe('WDIO VSCode Service', () => {
 
             const sidebar = workbench.getSideBar()
             const sidebarView = sidebar.getContent()
-            await sidebarView.getSection('EXTENSIONS')
+            await sidebarView.getSection('INSTALLED')
 
             /**
              * for some reason the developed extension doesn't show up
@@ -454,6 +454,72 @@ describe('WDIO VSCode Service', () => {
             await webview.open()
             await expect($('h1')).toHaveText('Hello World!')
             await webview.close()
+        })
+    })
+
+    describe('TreeView', () => {
+        let treeViewSection: ViewSection
+
+        it('should be able to find the extension tree view', async () => {
+            const workbench = await browser.getWorkbench()
+
+            const explorerView = await workbench.getActivityBar().getViewControl('Explorer')
+            const explorerSideBarView = await explorerView?.openView()
+            expect(explorerSideBarView).toBeInstanceOf(SideBarView)
+
+            const sidebar = workbench.getSideBar()
+
+            const sections = await sidebar.getContent().getSections()
+            expect(sections.length).toBeGreaterThan(1) // explorer and our tree view at least
+
+            treeViewSection = await sidebar.getContent().getSection('TEST EXTENSION TREEVIEW')
+            expect(treeViewSection).toBePresent()
+
+            expect(await treeViewSection.getTitle()).toBe('Test Extension Treeview')
+        })
+
+        let customTreeItem: CustomTreeItem
+
+        it('should be able to expand the tree and iterate over the tree items', async () => {
+            if (treeViewSection !== undefined) {
+                await treeViewSection.expand()
+                expect(await treeViewSection.isExpanded()).toBe(true)
+
+                const visItems = await treeViewSection.getVisibleItems()
+                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+                expect(visItems.length).toBe(2)
+
+                expect(await Promise.all(visItems.map(
+                    async (item) => `${item.locatorKey} "${await (item as TreeItem).getLabel()}"`
+                ))).toEqual([
+                    'TreeItem,CustomTreeItem "Item 1"',
+                    'TreeItem,CustomTreeItem "Item 2"'
+                ])
+
+                expect(visItems[0]).toBeInstanceOf(CustomTreeItem)
+                customTreeItem = visItems[0] as CustomTreeItem
+            }
+        })
+
+        it('should be able to click the action button within a tree item element', async () => {
+            if (customTreeItem !== undefined) {
+                const actions = await customTreeItem.getActionButtons()
+                expect(actions.length).toBe(1)
+
+                expect(actions[0].getLabel()).toBe('Call Me!')
+
+                await customTreeItem.select()
+                await actions[0].elem.click()
+
+                const workbench = await browser.getWorkbench()
+                await browser.waitUntil(async () => {
+                    const notifs = await workbench.getNotifications()
+                    const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                    return messages.includes('I got called!')
+                }, {
+                    timeoutMsg: 'Could not find notification as reaction to action item click'
+                })
+            }
         })
     })
 })
