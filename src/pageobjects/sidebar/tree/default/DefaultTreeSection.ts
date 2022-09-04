@@ -3,7 +3,10 @@ import { TreeItem, AllViewSectionLocators } from '../../..'
 import { DefaultTreeItem } from './DefaultTreeItem'
 
 import { PageDecorator, IPageDecorator } from '../../../utils'
-import { DefaultTreeSection as DefaultTreeSectionLocators } from '../../../../locators/1.66.0'
+import {
+    ViewSection as ViewSectionLocators,
+    DefaultTreeSection as DefaultTreeSectionLocators
+} from '../../../../locators/1.66.0'
 
 export interface DefaultTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
@@ -11,12 +14,12 @@ export interface DefaultTreeSection extends IPageDecorator<AllViewSectionLocator
  *
  * @category Sidebar
  */
-@PageDecorator(DefaultTreeSectionLocators)
+@PageDecorator({ ...ViewSectionLocators, ...DefaultTreeSectionLocators })
 export class DefaultTreeSection extends TreeSection {
     /**
      * @private
      */
-    public locatorKey = 'DefaultTreeSection' as const
+    public locatorKey = ['ViewSection' as const, 'DefaultTreeSection' as const]
 
     async getVisibleItems (): Promise<TreeItem[]> {
         const items: TreeItem[] = []

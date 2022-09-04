@@ -5,7 +5,10 @@ import { ContextMenu } from '../../menu/ContextMenu'
 import { ExtensionsViewSection } from './ExtensionsViewSection'
 
 import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../utils'
-import { ExtensionsViewItem as ExtensionsViewItemLocators } from '../../../locators/1.66.0'
+import {
+    TreeItem as TreeItemLocators,
+    ExtensionsViewItem as ExtensionsViewItemLocators
+} from '../../../locators/1.66.0'
 
 export interface ExtensionsViewItem extends IPageDecorator<ViewItemLocators> { }
 /**
@@ -13,12 +16,12 @@ export interface ExtensionsViewItem extends IPageDecorator<ViewItemLocators> { }
  *
  * @category Sidebar
  */
-@PageDecorator(ExtensionsViewItemLocators)
+@PageDecorator({ ...TreeItemLocators, ...ExtensionsViewItemLocators })
 export class ExtensionsViewItem extends ViewItem {
     /**
      * @private
      */
-    public locatorKey = 'ExtensionsViewItem' as const
+    public locatorKey = ['TreeItem' as const, 'ExtensionsViewItem' as const]
 
     constructor (
         locators: VSCodeLocatorMap,
