@@ -25,13 +25,31 @@
     "commands": [
       {
         "command": "test-extension.callme",
-        "title": "Call Me!"
+        "title": "Call Me!",
+        "icon": "$(globe)"
       },
       {
         "command": "test-extension.openWebView",
         "title": "Test Extension: Open WebView"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "testExtensionTreeview",
+          "name": "Test Extension Treeview"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "test-extension.callme",
+          "when": "view == testExtensionTreeview",
+          "group": "inline"
+        }
+      ]
+    }
   },
   "keywords": [
     "webdriverio"

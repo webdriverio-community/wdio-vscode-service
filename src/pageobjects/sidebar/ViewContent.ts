@@ -50,7 +50,7 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
 
         const availableSections: Set<string> = new Set()
         for (const element of elements) {
-            const sectionTitle = await this.sectionTitle$.getText()
+            const sectionTitle = await element.$(this.locators.sectionTitle).getText()
             availableSections.add(sectionTitle)
             if (sectionTitle === title) {
                 panel = element

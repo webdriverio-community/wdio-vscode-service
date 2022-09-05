@@ -1,7 +1,10 @@
 import { ViewSection } from '../ViewSection'
 import { ExtensionsViewItem, AllViewSectionLocators } from '../..'
 import { PageDecorator, IPageDecorator } from '../../utils'
-import { ExtensionsViewSection as ExtensionsViewSectionLocators } from '../../../locators/1.66.0'
+import {
+    ViewSection as ViewSectionLocators,
+    ExtensionsViewSection as ExtensionsViewSectionLocators
+} from '../../../locators/1.66.0'
 import { CMD_KEY } from '../../../constants'
 
 /**
@@ -21,12 +24,12 @@ export interface ExtensionsViewSection extends IPageDecorator<AllViewSectionLoca
  *
  * @category Sidebar
  */
-@PageDecorator(ExtensionsViewSectionLocators)
+@PageDecorator({ ...ViewSectionLocators, ...ExtensionsViewSectionLocators })
 export class ExtensionsViewSection extends ViewSection {
     /**
      * @private
      */
-    public locatorKey = 'ExtensionsViewSection' as const
+    public locatorKey = ['ViewSection' as const, 'ExtensionsViewSection' as const]
 
     async getVisibleItems (): Promise<ExtensionsViewItem[]> {
         await this.items$.$(this.locators.itemRow).waitForExist({

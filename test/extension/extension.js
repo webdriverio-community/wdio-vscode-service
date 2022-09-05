@@ -32,4 +32,18 @@ exports.activate = function (context) {
         vscode.window.showInformationMessage('I got called!');
     }))
     context.subscriptions.push(vscode.commands.registerCommand('test-extension.openWebView', openWebView))
+
+    context.subscriptions.push(vscode.window.registerTreeDataProvider('testExtensionTreeview', {
+        getChildren: (element) => {
+            return element ? (element.children || []) : [
+                {
+                    label: 'Item 1',
+                    children: [{ label: 'Item 1.1', tooltip: 'Tooltip for item 1.1', description: 'Description for item 1.1' }],
+                    collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+                },
+                { label: 'Item 2' }
+            ]
+        },
+        getTreeItem: (element) => element,
+    }))
 }

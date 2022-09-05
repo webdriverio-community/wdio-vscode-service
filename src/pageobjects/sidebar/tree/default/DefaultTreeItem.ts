@@ -3,7 +3,10 @@ import { ChainablePromiseElement } from 'webdriverio'
 import { TreeItem, ViewItemLocators } from '../../ViewItem'
 import { TreeSection } from '../TreeSection'
 import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../../utils'
-import { DefaultTreeItem as DefaultTreeItemLocators } from '../../../../locators/1.66.0'
+import {
+    TreeItem as TreeItemLocators,
+    DefaultTreeItem as DefaultTreeItemLocators
+} from '../../../../locators/1.66.0'
 
 export interface DefaultTreeItem extends IPageDecorator<ViewItemLocators> { }
 /**
@@ -11,12 +14,12 @@ export interface DefaultTreeItem extends IPageDecorator<ViewItemLocators> { }
  *
  * @category Sidebar
  */
-@PageDecorator(DefaultTreeItemLocators)
+@PageDecorator({ ...TreeItemLocators, ...DefaultTreeItemLocators })
 export class DefaultTreeItem extends TreeItem {
     /**
      * @private
      */
-    public locatorKey = 'DefaultTreeItem' as const
+    public locatorKey = ['TreeItem' as const, 'DefaultTreeItem' as const]
 
     constructor (
         locators: VSCodeLocatorMap,

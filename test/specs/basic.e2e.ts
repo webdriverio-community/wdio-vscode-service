@@ -6,7 +6,7 @@ import path from 'path'
 import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
-    ProblemsView, EditorView, WebView
+    ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, DefaultTreeItem, ViewSection, TreeItem, sleep
 } from '../..'
 
 function skip (param: string | string[] = process.platform) {
@@ -178,7 +178,7 @@ describe('WDIO VSCode Service', () => {
 
             const sidebar = workbench.getSideBar()
             const sidebarView = sidebar.getContent()
-            await sidebarView.getSection('EXTENSIONS')
+            await sidebarView.getSection('INSTALLED')
 
             /**
              * for some reason the developed extension doesn't show up
@@ -454,6 +454,134 @@ describe('WDIO VSCode Service', () => {
             await webview.open()
             await expect($('h1')).toHaveText('Hello World!')
             await webview.close()
+        })
+    })
+
+    describe('TreeView', () => {
+        let treeViewSection: ViewSection
+
+        it('should be able to find the extension tree view', async () => {
+            const workbench = await browser.getWorkbench()
+
+            const explorerView = await workbench.getActivityBar().getViewControl('Explorer')
+            const explorerSideBarView = await explorerView?.openView()
+            expect(explorerSideBarView).toBeInstanceOf(SideBarView)
+
+            const sidebar = workbench.getSideBar()
+
+            const sections = await sidebar.getContent().getSections()
+            expect(sections.length).toBeGreaterThan(1) // explorer and our tree view at least
+
+            treeViewSection = await sidebar.getContent().getSection('TEST EXTENSION TREEVIEW')
+            expect(treeViewSection).toBePresent()
+
+            expect(await treeViewSection.getTitle()).toBe('Test Extension Treeview')
+        })
+
+        let customTreeItem: CustomTreeItem
+
+        it('should be able to expand the tree and iterate over the tree items', async () => {
+            if (treeViewSection !== undefined) {
+                await treeViewSection.expand()
+                expect(await treeViewSection.isExpanded()).toBe(true)
+
+                const visItems = await treeViewSection.getVisibleItems()
+                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+                expect(visItems.length).toBe(2)
+
+                expect(await Promise.all(visItems.map(
+                    async (item) => `${item.locatorKey} "${await (item as TreeItem).getLabel()}"`
+                ))).toEqual([
+                    'TreeItem,CustomTreeItem "Item 1"',
+                    'TreeItem,CustomTreeItem "Item 2"'
+                ])
+
+                expect(visItems[0]).toBeInstanceOf(CustomTreeItem)
+                customTreeItem = visItems[0] as CustomTreeItem
+            }
+        })
+
+        it('should be able to click the action button within a tree item element', async () => {
+            if (customTreeItem !== undefined) {
+                const actions = await customTreeItem.getActionButtons()
+                expect(actions.length).toBe(1)
+
+                expect(actions[0].getLabel()).toBe('Call Me!')
+
+                await customTreeItem.select()
+                await actions[0].elem.click()
+
+                const workbench = await browser.getWorkbench()
+                await browser.waitUntil(async () => {
+                    const notifs = await workbench.getNotifications()
+                    const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                    return messages.includes('I got called!')
+                }, {
+                    timeoutMsg: 'Could not find notification as reaction to action item click'
+                })
+            }
+        })
+
+        it('should be able to iterate over child items from tree item element', async () => {
+            expect(await customTreeItem.isExpandable()).toBe(true)
+            await customTreeItem.expand()
+            expect(await customTreeItem.isExpanded()).toBe(true)
+            expect(await customTreeItem.hasChildren()).toBe(true)
+            const childItems = await customTreeItem.getChildren()
+            expect(childItems.length).toBe(1)
+            expect(await childItems[0].getLabel()).toBe('Item 1.1')
+            expect(await childItems[0].getTooltip()).toBe('Tooltip for item 1.1')
+            expect(await childItems[0].getDescription()).toBe('Description for item 1.1')
+        })
+
+        it('should be able to find the explorer tree view', async () => {
+            const workbench = await browser.getWorkbench()
+
+            const explorerView = await workbench.getActivityBar().getViewControl('Explorer')
+            const explorerSideBarView = await explorerView?.openView()
+            expect(explorerSideBarView).toBeInstanceOf(SideBarView)
+
+            const sidebar = workbench.getSideBar()
+
+            // one would expect 'mount' here (aria-label)
+            treeViewSection = await sidebar.getContent().getSection('/ [TEST FILES]')
+            expect(treeViewSection).toBePresent()
+
+            expect(await treeViewSection.getTitle()).toBe('mount')
+
+            await treeViewSection.expand()
+            expect(await treeViewSection.isExpanded()).toBe(true)
+        })
+
+        it('should be able to iterate over the (default) tree items', async () => {
+            if (treeViewSection !== undefined) {
+                const visItems = await treeViewSection.getVisibleItems()
+                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+                expect(visItems.length).toBeGreaterThanOrEqual(1) // at least README.md
+
+                /* gives a read ECONNRESET RequestError... often
+                const labels = await Promise.all(visItems.map(
+                    async (item) => [await (item as TreeItem).getLabel(), item]
+                )) */
+                let readmeItem: TreeItem | undefined
+                for (const visItem of visItems as TreeItem[]) {
+                    // slow down a bit to avoid ECONNRESET... (todo investigate better way)
+                    await sleep(50)
+                    const label = await visItem.getLabel()
+                    if (label === 'README.md') {
+                        readmeItem = visItem
+                        break
+                    }
+                }
+                expect(readmeItem).toBeDefined()
+                if (readmeItem !== undefined) {
+                    expect(readmeItem).toBeInstanceOf(DefaultTreeItem)
+                    expect(await readmeItem.isExpandable()).toBe(false)
+                    expect(await readmeItem.hasChildren()).toBe(false)
+                    expect(await readmeItem.getTooltip()).toBe('/README.md')
+                    expect(await readmeItem.getDescription()).toBeUndefined()
+                }
+            }
         })
     })
 })
