@@ -50,8 +50,7 @@ export class ViewContent extends BasePage<typeof ViewContentLocators> {
 
         const availableSections: Set<string> = new Set()
         for (const element of elements) {
-            const sectionTitle = await (await element.$(this.locators.sectionTitle)).getText()
-            // todo .getAttribute('title') imho would be better e.g. 'mount' instead of '/ [TEST FILES]'
+            const sectionTitle = await element.$(this.locators.sectionTitle).getText()
             availableSections.add(sectionTitle)
             if (sectionTitle === title) {
                 panel = element
