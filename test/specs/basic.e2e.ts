@@ -544,10 +544,10 @@ describe('WDIO VSCode Service', () => {
             const sidebar = workbench.getSideBar()
 
             // one would expect 'mount' here (aria-label)
-            treeViewSection = await sidebar.getContent().getSection('/ [TEST FILES]')
+            treeViewSection = await sidebar.getContent().getSection('WDIO-VSCODE-SERVICE')
             expect(treeViewSection).toBePresent()
 
-            expect(await treeViewSection.getTitle()).toBe('mount')
+            expect(await treeViewSection.getTitle()).toBe('wdio-vscode-service')
 
             await treeViewSection.expand()
             expect(await treeViewSection.isExpanded()).toBe(true)
@@ -578,7 +578,7 @@ describe('WDIO VSCode Service', () => {
                     expect(readmeItem).toBeInstanceOf(DefaultTreeItem)
                     expect(await readmeItem.isExpandable()).toBe(false)
                     expect(await readmeItem.hasChildren()).toBe(false)
-                    expect(await readmeItem.getTooltip()).toBe('/README.md')
+                    expect(await readmeItem.getTooltip()).toContain('/README.md')
                     expect(await readmeItem.getDescription()).toBeUndefined()
                 }
             }

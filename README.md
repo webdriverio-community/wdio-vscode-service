@@ -320,6 +320,16 @@ If you use WebdriverIO with TypeScript make sure to add `wdio-vscode-service` to
 }
 ```
 
+## Contributing
+
+Before posting a pull request, please run the following:
+
+1. clone wdio-vscode-service
+2. cd wdio-vscode-service
+3. npm install
+4. npm run build
+5. npm run test (or npm run ci)
+
 ## Learn More
 
 If you want to learn more about testing VSCode Extensions, check out [Christian Bromann's](https://twitter.com/bromann) talk at [OpenJS World 2022](https://www.youtube.com/watch?v=PhGNTioBUiU):
