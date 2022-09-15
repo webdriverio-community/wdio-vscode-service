@@ -328,7 +328,7 @@ Before posting a pull request, please run the following:
 1. `cd wdio-vscode-service`
 1. `npm install`
 1. `npm run build`
-1. `npm run test (or npm run ci)`
+1. `npm run test` (or `npm run ci`)
 
 ## Learn More
 
