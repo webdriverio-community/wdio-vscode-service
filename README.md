@@ -324,11 +324,11 @@ If you use WebdriverIO with TypeScript make sure to add `wdio-vscode-service` to
 
 Before posting a pull request, please run the following:
 
-1. clone wdio-vscode-service
-2. cd wdio-vscode-service
-3. npm install
-4. npm run build
-5. npm run test (or npm run ci)
+1. `git clone git@github.com:webdriverio-community/wdio-vscode-service.git`
+1. `cd wdio-vscode-service`
+1. `npm install`
+1. `npm run build`
+1. `npm run test (or npm run ci)`
 
 ## Learn More
 
