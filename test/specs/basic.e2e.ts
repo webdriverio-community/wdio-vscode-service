@@ -9,6 +9,8 @@ import {
     ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, DefaultTreeItem, ViewSection, TreeItem, sleep
 } from '../..'
 
+const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
+
 function skip (param: string | string[] = process.platform) {
     const platforms = Array.isArray(param) ? param : [param]
     return platforms.includes(process.platform) ? it.skip : it
@@ -541,11 +543,11 @@ describe('WDIO VSCode Service', () => {
 
             const sidebar = workbench.getSideBar()
 
-            const sectionName = process.env.VSCODE_WEB_TESTS ? '/ [TEST FILES]' : 'WDIO-VSCODE-SERVICE'
+            const sectionName = isWebTest ? '/ [TEST FILES]' : 'WDIO-VSCODE-SERVICE'
             treeViewSection = await sidebar.getContent().getSection(sectionName)
 
             // one would expect 'mount' here (aria-label)
-            const sectionTitle = process.env.VSCODE_WEB_TESTS ? 'mount' : 'wdio-vscode-service'
+            const sectionTitle = isWebTest ? 'mount' : 'wdio-vscode-service'
             expect(await treeViewSection.getTitle()).toBe(sectionTitle)
 
             await treeViewSection.expand()
