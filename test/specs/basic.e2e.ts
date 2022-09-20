@@ -475,6 +475,9 @@ describe('WDIO VSCode Service', () => {
             expect(sections.length).toBeGreaterThan(1) // explorer and our tree view at least
 
             treeViewSection = await sidebar.getContent().getSection('TEST EXTENSION TREEVIEW')
+            // eslint-disable-next-line @typescript-eslint/await-thenable
+            await expect(treeViewSection).toBePresent()
+
             expect(await treeViewSection.getTitle()).toBe('Test Extension Treeview')
         })
 
@@ -541,6 +544,8 @@ describe('WDIO VSCode Service', () => {
 
             const sectionName = isWebTest ? '/ [TEST FILES]' : 'WDIO-VSCODE-SERVICE'
             treeViewSection = await sidebar.getContent().getSection(sectionName)
+            // eslint-disable-next-line @typescript-eslint/await-thenable
+            await expect(treeViewSection).toBePresent()
 
             // one would expect 'mount' here (aria-label)
             const sectionTitle = isWebTest ? 'mount' : 'wdio-vscode-service'
