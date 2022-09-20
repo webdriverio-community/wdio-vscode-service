@@ -74,7 +74,7 @@
     "@types/chromedriver": "^81.0.1",
     "@types/download": "^8.0.1",
     "@types/node": "^18.7.18",
-    "@types/vscode": "^1.67.0",
+    "@types/vscode": "^1.71.0",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "@wdio/cli": "^7.19.7",

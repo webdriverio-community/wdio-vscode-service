@@ -50,7 +50,7 @@ export const config = {
     // ...
     capabilities: [{
         browserName: 'vscode',
-        browserVersion: '1.69.0', // "insiders" or "stable" for latest VSCode version
+        browserVersion: '1.71.0', // "insiders" or "stable" for latest VSCode version
         'wdio:vscodeOptions': {
             extensionPath: __dirname,
             userSettings: {
