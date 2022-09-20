@@ -481,45 +481,43 @@ describe('WDIO VSCode Service', () => {
         let customTreeItem: CustomTreeItem
 
         it('should be able to expand the tree and iterate over the tree items', async () => {
-            if (treeViewSection !== undefined) {
-                await treeViewSection.expand()
-                expect(await treeViewSection.isExpanded()).toBe(true)
+            await treeViewSection.expand()
+            expect(await treeViewSection.isExpanded()).toBe(true)
 
-                const visItems = await treeViewSection.getVisibleItems()
-                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
-                expect(visItems.length).toBe(2)
+            const visItems = await treeViewSection.getVisibleItems()
+            visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+            expect(visItems.length).toBe(2)
 
-                expect(await Promise.all(visItems.map(
-                    async (item) => `${item.locatorKey} "${await (item as TreeItem).getLabel()}"`
-                ))).toEqual([
-                    'TreeItem,CustomTreeItem "Item 1"',
-                    'TreeItem,CustomTreeItem "Item 2"'
-                ])
+            expect(await Promise.all(visItems.map(
+                async (item) => `${item.locatorKey} "${await (item as TreeItem).getLabel()}"`
+            ))).toEqual([
+                'TreeItem,CustomTreeItem "Item 1"',
+                'TreeItem,CustomTreeItem "Item 2"'
+            ])
 
-                expect(visItems[0]).toBeInstanceOf(CustomTreeItem)
-                customTreeItem = visItems[0] as CustomTreeItem
-            }
+            expect(visItems[0]).toBeInstanceOf(CustomTreeItem)
+            customTreeItem = visItems[0] as CustomTreeItem
         })
 
         it('should be able to click the action button within a tree item element', async () => {
-            if (customTreeItem !== undefined) {
-                const actions = await customTreeItem.getActionButtons()
-                expect(actions.length).toBe(1)
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(2000)
+            const actions = await customTreeItem.getActionButtons()
+            expect(actions.length).toBe(1)
 
-                expect(actions[0].getLabel()).toBe('Call Me!')
+            expect(actions[0].getLabel()).toBe('Call Me!')
 
-                await customTreeItem.select()
-                await actions[0].elem.click()
+            await customTreeItem.select()
+            await actions[0].elem.click()
 
-                const workbench = await browser.getWorkbench()
-                await browser.waitUntil(async () => {
-                    const notifs = await workbench.getNotifications()
-                    const messages = await Promise.all(notifs.map((n) => n.getMessage()))
-                    return messages.includes('I got called!')
-                }, {
-                    timeoutMsg: 'Could not find notification as reaction to action item click'
-                })
-            }
+            const workbench = await browser.getWorkbench()
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                return messages.includes('I got called!')
+            }, {
+                timeoutMsg: 'Could not find notification as reaction to action item click'
+            })
         })
 
         it('should be able to iterate over child items from tree item element', async () => {
