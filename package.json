@@ -82,6 +82,7 @@
     "@wdio/mocha-framework": "^7.19.7",
     "@wdio/spec-reporter": "^7.19.7",
     "@wdio/types": "^7.19.5",
+    "chromedriver": "*",
     "eslint": "^8.16.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-base-typescript": "^1.1.0",
