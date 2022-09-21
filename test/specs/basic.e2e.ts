@@ -500,8 +500,6 @@ describe('WDIO VSCode Service', () => {
         })
 
         it('should be able to click the action button within a tree item element', async () => {
-            // eslint-disable-next-line wdio/no-pause
-            await browser.pause(2000)
             const actions = await customTreeItem.getActionButtons()
             expect(actions.length).toBe(1)
 

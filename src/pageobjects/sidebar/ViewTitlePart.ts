@@ -2,7 +2,7 @@ import {
     ElementWithContextMenu, PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { SideBarView } from '..'
-import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.66.0'
+import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.70.0'
 
 export interface ViewTitlePart extends IPageDecorator<typeof ViewTitlePartLocators> { }
 /**

@@ -6,7 +6,7 @@ import {
 import {
     PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
 } from '../utils'
-import { ContentAssist as ContentAssistLocators } from '../../locators/1.66.0'
+import { ContentAssist as ContentAssistLocators } from '../../locators/1.70.0'
 
 export interface ContentAssist extends IPageDecorator<typeof ContentAssistLocators> {}
 /**

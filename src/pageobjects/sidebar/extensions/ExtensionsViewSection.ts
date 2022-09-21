@@ -4,7 +4,7 @@ import { PageDecorator, IPageDecorator } from '../../utils'
 import {
     ViewSection as ViewSectionLocators,
     ExtensionsViewSection as ExtensionsViewSectionLocators
-} from '../../../locators/1.66.0'
+} from '../../../locators/1.70.0'
 import { CMD_KEY } from '../../../constants'
 
 /**

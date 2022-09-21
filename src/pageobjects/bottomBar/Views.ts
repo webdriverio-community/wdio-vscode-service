@@ -10,7 +10,7 @@ import {
     OutputView as OutputViewLocators,
     DebugConsoleView as DebugConsoleViewLocators,
     TerminalView as TerminalViewLocators
-} from '../../locators/1.66.0'
+} from '../../locators/1.70.0'
 
 export interface OutputView extends IPageDecorator<typeof OutputViewLocators> {}
 /**

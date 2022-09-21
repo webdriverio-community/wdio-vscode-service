@@ -2,7 +2,7 @@ import { ViewContent, ViewTitlePart } from '..'
 import {
     PageDecorator, IPageDecorator, BasePage, LocatorComponents
 } from '../utils'
-import { SideBarView as SideBarViewLocators } from '../../locators/1.66.0'
+import { SideBarView as SideBarViewLocators } from '../../locators/1.70.0'
 
 export interface SideBarView<T> extends IPageDecorator<typeof SideBarViewLocators> { }
 /**

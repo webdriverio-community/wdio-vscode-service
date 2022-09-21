@@ -8,7 +8,7 @@ import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../utils'
 import {
     TreeItem as TreeItemLocators,
     ExtensionsViewItem as ExtensionsViewItemLocators
-} from '../../../locators/1.66.0'
+} from '../../../locators/1.70.0'
 
 export interface ExtensionsViewItem extends IPageDecorator<ViewItemLocators> { }
 /**

@@ -1,5 +1,5 @@
 import { PageDecorator, IPageDecorator, BasePage } from '../utils'
-import { StatusBar as StatusBarLocators } from '../../locators/1.66.0'
+import { StatusBar as StatusBarLocators } from '../../locators/1.70.0'
 import { NotificationsCenter } from '..'
 
 export interface StatusBar extends IPageDecorator<typeof StatusBarLocators> {}
