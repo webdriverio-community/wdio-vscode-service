@@ -575,7 +575,7 @@ describe('WDIO VSCode Service', () => {
                     expect(readmeItem).toBeInstanceOf(DefaultTreeItem)
                     expect(await readmeItem.isExpandable()).toBe(false)
                     expect(await readmeItem.hasChildren()).toBe(false)
-                    expect(await readmeItem.getTooltip()).toContain('/README.md')
+                    expect((await readmeItem.getTooltip())?.endsWith(('README.md'))).toBe(true)
                     expect(await readmeItem.getDescription()).toBeUndefined()
                 }
             }
