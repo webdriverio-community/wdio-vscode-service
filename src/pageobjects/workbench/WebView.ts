@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { BasePage, PageDecorator, IPageDecorator } from '../utils'
-import { WebView as WebViewLocators } from '../../locators/1.66.0'
+import { WebView as WebViewLocators } from '../../locators/1.70.0'
 import type { VSCodeLocatorMap } from '../utils'
 
 export interface WebView extends IPageDecorator<typeof WebViewLocators> { }

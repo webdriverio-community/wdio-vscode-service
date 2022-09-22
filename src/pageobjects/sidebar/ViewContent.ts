@@ -5,7 +5,7 @@ import { ExtensionsViewSection } from './extensions/ExtensionsViewSection'
 import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
-import { ViewContent as ViewContentLocators } from '../../locators/1.66.0'
+import { ViewContent as ViewContentLocators } from '../../locators/1.70.0'
 
 export interface ViewContent extends IPageDecorator<typeof ViewContentLocators> { }
 /**

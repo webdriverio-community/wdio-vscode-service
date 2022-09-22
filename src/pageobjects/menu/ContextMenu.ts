@@ -4,7 +4,7 @@ import { Menu, MenuItem } from '..'
 import {
     PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
 } from '../utils'
-import { ContextMenu as ContextMenuLocators } from '../../locators/1.66.0'
+import { ContextMenu as ContextMenuLocators } from '../../locators/1.70.0'
 
 export interface ContextMenu extends IPageDecorator<typeof ContextMenuLocators> {}
 /**

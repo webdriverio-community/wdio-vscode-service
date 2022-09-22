@@ -3,7 +3,7 @@ import {
     StatusBar
 } from '..'
 import { BasePage, PageDecorator, IPageDecorator } from '../utils'
-import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.66.0'
+import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.70.0'
 
 export interface BottomBarPanel extends IPageDecorator<typeof BottomBarPanelLocators> {}
 /**

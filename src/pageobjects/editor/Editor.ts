@@ -8,7 +8,7 @@ import {
     TextEditor as TextEditorLocators,
     DiffEditor as DiffEditorLocators,
     EditorView as EditorViewLocators
-} from '../../locators/1.66.0'
+} from '../../locators/1.70.0'
 
 /**
  * @hidden

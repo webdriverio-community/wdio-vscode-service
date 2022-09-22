@@ -7,7 +7,7 @@ import {
 import {
     EditorView as EditorViewLocators,
     Editor as EditorLocatorsObj
-} from '../../locators/1.66.0'
+} from '../../locators/1.70.0'
 
 export interface EditorView extends IPageDecorator<typeof EditorViewLocators> {}
 /**

@@ -31,9 +31,11 @@ To initiate a new WebdriverIO project, run:
 npm create wdio ./
 ```
 
-An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed. Then make sure to select `vscode` within the list of services:
+An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed. Then make sure to select `chromedriver` and `vscode` within the list of services:
 
 ![Install Demo](https://raw.githubusercontent.com/webdriverio-community/wdio-vscode-service/main/.github/assets/demo.gif "Install Demo")
+
+__Note:__ remove `chromedriver` from the list of services in the generated `wdio.conf.ts` afterwards. See also configuration example below.
 
 For more information on how to install `WebdriverIO`, please check the [project docs](https://webdriver.io/docs/gettingstarted).
 
@@ -48,7 +50,7 @@ export const config = {
     // ...
     capabilities: [{
         browserName: 'vscode',
-        browserVersion: '1.69.0', // "insiders" or "stable" for latest VSCode version
+        browserVersion: '1.71.0', // "insiders" or "stable" for latest VSCode version
         'wdio:vscodeOptions': {
             extensionPath: __dirname,
             userSettings: {

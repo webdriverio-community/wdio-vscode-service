@@ -4,7 +4,7 @@ import { ViewSection } from '..'
 import {
     BasePage, PageDecorator, IPageDecorator, VSCodeLocatorMap
 } from '../utils'
-import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.66.0'
+import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.70.0'
 
 export interface WelcomeContentButton extends IPageDecorator<typeof WelcomeContentLocators> {}
 /**

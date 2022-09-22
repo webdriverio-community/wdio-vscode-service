@@ -1,3 +1,4 @@
+import type { ChainablePromiseElement } from 'webdriverio'
 import {
     IPageDecorator, BasePage, ElementWithContextMenu, PageDecorator, VSCodeLocatorMap
 } from '../utils'
@@ -7,7 +8,7 @@ import {
     CustomTreeItem as CustomTreeItemLocators,
     DefaultTreeItem as DefaultTreeItemLocators,
     ExtensionsViewItem as ExtensionsViewItemLocators
-} from '../../locators/1.66.0'
+} from '../../locators/1.70.0'
 
 /**
  * Abstract representation of a row in the tree inside a view content section
@@ -138,10 +139,15 @@ export abstract class TreeItem extends ViewItem {
 
         const actions: ViewItemAction[] = []
         const items = await container.$$(this.locators.actionLabel)
-
         for (const item of items) {
-            const label = await item.getAttribute(this.locators.actionTitle)
-            actions.push(new ViewItemAction(this.locatorMap, label, this))
+            const elem = item.$((this.locatorMap.ViewSection.actionConstructor as () => string)())
+            const label = (
+                // v1.69.0 and before
+                await elem.getAttribute(this.locators.actionTitle)
+                // v1.70.0 and after
+                || await item.getAttribute(this.locators.actionTitle)
+            )
+            actions.push(new ViewItemAction(this.locatorMap, elem, label, this))
         }
         return actions
     }
@@ -213,10 +219,11 @@ export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        elem: ChainablePromiseElement<WebdriverIO.Element>,
         label: string,
         viewItem: TreeItem
     ) {
-        super(locators, (locators.ViewSection.actionConstructor as Function)(label) as string, viewItem.elem)
+        super(locators, elem, viewItem.elem)
         this.label = label
     }
 
