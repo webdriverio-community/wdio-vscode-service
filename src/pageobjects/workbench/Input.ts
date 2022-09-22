@@ -7,6 +7,7 @@ import {
     InputBox as InputBoxLocators,
     QuickOpenBox as QuickOpenBoxLocators
 } from '../../locators/1.70.0'
+import { CMD_KEY } from '../../constants'
 
 const HOME_KEY = process.platform === 'win32'
     ? 'a'
@@ -89,11 +90,11 @@ export abstract class Input extends BasePage<AllInputLocators> {
         const input = await this.inputBox$.$(this.locators.input)
         // VS Code 1.40 breaks the default clear method, use select all + back space instead
         await input.addValue(['End'])
-        await input.addValue(['Shift', HOME_KEY])
+        await input.addValue([CMD_KEY, HOME_KEY])
         await input.addValue(['Backspace'])
         if ((await input.getAttribute('value'))?.length > 0) {
             await input.addValue(['End'])
-            await input.addValue(['Shift', HOME_KEY])
+            await input.addValue([CMD_KEY, HOME_KEY])
             await input.addValue(['Backspace'])
         }
     }
