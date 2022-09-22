@@ -192,6 +192,7 @@ export const config: Options.Testrunner = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
+        grep: grep.length > 0 ? grep.join('|') : undefined,
         invert: true
     },
     //

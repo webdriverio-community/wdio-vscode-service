@@ -9,6 +9,8 @@ import {
     ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, DefaultTreeItem, ViewSection, TreeItem, sleep
 } from '../..'
 
+const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
+
 function skip (param: string | string[] = process.platform) {
     const platforms = Array.isArray(param) ? param : [param]
     return platforms.includes(process.platform) ? it.skip : it
@@ -473,53 +475,47 @@ describe('WDIO VSCode Service', () => {
             expect(sections.length).toBeGreaterThan(1) // explorer and our tree view at least
 
             treeViewSection = await sidebar.getContent().getSection('TEST EXTENSION TREEVIEW')
-            expect(treeViewSection).toBePresent()
-
             expect(await treeViewSection.getTitle()).toBe('Test Extension Treeview')
         })
 
         let customTreeItem: CustomTreeItem
 
         it('should be able to expand the tree and iterate over the tree items', async () => {
-            if (treeViewSection !== undefined) {
-                await treeViewSection.expand()
-                expect(await treeViewSection.isExpanded()).toBe(true)
+            await treeViewSection.expand()
+            expect(await treeViewSection.isExpanded()).toBe(true)
 
-                const visItems = await treeViewSection.getVisibleItems()
-                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
-                expect(visItems.length).toBe(2)
+            const visItems = await treeViewSection.getVisibleItems()
+            visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+            expect(visItems.length).toBe(2)
 
-                expect(await Promise.all(visItems.map(
-                    async (item) => `${item.locatorKey} "${await (item as TreeItem).getLabel()}"`
-                ))).toEqual([
-                    'TreeItem,CustomTreeItem "Item 1"',
-                    'TreeItem,CustomTreeItem "Item 2"'
-                ])
+            expect(await Promise.all(visItems.map(
+                async (item) => `${item.locatorKey} "${await (item as TreeItem).getLabel()}"`
+            ))).toEqual([
+                'TreeItem,CustomTreeItem "Item 1"',
+                'TreeItem,CustomTreeItem "Item 2"'
+            ])
 
-                expect(visItems[0]).toBeInstanceOf(CustomTreeItem)
-                customTreeItem = visItems[0] as CustomTreeItem
-            }
+            expect(visItems[0]).toBeInstanceOf(CustomTreeItem)
+            customTreeItem = visItems[0] as CustomTreeItem
         })
 
         it('should be able to click the action button within a tree item element', async () => {
-            if (customTreeItem !== undefined) {
-                const actions = await customTreeItem.getActionButtons()
-                expect(actions.length).toBe(1)
+            const actions = await customTreeItem.getActionButtons()
+            expect(actions.length).toBe(1)
 
-                expect(actions[0].getLabel()).toBe('Call Me!')
+            expect(actions[0].getLabel()).toBe('Call Me!')
 
-                await customTreeItem.select()
-                await actions[0].elem.click()
+            await customTreeItem.select()
+            await actions[0].elem.click()
 
-                const workbench = await browser.getWorkbench()
-                await browser.waitUntil(async () => {
-                    const notifs = await workbench.getNotifications()
-                    const messages = await Promise.all(notifs.map((n) => n.getMessage()))
-                    return messages.includes('I got called!')
-                }, {
-                    timeoutMsg: 'Could not find notification as reaction to action item click'
-                })
-            }
+            const workbench = await browser.getWorkbench()
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                return messages.includes('I got called!')
+            }, {
+                timeoutMsg: 'Could not find notification as reaction to action item click'
+            })
         })
 
         it('should be able to iterate over child items from tree item element', async () => {
@@ -543,11 +539,12 @@ describe('WDIO VSCode Service', () => {
 
             const sidebar = workbench.getSideBar()
 
-            // one would expect 'mount' here (aria-label)
-            treeViewSection = await sidebar.getContent().getSection('WDIO-VSCODE-SERVICE')
-            expect(treeViewSection).toBePresent()
+            const sectionName = isWebTest ? '/ [TEST FILES]' : 'WDIO-VSCODE-SERVICE'
+            treeViewSection = await sidebar.getContent().getSection(sectionName)
 
-            expect(await treeViewSection.getTitle()).toBe('wdio-vscode-service')
+            // one would expect 'mount' here (aria-label)
+            const sectionTitle = isWebTest ? 'mount' : 'wdio-vscode-service'
+            expect(await treeViewSection.getTitle()).toBe(sectionTitle)
 
             await treeViewSection.expand()
             expect(await treeViewSection.isExpanded()).toBe(true)
@@ -578,7 +575,7 @@ describe('WDIO VSCode Service', () => {
                     expect(readmeItem).toBeInstanceOf(DefaultTreeItem)
                     expect(await readmeItem.isExpandable()).toBe(false)
                     expect(await readmeItem.hasChildren()).toBe(false)
-                    expect(await readmeItem.getTooltip()).toContain('/README.md')
+                    expect((await readmeItem.getTooltip())?.endsWith(('README.md'))).toBe(true)
                     expect(await readmeItem.getDescription()).toBeUndefined()
                 }
             }
