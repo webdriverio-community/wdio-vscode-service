@@ -205,7 +205,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      */
     async executeCommand (command: string): Promise<void> {
         const prompt = await this.openCommandPrompt()
-        await prompt.setText(`>${command}`)
+        await prompt.setText(command)
         await prompt.confirm()
     }
 }
