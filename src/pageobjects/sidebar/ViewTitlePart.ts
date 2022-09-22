@@ -1,3 +1,4 @@
+import type { ChainablePromiseElement } from 'webdriverio'
 import {
     ElementWithContextMenu, PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
@@ -41,7 +42,8 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
         const elements = await this.action$$
         for (const element of elements) {
             const title = await element.getAttribute(this.locators.actionLabel)
-            actions.push(await new TitleActionButton(this.locatorMap, title, this).wait())
+            const link = element.$(this.locators.actionContstructor(title))
+            actions.push(await new TitleActionButton(this.locatorMap, link, title, this).wait())
         }
         return actions
     }
@@ -52,7 +54,8 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
      * @returns Promise resolving to TitleActionButton object
      */
     async getAction (title: string): Promise<TitleActionButton> {
-        return new TitleActionButton(this.locatorMap, title, this).wait()
+        const link = this.elem.$(this.locators.actionContstructor(title))
+        return new TitleActionButton(this.locatorMap, link, title, this).wait()
     }
 }
 
@@ -69,8 +72,13 @@ export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
      */
     public locatorKey = 'ViewTitlePart' as const
 
-    constructor (locators: VSCodeLocatorMap, private title: string, viewTitle: ViewTitlePart) {
-        super(locators, (locators.ViewTitlePart.actionContstructor as Function)(title) as string, viewTitle.elem)
+    constructor (
+        locators: VSCodeLocatorMap,
+        elem: ChainablePromiseElement<WebdriverIO.Element>,
+        private title: string,
+        viewTitle: ViewTitlePart
+    ) {
+        super(locators, elem, viewTitle.elem)
         this.title = title
     }
 

@@ -268,6 +268,7 @@ export const ScmView = {
     initButton: './/a[text()=\'Initialize Repository\']',
     providerTitle: '.title',
     providerType: '.type',
+    actionConstructor: (title: string) => `.//a[@title='${title}']`,
     action: '.action-label',
     inputField: 'textarea',
     changeItem: './/div[@role=\'treeitem\']',
