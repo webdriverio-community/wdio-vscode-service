@@ -111,7 +111,7 @@ In your `tsconfig.json` make sure to add `wdio-vscode-service` to your list of t
 
 ## Usage
 
-You can then use the `getWorkspace` method to access the page objects for the locators matching your desired VSCode version:
+You can then use the `getWorkbench` method to access the page objects for the locators matching your desired VSCode version:
 
 ```ts
 describe('WDIO VSCode Service', () => {
