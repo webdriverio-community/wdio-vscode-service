@@ -92,6 +92,13 @@ describe('WDIO VSCode Service', () => {
             expect(await selectedView.getTitle()).toBe('Search')
         })
 
+        skip('linux')('executeQuickPick @skipWeb', async () => {
+            const workbench = await browser.getWorkbench()
+            await workbench.executeQuickPick('Search: Find in Files')
+            const selectedView = await workbench.getActivityBar().getSelectedViewAction()
+            expect(await selectedView.getTitle()).toBe('Search')
+        })
+
         it('can access VSCode API through service interface @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             await browser.executeWorkbench((vscode) => {
@@ -185,7 +192,7 @@ describe('WDIO VSCode Service', () => {
             /**
              * for some reason the developed extension doesn't show up
              * in the installed extension section when running in a
-             * prestine environmnet
+             * pristine environment
              */
             // const installedExtensions = await extensionViewSection.getVisibleItems()
             // expect(await installedExtensions[0].getTitle()).toBe('Guinea Pig')
