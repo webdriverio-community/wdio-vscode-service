@@ -201,7 +201,8 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
     /**
      * Open the command prompt, type in a command, find the command using a fuzzy match, and execute
      * @param command text of the command to be executed
-     * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object when the command prompt is confirmed
+     * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object
+     * when the command prompt is confirmed
      */
     async executeCommand (command: string): Promise<InputBox | QuickOpenBox> {
         const prompt = await this.openCommandPrompt()
@@ -214,9 +215,10 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
     /**
      * Open the command prompt, type in a command, find the command from the quick pick list, and execute
      * @param command text of the command to be executed
-     * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object when the command prompt is confirmed
+     * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object
+     * when the command prompt is confirmed
      */
-     async executeQuickPick (command: string): Promise<InputBox | QuickOpenBox> {
+    async executeQuickPick (command: string): Promise<InputBox | QuickOpenBox> {
         const prompt = await this.openCommandPrompt()
         await prompt.setText(`>${command}`)
         const quickPicks = await prompt.getQuickPicks()
