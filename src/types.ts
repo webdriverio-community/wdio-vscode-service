@@ -1,4 +1,4 @@
-import type { ChromedriverServiceOptions } from 'wdio-chromedriver-service'
+import type { ServiceOptions as ChromedriverServiceOptions } from 'wdio-chromedriver-service'
 import type { Capabilities } from '@wdio/types'
 import type { VSCODE_CAPABILITY_KEY } from './constants'
 

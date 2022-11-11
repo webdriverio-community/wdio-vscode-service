@@ -56,10 +56,10 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     ) {
         super(_options, _capabilities, config)
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
-        // @ts-expect-error overwrite private method
         this._mapCapabilities = () => {}
     }
 
+    // @ts-expect-error this service uses provided params
     async onPrepare (_: never, capabilities: Capabilities.RemoteCapabilities) {
         const caps: VSCodeCapabilities[] = Array.isArray(capabilities)
             ? capabilities.map((c) => ((c as Capabilities.W3CCapabilities).alwaysMatch || c) as VSCodeCapabilities)
