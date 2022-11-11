@@ -405,7 +405,7 @@ process.umask = function() { return 0; };
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -419,14 +419,14 @@ process.umask = function() { return 0; };
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -439,12 +439,12 @@ process.umask = function() { return 0; };
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -455,7 +455,7 @@ process.umask = function() { return 0; };
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
@@ -478,7 +478,7 @@ function activate(context) {
     const serverBackedRootDirectory = new ServerBackedDirectory(serverUri, '');
     const disposable = vscode_1.workspace.registerFileSystemProvider(SCHEME, new fsProvider_1.MemFileSystemProvider(SCHEME, serverBackedRootDirectory));
     context.subscriptions.push(disposable);
-    console.log(`vscode-test-web-support fs provider registers for ${SCHEME}, initial content from ${serverUri.toString()}`);
+    console.log(`vscode-test-web-support fs provider registers for ${SCHEME}, initial content from ${serverUri.toString(/*skipEncoding*/ true)}`);
 }
 exports.activate = activate;
 class ServerBackedFile {
@@ -540,7 +540,7 @@ function isStat(e) {
     return e && (e.type === vscode_1.FileType.Directory || e.type === vscode_1.FileType.File) && typeof e.ctime === 'number' && typeof e.mtime === 'number' && typeof e.size === 'number';
 }
 async function getEntries(serverUri) {
-    const url = serverUri.with({ query: 'readdir' }).toString();
+    const url = serverUri.with({ query: 'readdir' }).toString(/*skipEncoding*/ true);
     const response = await (0, request_light_1.xhr)({ url });
     if (response.status === 200 && response.status <= 204) {
         try {
@@ -560,27 +560,27 @@ async function getEntries(serverUri) {
         catch {
             // ignore
         }
-        console.log(`Invalid server response format for ${url.toString()}.`);
+        console.log(`Invalid server response format for ${url.toString(/*skipEncoding*/ true)}.`);
     }
     else {
-        console.log(`Invalid server response for ${url.toString()}. Status ${response.status}`);
+        console.log(`Invalid server response for ${url.toString(/*skipEncoding*/ true)}. Status ${response.status}`);
     }
     return new Map();
 }
 async function getStats(serverUri) {
-    const url = serverUri.with({ query: 'stat' }).toString();
+    const url = serverUri.with({ query: 'stat' }).toString(/*skipEncoding*/ true);
     const response = await (0, request_light_1.xhr)({ url });
     if (response.status === 200 && response.status <= 204) {
         const res = JSON.parse(response.responseText);
         if (isStat(res)) {
             return res;
         }
-        throw vscode_1.FileSystemError.FileNotFound(`Invalid server response for ${serverUri.toString()}.`);
+        throw vscode_1.FileSystemError.FileNotFound(`Invalid server response for ${serverUri.toString(/*skipEncoding*/ true)}.`);
     }
-    throw vscode_1.FileSystemError.FileNotFound(`Invalid server response for ${serverUri.toString()}. Status ${response.status}.`);
+    throw vscode_1.FileSystemError.FileNotFound(`Invalid server response for ${serverUri.toString(/*skipEncoding*/ true)}. Status ${response.status}.`);
 }
 async function getContent(serverUri) {
-    const response = await (0, request_light_1.xhr)({ url: serverUri.toString() });
+    const response = await (0, request_light_1.xhr)({ url: serverUri.toString(/*skipEncoding*/ true) });
     if (response.status >= 200 && response.status <= 204) {
         return response.body;
     }
