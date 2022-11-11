@@ -33,6 +33,13 @@ export class DebugToolbar extends BasePage<typeof DebugToolbarLocators> {
     }
 
     /**
+     * Click Disconnect
+     */
+    async disconnect (): Promise<void> {
+        await this.getButton('disconnect').click()
+    }
+
+    /**
      * Click Pause
      */
     async pause (): Promise<void> {
