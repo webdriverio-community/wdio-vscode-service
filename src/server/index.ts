@@ -3,7 +3,7 @@ import path from 'path'
 
 import logger from '@wdio/logger'
 import getPort from 'get-port'
-import fastify from 'fastify'
+import fastify, { FastifyRequest } from 'fastify'
 import fastifyCors from '@fastify/cors'
 import fastifyStatic from '@fastify/static'
 import { request } from 'undici'
@@ -20,6 +20,12 @@ const log = logger('wdio-vscode-service/server')
 const mountPrefix = '/static/mount'
 const webviewHostRegexp = /^https:\/\/[^.]+\.vscode-webview\.net$/
 
+type COIRequest = FastifyRequest<{
+    Querystring: {
+        'vscode-coi': '1' | '2' | '3'
+    }
+}>
+
 /**
  * ToDo(Christian): missing capabilities:
  *   - allow serve VSCode sources from path location or CDN
@@ -34,10 +40,21 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
         origin: (origin, cb) => cb(null, webviewHostRegexp.test(origin))
     })
 
-    app.addHook('preHandler', (_, reply, done) => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        reply.header('Access-Control-Allow-Origin', '*')
-        done()
+    app.addHook('preHandler', async (_, reply) => {
+        await reply.header('Access-Control-Allow-Origin', '*')
+    })
+
+    // COI
+    app.addHook('preHandler', async (req: COIRequest, reply) => {
+        const value = req.query['vscode-coi']
+        if (value === '1') {
+            await reply.header('Cross-Origin-Opener-Policy', 'same-origin')
+        } else if (value === '2') {
+            await reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
+        } else if (value === '3' || value === '') {
+            await reply.header('Cross-Origin-Opener-Policy', 'same-origin')
+            await reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
+        }
     })
 
     if (options.extensionPath) {
