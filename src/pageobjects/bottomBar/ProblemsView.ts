@@ -35,7 +35,7 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
 
     /**
      * Set the filter using the input box on the problems view
-     * @param pattern filter to use, prefferably a glob pattern
+     * @param pattern filter to use, preferably a glob pattern
      * @returns Promise resolving when the filter pattern is filled in
      */
     async setFilter (pattern: string): Promise<void> {
@@ -68,12 +68,22 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
     }
 
     /**
-     * Get all markers from the problems view with the given type.
+     * @deprecated The method should not be used and getAllVisibleMarkers() should be used instead.
+     */
+    async getAllMarkers (type: MarkerType): Promise<Marker[]> {
+        return this.getAllVisibleMarkers(type)
+    }
+
+    /**
+     * Get all visible markers from the problems view with the given type.
+     * Warning: this only returns the markers that are visible, and not the
+     * entire list, so calls to this function may change depending on the
+     * environment  in which the tests are running in.
      * To get all markers regardless of type, use MarkerType.Any
      * @param type type of markers to retrieve
      * @returns Promise resolving to array of Marker objects
      */
-    async getAllMarkers (): Promise<Marker[]> {
+    async getAllVisibleMarkers (type: MarkerType): Promise<Marker[]> {
         const markers: Marker[] = []
         const elements = await this.markerRow$$
         for (const element of elements) {
@@ -81,13 +91,23 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
             if (isExpandable) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 const marker = await new Marker(this.locatorMap, element as any, this).wait()
-                markers.push(marker)
+                if (type === MarkerType.Any || type === await marker.getType()) {
+                    markers.push(marker)
+                }
                 continue
             }
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             markers[markers.length - 1].problems.push(new Problem(this.locatorMap, element as any))
         }
         return markers
+    }
+
+    /**
+     * Gets the count badge
+     * @returns Promise resolving to the WebElement representing the count badge
+     */
+    getCountBadge (): Promise<WebdriverIO.Element> {
+        return this.changeCount$
     }
 }
 
@@ -111,6 +131,24 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
         public view: ProblemsView
     ) {
         super(locators, element, view.elem)
+    }
+
+    /**
+     * Get the type of the marker
+     * Possible types are: File, Error, Warning
+     * @returns Promise resolving to a MarkerType
+     */
+    async getType (): Promise<MarkerType> {
+        const twist = await this.elem.$(this.locatorMap.ProblemsView.markerTwistie as string)
+        if ((await twist.getAttribute('class')).indexOf('collapsible') > -1) {
+            return MarkerType.File
+        }
+        const text = await this.getText()
+        if (text.startsWith('Error')) {
+            return MarkerType.Error
+        }
+
+        return MarkerType.Warning
     }
 
     /**
@@ -218,7 +256,9 @@ export class Problem extends ElementWithContextMenu<typeof MarkerLocators> {
  * @hidden
  */
 export enum MarkerType {
+    File = 'file',
+    Unknown = 'unknown',
     Error = 'error',
     Warning = 'warning',
-    Unknown = 'unknown'
+    Any = 'any'
 }

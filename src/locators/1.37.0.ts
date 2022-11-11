@@ -44,7 +44,8 @@ export const ProblemsView = {
     markersFilter: '.markers-panel-action-filter',
     input: 'input',
     collapseAll: '.collapse-all',
-    markerRow: '.monaco-list-row'
+    markerRow: '.monaco-list-row',
+    changeCount: '.monaco-count-badge'
 }
 export const Marker = {
     detailsText: '.marker-message .monaco-highlighted-label',
