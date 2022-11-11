@@ -169,7 +169,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
      * @returns promise that resolves to a SettingsEditor instance
      */
     async openSettings (): Promise<SettingsEditor> {
-        await this.executeCommand('open user settings')
+        await this.executeCommand('Preferences: Open User Settings')
         await new EditorView(this.locatorMap).openEditor('Settings')
         await this.elem.$(this.locatorMap.Editor.elem as string).waitForExist()
         await sleep(500)
@@ -199,13 +199,37 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
     }
 
     /**
-     * Open the command prompt, type in a command and execute
+     * Open the command prompt, type in a command, find the command using a fuzzy match, and execute
      * @param command text of the command to be executed
-     * @returns Promise resolving when the command prompt is confirmed
+     * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object
+     * when the command prompt is confirmed
      */
-    async executeCommand (command: string): Promise<void> {
+    async executeCommand (command: string): Promise<InputBox | QuickOpenBox> {
         const prompt = await this.openCommandPrompt()
         await prompt.setText(`>${command}`)
         await prompt.confirm()
+
+        return prompt
+    }
+
+    /**
+     * Open the command prompt, type in a command, find the command from the quick pick list, and execute
+     * @param command text of the command to be executed
+     * @returns Promise resolving to InputBox (vscode 1.44+) or QuickOpenBox (vscode up to 1.43) object
+     * when the command prompt is confirmed
+     */
+    async executeQuickPick (command: string): Promise<InputBox | QuickOpenBox> {
+        const prompt = await this.openCommandPrompt()
+        await prompt.setText(`>${command}`)
+        const quickPicks = await prompt.getQuickPicks()
+        for (const quickPick of quickPicks) {
+            const label = await quickPick.getLabel()
+            if (label === command) {
+                await quickPick.select()
+                return prompt
+            }
+        }
+
+        throw new Error('Command not found')
     }
 }
