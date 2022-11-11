@@ -16,7 +16,7 @@ jobs:
         vscodeVersion:
           - insiders
           - stable
-          - 1.70.0
+          - 1.72.0
           - web
     runs-on: ${{ matrix.os }}
 
@@ -25,7 +25,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
       - name: Install Dependencies
         run: |
           yarn install --frozen-lockfile
