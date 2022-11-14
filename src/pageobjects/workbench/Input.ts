@@ -366,10 +366,15 @@ export class QuickOpenBox extends Input {
         return klass.indexOf('done') < 0
     }
 
-    async getQuickPicks (): Promise<QuickPickItem[]> {
+    /**
+     * Get a set of QuickPickItems
+     * @param timeout amount time in ms to wait for the tree to appear (default 5000ms)
+     * @returns QuickPickItem[]
+     */
+    async getQuickPicks (timeout = 5000): Promise<QuickPickItem[]> {
         const picks: QuickPickItem[] = []
         const tree = await browser.$(this.locators.quickList)
-        await tree.waitForExist({ timeout: 1000 })
+        await tree.waitForExist({ timeout })
         const elements = await tree.$$(this.locators.row)
         for (const element of elements) {
             const index = parseInt(await element.getAttribute('aria-posinset'), 10)
