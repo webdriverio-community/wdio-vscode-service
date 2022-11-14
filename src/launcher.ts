@@ -95,7 +95,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
              */
             await this._setupVSCodeWeb(version, cap)
             // @ts-expect-error CJS
-            const instance = await instance
+            const instance = await this.instance
             this._mapBrowserCapabilities(instance.options as ServiceOptions)
         }
 
