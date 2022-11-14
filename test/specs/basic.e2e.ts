@@ -223,9 +223,6 @@ describe('WDIO VSCode Service', () => {
             const channels = await outputView.getChannelNames()
             expect(channels).toContain('Tasks')
             expect(channels).toContain('Markdown Language Server')
-            expect(channels).toContain(await browser.isVSCodeWebSession()
-                ? 'Log (Worker Extension Host)'
-                : 'Log (Extension Host)')
         })
 
         it('can get extension logs', async () => {
