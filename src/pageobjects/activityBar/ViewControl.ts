@@ -8,7 +8,7 @@ import { NewScmView } from '../sidebar/scm/NewScmView'
 import {
     PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap
 } from '../utils'
-import { ViewControl as ViewControlLocators } from '../../locators/1.70.0'
+import { ViewControl as ViewControlLocators } from '../../locators/1.73.0'
 
 export interface ViewControl extends IPageDecorator<typeof ViewControlLocators> { }
 /**

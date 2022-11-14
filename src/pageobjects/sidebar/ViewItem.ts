@@ -8,7 +8,7 @@ import {
     CustomTreeItem as CustomTreeItemLocators,
     DefaultTreeItem as DefaultTreeItemLocators,
     ExtensionsViewItem as ExtensionsViewItemLocators
-} from '../../locators/1.70.0'
+} from '../../locators/1.73.0'
 
 /**
  * Abstract representation of a row in the tree inside a view content section

@@ -11,7 +11,7 @@ import {
     ExtensionsViewSection as ExtensionsViewSectionLocators,
     CustomTreeSection as CustomTreeSectionLocators,
     DefaultTreeSection as DefaultTreeSectionLocators
-} from '../../locators/1.70.0'
+} from '../../locators/1.73.0'
 
 /**
  * @hidden

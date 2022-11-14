@@ -13,7 +13,7 @@ import { WebView } from './WebView'
 import {
     PageDecorator, IPageDecorator, BasePage, sleep
 } from '../utils'
-import { Workbench as WorkbenchLocators } from '../../locators/1.70.0'
+import { Workbench as WorkbenchLocators } from '../../locators/1.73.0'
 
 export interface Workbench extends IPageDecorator<typeof WorkbenchLocators> {}
 /**

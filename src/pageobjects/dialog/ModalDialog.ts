@@ -1,5 +1,5 @@
 import { PageDecorator, IPageDecorator, BasePage } from '../utils'
-import { Dialog as DialogLocators } from '../../locators/1.70.0'
+import { Dialog as DialogLocators } from '../../locators/1.73.0'
 
 export interface ModalDialog extends IPageDecorator<typeof DialogLocators> {}
 /**

@@ -6,7 +6,8 @@ import path from 'path'
 import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
-    ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem, DefaultTreeItem, ViewSection, TreeItem, sleep
+    ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem,
+    DefaultTreeItem, ViewSection, TreeItem, sleep
 } from '../..'
 
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
@@ -221,18 +222,16 @@ describe('WDIO VSCode Service', () => {
             const outputView = await bottomBar.openOutputView()
             const channels = await outputView.getChannelNames()
             expect(channels).toContain('Tasks')
-            expect(channels).toContain('Extensions')
+            expect(channels).toContain('Markdown Language Server')
             expect(channels).toContain(await browser.isVSCodeWebSession()
                 ? 'Log (Worker Extension Host)'
                 : 'Log (Extension Host)')
-
-            const currentChannel = await outputView.getCurrentChannel()
-            expect(currentChannel).toEqual(channels[0])
         })
 
         it('can get extension logs', async () => {
             const outputView = await bottomBar.openOutputView()
             await outputView.selectChannel('Guinea Pig')
+            expect(await outputView.getCurrentChannel()).toBe('Guinea Pig')
             expect(await outputView.getText()).toEqual(['Hello World!'])
         })
     })
@@ -391,7 +390,7 @@ describe('WDIO VSCode Service', () => {
             const bottomBar = workbench.getBottomBar()
 
             problemsView = await bottomBar.openProblemsView()
-            expect(await problemsView.getAllMarkers()).toHaveLength(0)
+            expect(await problemsView.getAllVisibleMarkers(MarkerType.Any)).toHaveLength(0)
         })
 
         it('should create problems @skipWeb', async () => {
@@ -412,13 +411,19 @@ describe('WDIO VSCode Service', () => {
             await tab.setText('I am creating problems')
 
             await browser.waitUntil(async () => {
-                const markers = await problemsView.getAllMarkers()
+                const markers = await problemsView.getAllVisibleMarkers(MarkerType.Any)
                 return markers.length > 0
             })
+
+            /**
+             * ensure deprecated command works in the same way
+             */
+            expect((await problemsView.getAllMarkers()).length)
+                .toEqual((await problemsView.getAllVisibleMarkers(MarkerType.Any)).length)
         })
 
         it('can access problem information @skipWeb', async () => {
-            const [marker] = await problemsView.getAllMarkers()
+            const [marker] = await problemsView.getAllVisibleMarkers(MarkerType.Any)
             expect(await marker.getFileName()).toBe('wdio.conf.ts')
             expect(await marker.getText()).toContain('problems in file wdio.conf.ts of folder test')
 
@@ -468,7 +473,6 @@ describe('WDIO VSCode Service', () => {
 
     describe('TreeView', () => {
         let treeViewSection: ViewSection
-
         it('should be able to find the extension tree view', async () => {
             const workbench = await browser.getWorkbench()
 
@@ -483,16 +487,16 @@ describe('WDIO VSCode Service', () => {
 
             treeViewSection = await sidebar.getContent().getSection('TEST EXTENSION TREEVIEW')
             // eslint-disable-next-line @typescript-eslint/await-thenable
-            await expect(treeViewSection).toBePresent()
+            await expect(treeViewSection.elem).toBePresent()
 
             expect(await treeViewSection.getTitle()).toBe('Test Extension Treeview')
         })
 
         let customTreeItem: CustomTreeItem
-
         it('should be able to expand the tree and iterate over the tree items', async () => {
             await treeViewSection.expand()
             expect(await treeViewSection.isExpanded()).toBe(true)
+            await browser.waitUntil(async () => (await treeViewSection.getVisibleItems()).length > 0)
 
             const visItems = await treeViewSection.getVisibleItems()
             visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
@@ -552,7 +556,7 @@ describe('WDIO VSCode Service', () => {
             const sectionName = isWebTest ? '/ [TEST FILES]' : 'WDIO-VSCODE-SERVICE'
             treeViewSection = await sidebar.getContent().getSection(sectionName)
             // eslint-disable-next-line @typescript-eslint/await-thenable
-            await expect(treeViewSection).toBePresent()
+            await expect(treeViewSection.elem).toBePresent()
 
             // one would expect 'mount' here (aria-label)
             const sectionTitle = isWebTest ? 'mount' : 'wdio-vscode-service'

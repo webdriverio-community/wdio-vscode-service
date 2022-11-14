@@ -1,6 +1,6 @@
 import { Editor, InputBox } from '..'
 import { PageDecorator, IPageDecorator } from '../utils'
-import { Editor as EditorLocators } from '../../locators/1.70.0'
+import { Editor as EditorLocators } from '../../locators/1.73.0'
 import { CMD_KEY } from '../../constants'
 
 export interface CustomEditor extends IPageDecorator<typeof EditorLocators> {}

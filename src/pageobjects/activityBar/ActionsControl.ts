@@ -1,5 +1,5 @@
 import { ElementWithContextMenu } from '../utils'
-import { ActivityBar as ActivityBarLocators } from '../../locators/1.70.0'
+import { ActivityBar as ActivityBarLocators } from '../../locators/1.73.0'
 import type { ContextMenu } from '../menu/ContextMenu'
 
 /**

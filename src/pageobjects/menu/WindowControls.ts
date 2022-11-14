@@ -4,7 +4,7 @@ import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils'
 import { TitleBar } from '../..'
-import { WindowControls as WindowControlsLocators } from '../../locators/1.70.0'
+import { WindowControls as WindowControlsLocators } from '../../locators/1.73.0'
 
 export interface WindowControls extends IPageDecorator<typeof WindowControlsLocators> {}
 /**

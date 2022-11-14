@@ -94,7 +94,9 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
              * setup VSCode Web
              */
             await this._setupVSCodeWeb(version, cap)
-            this._mapBrowserCapabilities()
+            // @ts-expect-error CJS
+            const instance = await instance
+            this._mapBrowserCapabilities(instance.options as ServiceOptions)
         }
 
         return super.onPrepare()
@@ -147,6 +149,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             throw new Error(`No key "${VSCODE_CAPABILITY_KEY}" found in caps`)
         }
 
+        // @ts-expect-error CJS
+        const instance = await this.instance
         if (versionsFileExist) {
             const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
             const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
@@ -161,18 +165,18 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                     + `and Chromedriver v${content[version]?.chromedriver} already exist`
                 )
 
-                Object.assign(cap, this.options)
+                Object.assign(cap, instance.options)
                 cap[VSCODE_CAPABILITY_KEY].binary = (
                     cap[VSCODE_CAPABILITY_KEY].binary
                     || await this._downloadVSCode(content[version]?.vscode as string)
                 )
-                this.chromedriverCustomPath = chromedriverPath
+                instance.chromedriverCustomPath = chromedriverPath
                 return
             }
         }
 
         const [vscodeVersion, chromedriverVersion, chromedriverPath] = await this._setupChromedriver(version)
-        this.chromedriverCustomPath = chromedriverPath
+        instance.chromedriverCustomPath = chromedriverPath
         const serviceArgs: ServiceCapability = {
             chromedriver: { version: chromedriverVersion, path: chromedriverPath },
             vscode: {
@@ -180,7 +184,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
                 path: cap[VSCODE_CAPABILITY_KEY]?.binary || await this._downloadVSCode(vscodeVersion)
             }
         }
-        Object.assign(cap, this.options)
+        Object.assign(cap, instance.options)
         cap[VSCODE_CAPABILITY_KEY].binary = serviceArgs.vscode.path
         await this._updateVersionsTxt(version, serviceArgs, versionsFileExist)
     }
@@ -349,14 +353,14 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         )
     }
 
-    private _mapBrowserCapabilities () {
-        if (isMultiremote(this.capabilities)) {
+    private _mapBrowserCapabilities (options: ServiceOptions) {
+        if (isMultiremote(this._capabilities)) {
             throw new SevereServiceError('This service deson\'t support multiremote yet')
         }
 
         for (const cap of this._capabilities as any as Capabilities.Capabilities[]) {
             if (isChrome(cap)) {
-                Object.assign(cap, this.options)
+                Object.assign(cap, options)
             }
         }
     }

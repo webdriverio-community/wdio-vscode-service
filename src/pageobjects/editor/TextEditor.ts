@@ -12,7 +12,7 @@ import {
 import {
     TextEditor as TextEditorLocators,
     FindWidget as FindWidgetLocators
-} from '../../locators/1.70.0'
+} from '../../locators/1.73.0'
 import { CMD_KEY } from '../../constants'
 
 export interface TextEditor extends IPageDecorator<EditorLocators> {}

@@ -4,7 +4,7 @@ import { BottomBarPanel } from '..'
 import {
     BasePage, ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap
 } from '../utils'
-import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.70.0'
+import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.73.0'
 
 export interface ProblemsView extends IPageDecorator<typeof ProblemsViewLocators> {}
 /**
@@ -70,8 +70,8 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
     /**
      * @deprecated The method should not be used and getAllVisibleMarkers() should be used instead.
      */
-    async getAllMarkers (type: MarkerType): Promise<Marker[]> {
-        return this.getAllVisibleMarkers(type)
+    async getAllMarkers (): Promise<Marker[]> {
+        return this.getAllVisibleMarkers(MarkerType.Any)
     }
 
     /**

@@ -7,7 +7,7 @@ import {
 } from './1.66.0'
 
 export * from './1.66.0'
-export const locatorVersion = '1.70.0'
+export const locatorVersion = '1.73.0'
 export const BottomBarPanel = {
     ...BottomBarPanelImport,
     action: (label: string) => `.//li[starts-with(@title, '${label}')]`

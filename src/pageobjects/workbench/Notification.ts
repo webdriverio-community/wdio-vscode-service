@@ -2,7 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 import {
     BasePage, IPageDecorator, PageDecorator, VSCodeLocatorMap
 } from '../utils'
-import { Notification as NotificationLocators } from '../../locators/1.70.0'
+import { Notification as NotificationLocators } from '../../locators/1.73.0'
 
 /**
  * Available types of notifications

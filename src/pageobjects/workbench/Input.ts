@@ -6,7 +6,7 @@ import {
     Input as InputLocators,
     InputBox as InputBoxLocators,
     QuickOpenBox as QuickOpenBoxLocators
-} from '../../locators/1.70.0'
+} from '../../locators/1.73.0'
 import { CMD_KEY } from '../../constants'
 
 const HOME_KEY = process.platform === 'win32'

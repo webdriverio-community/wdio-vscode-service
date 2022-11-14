@@ -2,7 +2,7 @@ import { Editor, EditorLocators } from './Editor'
 import { TextEditor } from './TextEditor'
 import { EditorView } from './EditorView'
 import { PageDecorator, IPageDecorator } from '../utils'
-import { DiffEditor as DiffEditorLocators } from '../../locators/1.70.0'
+import { DiffEditor as DiffEditorLocators } from '../../locators/1.73.0'
 
 export interface DiffEditor extends IPageDecorator<EditorLocators> {}
 /**
