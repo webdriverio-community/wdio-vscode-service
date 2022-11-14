@@ -139,7 +139,8 @@ describe('WDIO VSCode Service', () => {
                 const messages = await Promise.all(notifs.map((n) => n.getMessage()))
                 return messages.includes(message)
             }, {
-                timeoutMsg: 'Could not find custom notification'
+                timeoutMsg: 'Could not find custom notification',
+                timeout: 5000
             })
         })
     })
