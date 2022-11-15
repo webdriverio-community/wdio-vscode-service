@@ -322,6 +322,15 @@ If you use WebdriverIO with TypeScript make sure to add `wdio-vscode-service` to
 }
 ```
 
+## References
+
+The following VS Code extensions use `wdio-vscode-service`:
+
+- [Marquee](https://marketplace.visualstudio.com/items?itemName=stateful.marquee) (27k downloads)
+- [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) (27.8m downloads)
+- [DVC Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=Iterative.dvc) (11.2k downloads)
+- [Nx Console](https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console) (1.2m downloads)
+
 ## Contributing
 
 Before posting a pull request, please run the following:
