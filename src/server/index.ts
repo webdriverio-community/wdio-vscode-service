@@ -40,20 +40,22 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
         origin: (origin, cb) => cb(null, webviewHostRegexp.test(origin))
     })
 
-    app.addHook('preHandler', async (_, reply) => {
-        await reply.header('Access-Control-Allow-Origin', '*')
-    })
-
-    // COI
     app.addHook('preHandler', async (req: COIRequest, reply) => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        reply.header('Access-Control-Allow-Origin', '*')
+
         const value = req.query['vscode-coi']
         if (value === '1') {
-            await reply.header('Cross-Origin-Opener-Policy', 'same-origin')
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Cross-Origin-Opener-Policy', 'same-origin')
         } else if (value === '2') {
-            await reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
         } else if (value === '3' || value === '') {
-            await reply.header('Cross-Origin-Opener-Policy', 'same-origin')
-            await reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Cross-Origin-Opener-Policy', 'same-origin')
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Cross-Origin-Embedder-Policy', 'require-corp')
         }
     })
 
