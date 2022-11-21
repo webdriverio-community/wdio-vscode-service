@@ -60,7 +60,7 @@
   },
   "peerDependencies": {
     "chromedriver": "latest",
-    "webdriverio": "^7.19.2"
+    "webdriverio": "^7.0.0 || ^8.0.0-alpha.219"
   },
   "peerDependenciesMeta": {
     "webdriverio": {
