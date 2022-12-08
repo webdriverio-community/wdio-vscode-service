@@ -1,6 +1,6 @@
-import { Input as InputImport } from './1.43.0'
+import { Input as InputImport } from './1.43.0.js'
 
-export * from './1.43.0'
+export * from './1.43.0.js'
 export const locatorVersion = '1.44.0'
 export const Input = {
     ...InputImport,

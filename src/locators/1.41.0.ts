@@ -1,9 +1,9 @@
 import {
     ViewSection as ViewSectionImport,
     ScmView as ScmViewImport
-} from './1.40.0'
+} from './1.40.0.js'
 
-export * from './1.40.0'
+export * from './1.40.0.js'
 export const locatorVersion = '1.41.0'
 export const ViewSection = {
     ...ViewSectionImport,

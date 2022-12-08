@@ -1,8 +1,10 @@
-import fs from 'fs/promises'
-import path from 'path'
+import fs from 'node:fs/promises'
+import url from 'node:url'
+import path from 'node:path'
 import type { Options } from '@wdio/types'
 import type { VSCodeCapabilities } from '../dist/types'
 
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const grep = []
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
 const capabilities: VSCodeCapabilities = {
@@ -87,7 +89,7 @@ export const config: Options.Testrunner = {
     // will be called from there.
     //
     specs: [
-        './test/specs/**/*.ts'
+        './specs/**/*.ts'
     ],
     // Patterns to exclude.
     exclude: [

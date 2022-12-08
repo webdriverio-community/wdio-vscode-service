@@ -1,9 +1,9 @@
 import {
     CustomTreeItem as CustomTreeItemImport,
     ScmView as ScmViewImport
-} from './1.46.0'
+} from './1.46.0.js'
 
-export * from './1.46.0'
+export * from './1.46.0.js'
 export const locatorVersion = '1.47.0'
 export const CustomTreeItem = {
     ...CustomTreeItemImport,

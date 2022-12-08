@@ -2,13 +2,13 @@ import type { ChainablePromiseElement } from 'webdriverio'
 
 import {
     ActivityBar, DebugView, SideBarView, ScmView
-} from '../..'
-import { NewScmView } from '../sidebar/scm/NewScmView'
+} from '../../index.js'
+import { NewScmView } from '../sidebar/scm/NewScmView.js'
 
 import {
     PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap
-} from '../utils'
-import { ViewControl as ViewControlLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { ViewControl as ViewControlLocators } from '../../locators/1.73.0.js'
 
 export interface ViewControl extends IPageDecorator<typeof ViewControlLocators> { }
 /**

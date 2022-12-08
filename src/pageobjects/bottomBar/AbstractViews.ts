@@ -1,4 +1,4 @@
-import { ElementWithContextMenu } from '../utils'
+import { ElementWithContextMenu } from '../utils.js'
 
 /**
  * View with channel selector/**

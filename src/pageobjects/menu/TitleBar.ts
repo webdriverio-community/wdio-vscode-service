@@ -1,8 +1,8 @@
-import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils'
-import { WindowControls, ContextMenu } from '..'
-import { Menu } from './Menu'
-import { MenuItem } from './MenuItem'
-import { TitleBar as TitleBarLocators } from '../../locators/1.73.0'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils.js'
+import { WindowControls, ContextMenu } from '../index.js'
+import { Menu } from './Menu.js'
+import { MenuItem } from './MenuItem.js'
+import { TitleBar as TitleBarLocators } from '../../locators/1.73.0.js'
 
 export interface TitleBar extends IPageDecorator<typeof TitleBarLocators> {}
 /**

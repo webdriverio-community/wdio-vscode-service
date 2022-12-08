@@ -1,8 +1,8 @@
 /* eslint-disable object-shorthand */
 import type { ChainablePromiseElement, ChainablePromiseArray } from 'webdriverio'
 
-import * as allLocatorsTypes from '../locators/insiders'
-import { ContextMenu } from '..'
+import * as allLocatorsTypes from '../locators/insiders.js'
+import { ContextMenu } from './index.js'
 
 type ClassWithFunctionLocatorsAsString<T> = {
     [key in keyof T as T[key] extends Function | undefined ? key : never]: T[key]

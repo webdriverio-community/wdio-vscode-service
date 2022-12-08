@@ -1,6 +1,6 @@
-import { PageDecorator, IPageDecorator, BasePage } from '../utils'
-import { StatusBar as StatusBarLocators } from '../../locators/1.73.0'
-import { NotificationsCenter } from '..'
+import { PageDecorator, IPageDecorator, BasePage } from '../utils.js'
+import { StatusBar as StatusBarLocators } from '../../locators/1.73.0.js'
+import { NotificationsCenter } from '../index.js'
 
 export interface StatusBar extends IPageDecorator<typeof StatusBarLocators> {}
 /**

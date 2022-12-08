@@ -2,16 +2,16 @@ import type { ChainablePromiseElement } from 'webdriverio'
 
 import {
     ContextMenu, ViewContent, ViewItem, WelcomeContentSection
-} from '..'
+} from '../index.js'
 import {
     PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
-} from '../utils'
+} from '../utils.js'
 import {
     ViewSection as ViewSectionLocators,
     ExtensionsViewSection as ExtensionsViewSectionLocators,
     CustomTreeSection as CustomTreeSectionLocators,
     DefaultTreeSection as DefaultTreeSectionLocators
-} from '../../locators/1.73.0'
+} from '../../locators/1.73.0.js'
 
 /**
  * @hidden

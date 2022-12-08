@@ -1,14 +1,14 @@
 import { ChainablePromiseElement } from 'webdriverio'
 
-import { EditorView, EditorGroup, EditorTab } from '..'
-import { ElementWithContextMenu, VSCodeLocatorMap } from '../utils'
+import { EditorView, EditorGroup, EditorTab } from '../index.js'
+import { ElementWithContextMenu, VSCodeLocatorMap } from '../utils.js'
 import {
     Editor as EditorLocatorsMap,
     SettingsEditor as SettingsEditorLocators,
     TextEditor as TextEditorLocators,
     DiffEditor as DiffEditorLocators,
     EditorView as EditorViewLocators
-} from '../../locators/1.73.0'
+} from '../../locators/1.73.0.js'
 
 /**
  * @hidden

@@ -3,9 +3,9 @@ import {
     Notification as NotificationImport,
     EditorView as EditorViewImport,
     ScmView as ScmViewImport
-} from './1.44.0'
+} from './1.44.0.js'
 
-export * from './1.44.0'
+export * from './1.44.0.js'
 export const locatorVersion = '1.45.0'
 export const NotificationsCenter = {
     ...NotificationsCenterImport,

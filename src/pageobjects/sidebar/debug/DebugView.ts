@@ -1,6 +1,6 @@
-import { SideBarView } from '../SideBarView'
-import { PageDecorator, IPageDecorator } from '../../utils'
-import { DebugView as DebugViewLocators } from '../../../locators/1.73.0'
+import { SideBarView } from '../SideBarView.js'
+import { PageDecorator, IPageDecorator } from '../../utils.js'
+import { DebugView as DebugViewLocators } from '../../../locators/1.73.0.js'
 
 export interface DebugView extends IPageDecorator<typeof DebugViewLocators> { }
 /**

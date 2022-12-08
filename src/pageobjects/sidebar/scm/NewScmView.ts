@@ -1,12 +1,13 @@
+import { Key } from 'webdriverio'
 import {
     ScmView, ScmProvider, MoreAction, ScmChange
-} from './ScmView'
-import { ContextMenu } from '../..'
+} from './ScmView.js'
+import { ContextMenu } from '../../index.js'
 import {
     PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap
-} from '../../utils'
-import { ScmView as ScmViewLocators } from '../../../locators/1.73.0'
-import { CMD_KEY } from '../../../constants'
+} from '../../utils.js'
+import { ScmView as ScmViewLocators } from '../../../locators/1.73.0.js'
+import { CMD_KEY } from '../../../constants.js'
 
 export interface NewScmView extends IPageDecorator<typeof ScmViewLocators> { }
 /**
@@ -134,7 +135,11 @@ export class MultiScmProvider extends ScmProvider {
         const input = await this.view.itemIndex$(index)
         await input.clearValue()
         await input.addValue(message)
-        await input.addValue([CMD_KEY, 'Enter'])
+        await input.click()
+        await browser.action('key')
+            .down(CMD_KEY).down(Key.Enter)
+            .up(CMD_KEY).up(Key.Enter)
+            .perform()
     }
 
     async getChanges (staged = false): Promise<ScmChange[]> {

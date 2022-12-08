@@ -1,10 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio'
 
-import { ViewSection } from '..'
+import { ViewSection } from '../index.js'
 import {
     BasePage, PageDecorator, IPageDecorator, VSCodeLocatorMap
-} from '../utils'
-import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { WelcomeContent as WelcomeContentLocators } from '../../locators/1.73.0.js'
 
 export interface WelcomeContentButton extends IPageDecorator<typeof WelcomeContentLocators> {}
 /**

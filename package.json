@@ -5,15 +5,27 @@
   "author": "Christian Bromann <mail@bromann.dev>",
   "homepage": "https://github.com/webdriverio-community/wdio-vscode-service",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "main": "./dist/cjs/index.js",
+  "type": "module",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": [
+      {
+        "import": "./dist/index.js",
+        "require": "./dist/cjs/index.js"
+      },
+      "./dist/cjs/index.js"
+    ]
+  },
   "types": "./dist/index.d.ts",
+  "typeScriptVersion": "3.8.3",
   "engines": {
-    "node": ">=14.0.0"
+    "node": "^16.13 || >=18"
   },
   "scripts": {
     "build": "run-s build:*",
     "build:ts": "tsc -b .",
-    "build:compile": "pkg --target win --out-path ./dist/chromium ./dist/chromium/index.js",
+    "build:compile": "pkg --target node18-win-arm64 --out-path ./dist/chromium ./dist/chromium/index.js",
     "build:chmod": "chmod +x ./dist/chromium/index.js",
     "ci": "run-s test:lint build test",
     "clean": "rimraf ./node_modules yarn-lock.yaml ./dist",
@@ -40,31 +52,31 @@
     "tests"
   ],
   "dependencies": {
-    "@fastify/cors": "^7.0.0",
-    "@fastify/static": "^5.0.2",
+    "@fastify/cors": "^8.2.0",
+    "@fastify/static": "^6.6.0",
     "@types/ws": "^8.5.3",
-    "@vscode/test-electron": "^2.2.0",
-    "@wdio/logger": "^7.19.0",
-    "clipboardy": "^2.3.0",
-    "decamelize": "5.0.1",
+    "@vscode/test-electron": "^2.2.1",
+    "@wdio/logger": "^8.0.0",
+    "clipboardy": "^3.0.0",
+    "decamelize": "6.0.0",
     "download": "^8.0.0",
-    "fastify": "^3.29.0",
-    "get-port": "5.1.1",
-    "slash": "^3.0.0",
+    "fastify": "^4.10.2",
+    "get-port": "6.1.2",
+    "slash": "^5.0.0",
     "tmp-promise": "^3.0.3",
-    "undici": "^5.12.0",
+    "undici": "^5.13.0",
     "vscode-uri": "^3.0.6",
-    "wdio-chromedriver-service": "^8.0.0",
+    "wdio-chromedriver-service": "^8.0.1",
     "ws": "^8.11.0",
     "yargs-parser": "^21.1.1"
   },
   "peerDependencies": {
     "chromedriver": "latest",
-    "webdriverio": "^7.0.0 || ^8.0.0-alpha.219"
+    "webdriverio": "^8.0.0"
   },
   "peerDependenciesMeta": {
     "webdriverio": {
-      "optional": false
+      "optional": true
     },
     "chromedriver": {
       "optional": false
@@ -73,33 +85,35 @@
   "devDependencies": {
     "@types/chromedriver": "^81.0.1",
     "@types/download": "^8.0.1",
-    "@types/node": "^18.11.9",
-    "@types/vscode": "^1.73.0",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
-    "@wdio/cli": "^7.25.4",
-    "@wdio/local-runner": "^7.25.4",
-    "@wdio/mocha-framework": "^7.25.4",
-    "@wdio/spec-reporter": "^7.25.4",
-    "@wdio/types": "^7.25.4",
+    "@types/node": "^18.11.11",
+    "@types/vscode": "^1.73.1",
+    "@typescript-eslint/eslint-plugin": "^5.45.1",
+    "@typescript-eslint/parser": "^5.45.1",
+    "@wdio/cli": "^8.0.9",
+    "@wdio/globals": "^8.0.9",
+    "@wdio/local-runner": "^8.0.9",
+    "@wdio/mocha-framework": "^8.0.9",
+    "@wdio/spec-reporter": "^8.0.8",
+    "@wdio/types": "^8.0.8",
     "chromedriver": "*",
-    "eslint": "^8.27.0",
+    "eslint": "^8.29.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-base-typescript": "^1.1.0",
     "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^27.1.5",
+    "eslint-plugin-jest": "^27.1.6",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-wdio": "^7.25.3",
+    "eslint-plugin-unicorn": "^45.0.1",
+    "eslint-plugin-wdio": "^8.0.7",
     "husky": "^8.0.2",
     "npm-run-all": "^4.1.5",
     "pkg": "^5.8.0",
-    "release-it": "^15.5.0",
+    "release-it": "^15.5.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.20",
-    "typescript": "^4.8.4"
+    "typedoc": "^0.23.21",
+    "typescript": "^4.9.3"
   },
   "files": [
     "dist/*",

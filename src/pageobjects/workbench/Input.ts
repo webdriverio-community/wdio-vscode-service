@@ -1,17 +1,19 @@
 import clipboard from 'clipboardy'
+import { Key } from 'webdriverio'
+
 import {
     IPageDecorator, BasePage, PageDecorator, VSCodeLocatorMap, sleep
-} from '../utils'
+} from '../utils.js'
 import {
     Input as InputLocators,
     InputBox as InputBoxLocators,
     QuickOpenBox as QuickOpenBoxLocators
-} from '../../locators/1.73.0'
-import { CMD_KEY } from '../../constants'
+} from '../../locators/1.73.0.js'
+import { CMD_KEY } from '../../constants.js'
 
 const HOME_KEY = process.platform === 'win32'
     ? 'a'
-    : 'Home'
+    : Key.Home
 
 type AllInputLocators = typeof InputLocators & typeof InputBoxLocators & typeof QuickOpenBoxLocators
 export interface Input extends IPageDecorator<AllInputLocators> {}
@@ -40,7 +42,11 @@ export abstract class Input extends BasePage<AllInputLocators> {
         await this.clear()
         await sleep(200)
         if ((await this.getText())?.length > 0) {
-            await input.addValue(['End', 'Shift', HOME_KEY])
+            await input.click()
+            await browser.action('key')
+                .down(Key.End).down(Key.Shift).down(Key.Home)
+                .up(Key.End).up(Key.Shift).up(Key.Home)
+                .perform()
         }
         await input.addValue(text)
 
@@ -49,8 +55,13 @@ export abstract class Input extends BasePage<AllInputLocators> {
         if (currentText !== text) {
             await clipboard.write(text)
             if (currentText?.length) {
-                const backSpaces = new Array(currentText.length).fill('Backspace')
-                await input.addValue(backSpaces)
+                await input.click()
+                const backSpaces: string[] = new Array(currentText.length).fill(Key.Backspace)
+                const keyAction = browser.action('key')
+                for (const key of backSpaces) {
+                    keyAction.down(key).up(key)
+                }
+                await keyAction.perform()
             }
             await clipboard.write('')
         }
@@ -71,7 +82,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
     async confirm (): Promise<void> {
         const input = this.inputBox$.$(this.locators.input)
         await input.click()
-        await input.addValue(['Enter'])
+        await browser.action('key').down(Key.Enter).up(Key.Enter).perform()
     }
 
     /**
@@ -79,7 +90,8 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving when the input is cancelled
      */
     async cancel (): Promise<void> {
-        await this.inputBox$.$(this.locators.input).addValue(['Escape'])
+        await this.inputBox$.$(this.locators.input).click()
+        await browser.action('key').down(Key.Escape).up(Key.Escape).perform()
     }
 
     /**
@@ -88,14 +100,30 @@ export abstract class Input extends BasePage<AllInputLocators> {
      */
     async clear (): Promise<void> {
         const input = await this.inputBox$.$(this.locators.input)
+        await input.click()
         // VS Code 1.40 breaks the default clear method, use select all + back space instead
-        await input.addValue(['End'])
-        await input.addValue([CMD_KEY, HOME_KEY])
-        await input.addValue(['Backspace'])
+        await browser.action('key')
+            .down(Key.End).up(Key.End)
+            .perform()
+        await browser.action('key')
+            .down(CMD_KEY).down(HOME_KEY)
+            .up(CMD_KEY).up(HOME_KEY)
+            .perform()
+        await browser.action('key')
+            .down(Key.Backspace)
+            .up(Key.Backspace)
+            .perform()
         if ((await input.getAttribute('value'))?.length > 0) {
-            await input.addValue(['End'])
-            await input.addValue([CMD_KEY, HOME_KEY])
-            await input.addValue(['Backspace'])
+            await browser.action('key')
+                .down(Key.End).up(Key.End)
+                .perform()
+            await browser.action('key')
+                .down(CMD_KEY).down(HOME_KEY)
+                .up(CMD_KEY).up(HOME_KEY)
+                .perform()
+            await browser.action('key')
+                .down(Key.Backspace).up(Key.Backspace)
+                .perform()
         }
     }
 
@@ -171,7 +199,8 @@ export abstract class Input extends BasePage<AllInputLocators> {
                 }
             }
             if (!endReached) {
-                await input.addValue(['PageDown'])
+                await input.click()
+                await browser.action('key').down(Key.PageDown).up(Key.PageDown).perform()
             }
         }
         return undefined

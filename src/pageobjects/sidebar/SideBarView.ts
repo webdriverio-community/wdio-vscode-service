@@ -1,8 +1,8 @@
-import { ViewContent, ViewTitlePart } from '..'
+import { ViewContent, ViewTitlePart } from '../index.js'
 import {
     PageDecorator, IPageDecorator, BasePage, LocatorComponents
-} from '../utils'
-import { SideBarView as SideBarViewLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { SideBarView as SideBarViewLocators } from '../../locators/1.73.0.js'
 
 export interface SideBarView<T> extends IPageDecorator<typeof SideBarViewLocators> { }
 /**

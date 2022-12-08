@@ -1,5 +1,5 @@
-import { PageDecorator, IPageDecorator, BasePage } from '../utils'
-import { Dialog as DialogLocators } from '../../locators/1.73.0'
+import { PageDecorator, IPageDecorator, BasePage } from '../utils.js'
+import { Dialog as DialogLocators } from '../../locators/1.73.0.js'
 
 export interface ModalDialog extends IPageDecorator<typeof DialogLocators> {}
 /**

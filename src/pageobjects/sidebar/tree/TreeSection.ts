@@ -1,5 +1,5 @@
-import { ViewSection } from '../ViewSection'
-import { TreeItem } from '../ViewItem'
+import { ViewSection } from '../ViewSection.js'
+import { TreeItem } from '../ViewItem.js'
 
 /**
  * Abstract representation of a view section containing a tree

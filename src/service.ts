@@ -1,6 +1,7 @@
-import fs from 'fs/promises'
-import util from 'util'
-import path from 'path'
+import fs from 'node:fs/promises'
+import url from 'node:url'
+import util from 'node:util'
+import path from 'node:path'
 import slash from 'slash'
 import tmp from 'tmp-promise'
 import logger from '@wdio/logger'
@@ -10,19 +11,19 @@ import { WebSocketServer, WebSocket } from 'ws'
 import { Services, Options } from '@wdio/types'
 import { SevereServiceError } from 'webdriverio'
 
-import { Workbench } from './pageobjects'
-import { getLocators, getValueSuffix, isVSCodeCapability } from './utils'
+import { Workbench } from './pageobjects/index.js'
+import { getLocators, getValueSuffix, isVSCodeCapability } from './utils.js'
 import {
     VSCODE_APPLICATION_ARGS, DEFAULT_VSCODE_SETTINGS, DEFAULT_PROXY_OPTIONS,
     SETTINGS_KEY, VSCODE_CAPABILITY_KEY, DEFAULT_VSCODE_WEB_PORT
-} from './constants'
+} from './constants.js'
 import type {
     VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
     PendingMessageResolver, VSCodeProxyOptions, VSCodeOptions
 } from './types'
 
 const log = logger('wdio-vscode-service')
-
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _browser?: WebdriverIO.Browser
     private _wss?: WebSocketServer

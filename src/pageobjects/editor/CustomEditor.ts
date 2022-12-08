@@ -1,7 +1,9 @@
-import { Editor, InputBox } from '..'
-import { PageDecorator, IPageDecorator } from '../utils'
-import { Editor as EditorLocators } from '../../locators/1.73.0'
-import { CMD_KEY } from '../../constants'
+import { Key } from 'webdriverio'
+
+import { Editor, InputBox } from '../index.js'
+import { PageDecorator, IPageDecorator } from '../utils.js'
+import { Editor as EditorLocators } from '../../locators/1.73.0.js'
+import { CMD_KEY } from '../../constants.js'
 
 export interface CustomEditor extends IPageDecorator<typeof EditorLocators> {}
 /**
@@ -31,7 +33,11 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      */
     async save (): Promise<void> {
         const tab = await this.getTab()
-        await tab.elem.addValue([CMD_KEY, 's'])
+        await tab.elem.click()
+        await browser.action('key')
+            .down(CMD_KEY).down('s')
+            .up(CMD_KEY).up('s')
+            .perform()
     }
 
     /**
@@ -41,7 +47,13 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      */
     async saveAs (): Promise<InputBox> {
         const tab = await this.getTab()
-        await tab.elem.addValue([CMD_KEY, 'Shift', 's'])
+
+        await tab.elem.click()
+        await browser.action('key')
+            .down(CMD_KEY).down(Key.Shift).down('s')
+            .up(CMD_KEY).down(Key.Shift).up('s')
+            .perform()
+
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
         await inputBox.waitForExist({ timeout: 5000 })
         return new InputBox(this.locatorMap)

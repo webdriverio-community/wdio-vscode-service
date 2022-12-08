@@ -1,11 +1,14 @@
-import fs from 'fs/promises'
-import path from 'path'
-import child_process from 'child_process'
-import type { Dirent, Stats } from 'fs'
+import fs from 'node:fs/promises'
+import url from 'node:url'
+import path from 'node:path'
+import child_process from 'node:child_process'
+import type { Dirent, Stats } from 'node:fs'
 
-import { VSCODE_CAPABILITY_KEY } from './constants'
+import { VSCODE_CAPABILITY_KEY } from './constants.js'
 import type { VSCodeLocatorMap } from './pageobjects/utils'
 import type { VSCodeCapabilities } from './types'
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 function isEmulatedRosettaEnvironment () {
     const archName = child_process.spawnSync('uname', ['-m']).stdout.toString().trim()
@@ -60,7 +63,7 @@ export function validatePlatform () {
 
 export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
     if (version === 'insiders') {
-        return import('./locators/insiders') as any as Promise<VSCodeLocatorMap>
+        return import('./locators/insiders.js') as any as Promise<VSCodeLocatorMap>
     }
 
     const files = (await fs.readdir(path.join(__dirname, 'locators'), { encoding: 'utf-8' }))

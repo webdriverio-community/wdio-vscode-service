@@ -1,6 +1,6 @@
-import { EditorView as EditorViewImport } from './1.37.0'
+import { EditorView as EditorViewImport } from './1.37.0.js'
 
-export * from './1.37.0'
+export * from './1.37.0.js'
 export const locatorVersion = '1.38.0'
 export const EditorView = {
     ...EditorViewImport,

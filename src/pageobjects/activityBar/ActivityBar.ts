@@ -1,6 +1,6 @@
-import { ViewControl, ActionsControl } from '..'
-import { PageDecorator, IPageDecorator, ElementWithContextMenu } from '../utils'
-import { ActivityBar as ActivityBarLocators } from '../../locators/1.73.0'
+import { ViewControl, ActionsControl } from '../index.js'
+import { PageDecorator, IPageDecorator, ElementWithContextMenu } from '../utils.js'
+import { ActivityBar as ActivityBarLocators } from '../../locators/1.73.0.js'
 
 export interface ActivityBar extends IPageDecorator<typeof ActivityBarLocators> {}
 /**

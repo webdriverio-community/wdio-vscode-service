@@ -1,14 +1,14 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 import {
     IPageDecorator, BasePage, ElementWithContextMenu, PageDecorator, VSCodeLocatorMap
-} from '../utils'
+} from '../utils.js'
 import {
     ViewSection as ViewSectionLocators,
     TreeItem as TreeItemLocators,
     CustomTreeItem as CustomTreeItemLocators,
     DefaultTreeItem as DefaultTreeItemLocators,
     ExtensionsViewItem as ExtensionsViewItemLocators
-} from '../../locators/1.73.0'
+} from '../../locators/1.73.0.js'
 
 /**
  * Abstract representation of a row in the tree inside a view content section

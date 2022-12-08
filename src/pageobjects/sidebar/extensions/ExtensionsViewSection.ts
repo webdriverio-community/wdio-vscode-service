@@ -1,11 +1,13 @@
-import { ViewSection } from '../ViewSection'
-import { ExtensionsViewItem, AllViewSectionLocators } from '../..'
-import { PageDecorator, IPageDecorator } from '../../utils'
+import { Key } from 'webdriverio'
+
+import { ViewSection } from '../ViewSection.js'
+import { ExtensionsViewItem, AllViewSectionLocators } from '../../index.js'
+import { PageDecorator, IPageDecorator } from '../../utils.js'
 import {
     ViewSection as ViewSectionLocators,
     ExtensionsViewSection as ExtensionsViewSectionLocators
-} from '../../../locators/1.73.0'
-import { CMD_KEY } from '../../../constants'
+} from '../../../locators/1.73.0.js'
+import { CMD_KEY } from '../../../constants.js'
 
 /**
  * Categories of extensions to search for
@@ -102,8 +104,15 @@ export class ExtensionsViewSection extends ViewSection {
 
         try {
             await textField.$(this.locators.textField)
-            await searchField.addValue([CMD_KEY, 'a'])
-            await searchField.addValue(['Backspace'])
+
+            await searchField.click()
+            await browser.action('key')
+                .down(CMD_KEY).down('a')
+                .up(CMD_KEY).up('a')
+                .perform()
+            await browser.action('key')
+                .down(Key.Backspace).up(Key.Backspace)
+                .perform()
             await progress.waitForDisplayed()
             await progress.waitForDisplayed({ reverse: true })
         } catch (err) {

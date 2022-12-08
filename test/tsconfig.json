@@ -1,19 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
-    "module": "CommonJS",
+    "target": "ES2021",
+    "module": "ESNext",
     "rootDir": "./",
     "esModuleInterop": true,
     "strict": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
+    "moduleResolution": "Node",
     "noImplicitAny": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "allowJs": true,
     "types": [
       "node",
-      "webdriverio/async",
+      "@wdio/globals/types",
       "@wdio/mocha-framework",
       "expect-webdriverio"
     ]

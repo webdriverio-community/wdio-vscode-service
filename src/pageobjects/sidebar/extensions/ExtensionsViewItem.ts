@@ -1,14 +1,14 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
-import { ViewItem, ViewItemLocators } from '../ViewItem'
-import { ContextMenu } from '../../menu/ContextMenu'
-import { ExtensionsViewSection } from './ExtensionsViewSection'
+import { ViewItem, ViewItemLocators } from '../ViewItem.js'
+import { ContextMenu } from '../../menu/ContextMenu.js'
+import { ExtensionsViewSection } from './ExtensionsViewSection.js'
 
-import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../utils'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../utils.js'
 import {
     TreeItem as TreeItemLocators,
     ExtensionsViewItem as ExtensionsViewItemLocators
-} from '../../../locators/1.73.0'
+} from '../../../locators/1.73.0.js'
 
 export interface ExtensionsViewItem extends IPageDecorator<ViewItemLocators> { }
 /**

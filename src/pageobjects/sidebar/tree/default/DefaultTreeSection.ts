@@ -1,12 +1,14 @@
-import { TreeSection } from '../TreeSection'
-import { TreeItem, AllViewSectionLocators } from '../../..'
-import { DefaultTreeItem } from './DefaultTreeItem'
+import { Key } from 'webdriverio'
 
-import { PageDecorator, IPageDecorator } from '../../../utils'
+import { TreeSection } from '../TreeSection.js'
+import { TreeItem, AllViewSectionLocators } from '../../../index.js'
+import { DefaultTreeItem } from './DefaultTreeItem.js'
+
+import { PageDecorator, IPageDecorator } from '../../../utils.js'
 import {
     ViewSection as ViewSectionLocators,
     DefaultTreeSection as DefaultTreeSectionLocators
-} from '../../../../locators/1.73.0'
+} from '../../../../locators/1.73.0.js'
 
 export interface DefaultTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
@@ -36,7 +38,8 @@ export class DefaultTreeSection extends TreeSection {
     async findItem (label: string, maxLevel = 0): Promise<TreeItem | undefined> {
         await this.expand()
         const container = await this.rowContainer$
-        await container.addValue(['Home'])
+        await container.click()
+        await browser.action('key').down(Key.Home).up(Key.Home).perform()
         let item: TreeItem | undefined
         do {
             const temp = await container.$$((this.locatorMap.DefaultTreeItem.ctor as Function)(label) as string)
@@ -52,7 +55,8 @@ export class DefaultTreeSection extends TreeSection {
                 if (lastrow.length > 0) {
                     break
                 }
-                await container.addValue(['Page Down'])
+                await container.click()
+                await browser.action('key').down(Key.PageDown).up(Key.PageDown).perform()
             }
         } while (!item)
 

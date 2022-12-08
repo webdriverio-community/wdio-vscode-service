@@ -1,12 +1,12 @@
-import type { ChainablePromiseElement } from 'webdriverio'
+import { Key, ChainablePromiseElement } from 'webdriverio'
 
-import { SideBarView } from '../SideBarView'
-import { ContextMenu } from '../..'
+import { SideBarView } from '../SideBarView.js'
+import { ContextMenu } from '../../index.js'
 import {
     ElementWithContextMenu, VSCodeLocatorMap, PageDecorator, IPageDecorator, BasePage
-} from '../../utils'
-import { ScmView as ScmViewLocators } from '../../../locators/1.73.0'
-import { CMD_KEY } from '../../../constants'
+} from '../../utils.js'
+import { ScmView as ScmViewLocators } from '../../../locators/1.73.0.js'
+import { CMD_KEY } from '../../../constants.js'
 
 export interface ScmView extends IPageDecorator<typeof ScmViewLocators> { }
 /**
@@ -143,7 +143,11 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         const input = await this.inputField$
         await input.clearValue()
         await input.addValue(message)
-        await input.addValue([CMD_KEY, 'Enter'])
+        await input.click()
+        await browser.action('key')
+            .down(CMD_KEY).down(Key.Enter)
+            .up(CMD_KEY).up(Key.Enter)
+            .perform()
     }
 
     /**

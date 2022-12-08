@@ -1,9 +1,9 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 import {
     ElementWithContextMenu, PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
-} from '../utils'
-import { SideBarView } from '..'
-import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { SideBarView } from '../index.js'
+import { ViewTitlePart as ViewTitlePartLocators } from '../../locators/1.73.0.js'
 
 export interface ViewTitlePart extends IPageDecorator<typeof ViewTitlePartLocators> { }
 /**

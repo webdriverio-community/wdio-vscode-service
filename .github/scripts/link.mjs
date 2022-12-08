@@ -1,10 +1,10 @@
-import fs from 'fs/promises'
-import path from 'path'
-import url from 'url'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import url from 'node:url'
 
-console.log('Start linking wdio-vscode-service into node_modules');
+console.log('Start linking wdio-vscode-service into node_modules')
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const ROOT = path.join(__dirname, '..', '..')
 const LINKED_DIR = path.join(ROOT, 'node_modules', 'wdio-vscode-service')
 

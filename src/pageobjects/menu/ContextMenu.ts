@@ -1,10 +1,10 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
-import { Menu, MenuItem } from '..'
+import { Menu, MenuItem } from '../index.js'
 import {
     PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
-} from '../utils'
-import { ContextMenu as ContextMenuLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { ContextMenu as ContextMenuLocators } from '../../locators/1.73.0.js'
 
 export interface ContextMenu extends IPageDecorator<typeof ContextMenuLocators> {}
 /**

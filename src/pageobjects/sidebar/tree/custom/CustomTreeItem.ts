@@ -1,12 +1,12 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
-import { TreeSection } from '../TreeSection'
-import { TreeItem, ViewItemLocators } from '../../ViewItem'
-import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../../utils'
+import { TreeSection } from '../TreeSection.js'
+import { TreeItem, ViewItemLocators } from '../../ViewItem.js'
+import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../../../utils.js'
 import {
     TreeItem as TreeItemLocators,
     CustomTreeItem as CustomTreeItemLocators
-} from '../../../../locators/1.73.0'
+} from '../../../../locators/1.73.0.js'
 
 export interface CustomTreeItem extends IPageDecorator<ViewItemLocators> { }
 /**

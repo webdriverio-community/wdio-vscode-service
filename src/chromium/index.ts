@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // eslint-disable-next-line node/shebang
-import childProcess from 'child_process'
+import childProcess from 'node:child_process'
 import argvParser from 'yargs-parser'
 
 /**

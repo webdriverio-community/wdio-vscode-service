@@ -1,13 +1,15 @@
-import { TreeSection } from '../TreeSection'
-import { TreeItem } from '../../ViewItem'
-import { CustomTreeItem } from './CustomTreeItem'
-import { AllViewSectionLocators } from '../../ViewSection'
+import { Key } from 'webdriverio'
 
-import { PageDecorator, IPageDecorator } from '../../../utils'
+import { TreeSection } from '../TreeSection.js'
+import { TreeItem } from '../../ViewItem.js'
+import { CustomTreeItem } from './CustomTreeItem.js'
+import { AllViewSectionLocators } from '../../ViewSection.js'
+
+import { PageDecorator, IPageDecorator } from '../../../utils.js'
 import {
     ViewSection as ViewSectionLocators,
     CustomTreeSection as CustomTreeSectionLocators
-} from '../../../../locators/1.73.0'
+} from '../../../../locators/1.73.0.js'
 
 export interface CustomTreeSection extends IPageDecorator<AllViewSectionLocators> { }
 /**
@@ -38,7 +40,8 @@ export class CustomTreeSection extends TreeSection {
         const container = await this.rowContainer$
         await container.waitForExist({ timeout: 5000 })
 
-        await container.addValue(['Home'])
+        await container.click()
+        await browser.action('key').down(Key.Home).up(Key.Home).perform()
         let item: TreeItem | undefined
 
         const elements = await container.$$(this.locators.itemRow)

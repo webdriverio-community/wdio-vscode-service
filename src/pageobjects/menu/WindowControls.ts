@@ -2,9 +2,9 @@ import type { ChainablePromiseElement } from 'webdriverio'
 
 import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
-} from '../utils'
-import { TitleBar } from '../..'
-import { WindowControls as WindowControlsLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { TitleBar } from '../../index.js'
+import { WindowControls as WindowControlsLocators } from '../../locators/1.73.0.js'
 
 export interface WindowControls extends IPageDecorator<typeof WindowControlsLocators> {}
 /**

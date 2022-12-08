@@ -1,11 +1,11 @@
-import { Editor, EditorLocators } from './Editor'
-import { ContextMenu } from '../menu/ContextMenu'
-import { EditorView, EditorGroup } from '..'
+import { Editor, EditorLocators } from './Editor.js'
+import { ContextMenu } from '../menu/ContextMenu.js'
+import { EditorView, EditorGroup } from '../index.js'
 
 import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap, sleep
-} from '../utils'
-import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.73.0.js'
 
 export interface SettingsEditor extends IPageDecorator<EditorLocators> {}
 /**

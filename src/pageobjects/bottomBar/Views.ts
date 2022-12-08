@@ -1,16 +1,17 @@
 import clipboard from 'clipboardy'
+import { Key } from 'webdriverio'
 
-import { Workbench, BottomBarPanel, ContentAssist } from '../..'
-import { TextView, ChannelView } from './AbstractViews'
+import { Workbench, BottomBarPanel, ContentAssist } from '../../index.js'
+import { TextView, ChannelView } from './AbstractViews.js'
 import {
     ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap,
     sleep
-} from '../utils'
+} from '../utils.js'
 import {
     OutputView as OutputViewLocators,
     DebugConsoleView as DebugConsoleViewLocators,
     TerminalView as TerminalViewLocators
-} from '../../locators/1.73.0'
+} from '../../locators/1.73.0.js'
 
 export interface OutputView extends IPageDecorator<typeof OutputViewLocators> {}
 /**
@@ -163,7 +164,8 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
         } catch (err) {
             // try clearing, ignore if not available
         }
-        await input.setValue([command, 'Enter'])
+        await input.setValue(command)
+        await browser.action('key').down(Key.Enter).up(Key.Enter).perform()
 
         let timer = 0
         let style = await input.getCSSProperty('left')

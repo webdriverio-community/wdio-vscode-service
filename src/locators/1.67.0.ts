@@ -4,9 +4,9 @@ import {
     ViewTitlePart as ViewTitlePartImport,
     ScmView as ScmViewImport,
     TreeItem as TreeItemImport
-} from './1.66.0'
+} from './1.66.0.js'
 
-export * from './1.66.0'
+export * from './1.66.0.js'
 export const locatorVersion = '1.73.0'
 export const BottomBarPanel = {
     ...BottomBarPanelImport,

@@ -1,19 +1,19 @@
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 import clipboard from 'clipboardy'
-import type { ChainablePromiseElement } from 'webdriverio'
+import { Key, ChainablePromiseElement } from 'webdriverio'
 
-import { ContentAssist, ContextMenu, InputBox } from '..'
-import { StatusBar } from '../statusBar/StatusBar'
-import { Editor, EditorLocators } from './Editor'
+import { ContentAssist, ContextMenu, InputBox } from '../index.js'
+import { StatusBar } from '../statusBar/StatusBar.js'
+import { Editor, EditorLocators } from './Editor.js'
 
 import {
     PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
-} from '../utils'
+} from '../utils.js'
 import {
     TextEditor as TextEditorLocators,
     FindWidget as FindWidgetLocators
-} from '../../locators/1.73.0'
-import { CMD_KEY } from '../../constants'
+} from '../../locators/1.73.0.js'
+import { CMD_KEY } from '../../constants.js'
 
 export interface TextEditor extends IPageDecorator<EditorLocators> {}
 /**
@@ -43,7 +43,11 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async save (): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 's'])
+        await inputarea.click()
+        await browser.action('key')
+            .down(CMD_KEY).down('s')
+            .up(CMD_KEY).up('s')
+            .perform()
     }
 
     /**
@@ -53,7 +57,11 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async saveAs (): Promise<InputBox> {
         const tab = await this.getTab()
-        await tab.elem.addValue([CMD_KEY, 'Shift', 's'])
+        await tab.elem.click()
+        await browser.action('key')
+            .down(CMD_KEY).down(Key.Shift).down('s')
+            .up(CMD_KEY).down(Key.Shift).up('s')
+            .perform()
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
         await inputBox.waitForExist({ timeout: 5000 })
         return new InputBox(this.locatorMap, inputBox)
@@ -93,10 +101,14 @@ export class TextEditor extends Editor<EditorLocators> {
             isHidden = true
         }
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
+        await inputarea.click()
 
         if (open) {
             if (isHidden) {
-                await inputarea.addValue([CMD_KEY, 'Space'])
+                await browser.action('key')
+                    .down(CMD_KEY).down(Key.Space)
+                    .up(CMD_KEY).up(Key.Space)
+                    .perform()
                 await browser.$(this.locatorMap.ContentAssist.elem as string)
                     .waitForExist({ timeout: 2000 })
             }
@@ -105,7 +117,9 @@ export class TextEditor extends Editor<EditorLocators> {
             return assist
         }
         if (!isHidden) {
-            await inputarea.addValue(['Escape'])
+            await browser.action('key')
+                .down(Key.Escape).up(Key.Escape)
+                .perform()
         }
         return undefined
     }
@@ -116,9 +130,13 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getText (): Promise<string> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 'a', 'c'])
+        await inputarea.click()
+        await browser.action('key')
+            .down(CMD_KEY).down('a').down('c')
+            .up(CMD_KEY).up('a').up('c')
+            .perform()
         const text = clipboard.readSync()
-        await inputarea.addValue(['ArrowUp'])
+        await browser.action('key').down(Key.ArrowUp).down(Key.ArrowUp).perform()
         clipboard.writeSync('')
 
         /**
@@ -138,7 +156,11 @@ export class TextEditor extends Editor<EditorLocators> {
     async setText (text: string, formatText = false): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
         clipboard.writeSync(text)
-        await inputarea.addValue([CMD_KEY, 'a', 'v'])
+        await inputarea.click()
+        await browser.action('key')
+            .down(CMD_KEY).down('a').down('v')
+            .up(CMD_KEY).up('a').up('v')
+            .perform()
         clipboard.writeSync('')
         if (formatText) {
             await this.formatDocument()
@@ -151,7 +173,11 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async clearText (): Promise<void> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 'a', 'Backspace'])
+        await inputarea.click()
+        await browser.action('key')
+            .down(CMD_KEY).down('a').down(Key.Backspace)
+            .up(CMD_KEY).up('a').up(Key.Backspace)
+            .perform()
     }
 
     /**
@@ -229,7 +255,11 @@ export class TextEditor extends Editor<EditorLocators> {
         await this.moveCursor(lineNum, column)
 
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 'Shift', 'ArrowRight'])
+        await inputarea.click()
+        await browser.action('key')
+            .down(CMD_KEY).down(Key.Shift).down(Key.ArrowRight)
+            .up(CMD_KEY).up(Key.Shift).up(Key.ArrowRight)
+            .perform()
     }
 
     /**
@@ -237,7 +267,11 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getSelectedText (): Promise<string> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.addValue([CMD_KEY, 'c'])
+        await inputarea.click()
+        await browser.action('key')
+            .down(CMD_KEY).down('c')
+            .up(CMD_KEY).up('c')
+            .perform()
         return clipboard.read()
     }
 
@@ -302,18 +336,24 @@ export class TextEditor extends Editor<EditorLocators> {
         const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
         let coordinates = await this.getCoordinates()
         const lineGap = coordinates[0] - line
-        const lineKey = lineGap >= 0 ? 'ArrowUp' : 'ArrowDown'
+        const lineKey = lineGap >= 0 ? Key.ArrowUp : Key.ArrowDown
+        await inputarea.click()
         for (let i = 0; i < Math.abs(lineGap); i += 1) {
-            await inputarea.addValue([lineKey])
+            await browser.action('key')
+                .down(lineKey).up(lineKey)
+                .perform()
         }
 
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(100)
         coordinates = await this.getCoordinates()
         const columnGap = coordinates[1] - column
-        const columnKey = columnGap >= 0 ? 'ArrowLeft' : 'ArrowRight'
+        const columnKey = columnGap >= 0 ? Key.ArrowLeft : Key.ArrowRight
+        await inputarea.click()
         for (let i = 0; i < Math.abs(columnGap); i += 1) {
-            await inputarea.addValue([columnKey])
+            await browser.action('key')
+                .down(lineKey).up(columnKey)
+                .perform()
             // eslint-disable-next-line wdio/no-pause
             await browser.pause(50)
             if ((await this.getCoordinates())[0] !== coordinates[0]) {
@@ -546,7 +586,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
         const klass = await btn.getAttribute('class')
 
         if ((replace && klass.includes('collapsed')) || (!replace && !klass.includes('collapsed'))) {
-            await btn.addValue([' '])
+            await browser.action('key').down(Key.Space).up(Key.Space).perform()
             const repl = await browser.$(this.locators.replacePart)
             await repl.waitForExist({ timeout: 2000 })
             if (replace) {

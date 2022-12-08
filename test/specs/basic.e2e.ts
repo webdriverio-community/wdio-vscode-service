@@ -3,13 +3,15 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../dist/service.d.ts" />
 
-import path from 'path'
+import path from 'node:path'
+import { browser, expect, $ } from '@wdio/globals'
+
 import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
     ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem,
     DefaultTreeItem, ViewSection, TreeItem, sleep
-} from '../..'
+} from '../../dist/index.js'
 
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
 

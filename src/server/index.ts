@@ -1,5 +1,6 @@
-import fs from 'fs/promises'
-import path from 'path'
+import fs from 'node:fs/promises'
+import url from 'node:url'
+import path from 'node:path'
 
 import logger from '@wdio/logger'
 import getPort from 'get-port'
@@ -8,13 +9,14 @@ import fastifyCors from '@fastify/cors'
 import fastifyStatic from '@fastify/static'
 import { request } from 'undici'
 
-import getWorkbench from './workbench.tpl'
-import { getWorkbenchOptions } from './utils'
-import { getFileType } from '../utils'
-import { fsProviderExtensionPrefix } from './constants'
-import { DEFAULT_VSCODE_WEB_PORT, DEFAULT_CHANNEL, DEFAULT_VSCODE_WEB_HOSTNAME } from '../constants'
+import getWorkbench from './workbench.tpl.js'
+import { getWorkbenchOptions } from './utils.js'
+import { getFileType } from '../utils.js'
+import { fsProviderExtensionPrefix } from './constants.js'
+import { DEFAULT_VSCODE_WEB_PORT, DEFAULT_CHANNEL, DEFAULT_VSCODE_WEB_HOSTNAME } from '../constants.js'
 import type { VSCodeOptions, Bundle } from '../types'
 
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const log = logger('wdio-vscode-service/server')
 
 const mountPrefix = '/static/mount'
@@ -156,8 +158,8 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
      */
     app.get('/callback', async (req, reply) => {
         const host = `${req.protocol}://${req.hostname || DEFAULT_VSCODE_WEB_HOSTNAME}:${port}`
-        const url = `${host}/${req.url}/out/vs/code/browser/workbench/callback.html`
-        const { body } = await request(url, {})
+        const cbUrl = `${host}/${req.url}/out/vs/code/browser/workbench/callback.html`
+        const { body } = await request(cbUrl, {})
         await reply.send(body)
     })
 

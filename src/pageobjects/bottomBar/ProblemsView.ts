@@ -1,10 +1,10 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
-import { BottomBarPanel } from '..'
+import { BottomBarPanel } from '../index.js'
 import {
     BasePage, ElementWithContextMenu, PageDecorator, IPageDecorator, VSCodeLocatorMap
-} from '../utils'
-import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { ProblemsView as ProblemsViewLocators, Marker as MarkerLocators } from '../../locators/1.73.0.js'
 
 export interface ProblemsView extends IPageDecorator<typeof ProblemsViewLocators> {}
 /**

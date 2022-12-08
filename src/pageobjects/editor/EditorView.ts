@@ -1,13 +1,13 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
-import { TextEditor, DiffEditor, SettingsEditor } from '..'
+import { TextEditor, DiffEditor, SettingsEditor } from '../index.js'
 import {
     PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
-} from '../utils'
+} from '../utils.js'
 import {
     EditorView as EditorViewLocators,
     Editor as EditorLocatorsObj
-} from '../../locators/1.73.0'
+} from '../../locators/1.73.0.js'
 
 export interface EditorView extends IPageDecorator<typeof EditorViewLocators> {}
 /**

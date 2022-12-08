@@ -1,5 +1,5 @@
-import { BasePage } from '../utils'
-import type { MenuItem } from '..'
+import { BasePage } from '../utils.js'
+import type { MenuItem } from '../index.js'
 
 /**
  * Abstract element representing a menu

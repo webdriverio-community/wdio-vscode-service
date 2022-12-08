@@ -1,9 +1,9 @@
 import {
     NotificationsCenter as NotificationsCenterImport,
     Input as InputImport
-} from './1.41.0'
+} from './1.41.0.js'
 
-export * from './1.41.0'
+export * from './1.41.0.js'
 export const locatorVersion = '1.43.0'
 export const NotificationsCenter = {
     ...NotificationsCenterImport,

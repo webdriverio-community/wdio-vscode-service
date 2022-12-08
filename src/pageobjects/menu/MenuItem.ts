@@ -1,4 +1,4 @@
-import { BasePage } from '../utils'
+import { BasePage } from '../utils.js'
 import type { Menu } from './Menu'
 
 /**

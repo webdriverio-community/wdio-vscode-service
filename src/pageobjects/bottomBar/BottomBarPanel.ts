@@ -1,9 +1,9 @@
 import {
     DebugConsoleView, OutputView, TerminalView, ProblemsView, EditorView, TitleBar,
     StatusBar
-} from '..'
-import { BasePage, PageDecorator, IPageDecorator } from '../utils'
-import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.73.0'
+} from '../index.js'
+import { BasePage, PageDecorator, IPageDecorator } from '../utils.js'
+import { BottomBarPanel as BottomBarPanelLocators } from '../../locators/1.73.0.js'
 
 export interface BottomBarPanel extends IPageDecorator<typeof BottomBarPanelLocators> {}
 /**

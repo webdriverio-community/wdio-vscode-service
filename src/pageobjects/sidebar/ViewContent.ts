@@ -1,11 +1,11 @@
-import { SideBarView, ViewSection } from '..'
-import { DefaultTreeSection } from './tree/default/DefaultTreeSection'
-import { CustomTreeSection } from './tree/custom/CustomTreeSection'
-import { ExtensionsViewSection } from './extensions/ExtensionsViewSection'
+import { SideBarView, ViewSection } from '../index.js'
+import { DefaultTreeSection } from './tree/default/DefaultTreeSection.js'
+import { CustomTreeSection } from './tree/custom/CustomTreeSection.js'
+import { ExtensionsViewSection } from './extensions/ExtensionsViewSection.js'
 import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
-} from '../utils'
-import { ViewContent as ViewContentLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { ViewContent as ViewContentLocators } from '../../locators/1.73.0.js'
 
 export interface ViewContent extends IPageDecorator<typeof ViewContentLocators> { }
 /**

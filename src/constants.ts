@@ -1,4 +1,5 @@
-import path from 'path'
+import path from 'node:path'
+import { Key } from 'webdriverio'
 import type { ArgsParams, VSCodeProxyOptions } from './types'
 
 export const VSCODE_CAPABILITY_KEY = 'wdio:vscodeOptions' as const
@@ -36,7 +37,7 @@ export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleap
 export const DEFAULT_VSCODE_WEB_HOSTNAME = 'localhost'
 export const DEFAULT_VSCODE_WEB_PORT = 3000
 export const DEFAULT_CACHE_PATH = path.join(process.cwd(), '.wdio-vscode-service')
-export const CMD_KEY = process.platform === 'darwin' ? 'Meta' : 'Control'
+export const CMD_KEY = process.platform === 'darwin' ? Key.Command : Key.Control
 export const DEFAULT_PROXY_OPTIONS: VSCodeProxyOptions = {
     enable: true,
     port: undefined,

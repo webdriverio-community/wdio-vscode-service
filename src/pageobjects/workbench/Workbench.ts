@@ -1,19 +1,19 @@
-import { TitleBar } from '../menu/TitleBar'
-import { SideBarView } from '../sidebar/SideBarView'
-import { ActivityBar } from '../activityBar/ActivityBar'
-import { StatusBar } from '../statusBar/StatusBar'
-import { EditorView } from '../editor/EditorView'
-import { BottomBarPanel } from '../bottomBar/BottomBarPanel'
-import { Notification, StandaloneNotification } from './Notification'
-import { NotificationsCenter } from './NotificationsCenter'
-import { QuickOpenBox, InputBox } from './Input'
-import { SettingsEditor } from '../editor/SettingsEditor'
-import { WebView } from './WebView'
+import { TitleBar } from '../menu/TitleBar.js'
+import { SideBarView } from '../sidebar/SideBarView.js'
+import { ActivityBar } from '../activityBar/ActivityBar.js'
+import { StatusBar } from '../statusBar/StatusBar.js'
+import { EditorView } from '../editor/EditorView.js'
+import { BottomBarPanel } from '../bottomBar/BottomBarPanel.js'
+import { Notification, StandaloneNotification } from './Notification.js'
+import { NotificationsCenter } from './NotificationsCenter.js'
+import { QuickOpenBox, InputBox } from './Input.js'
+import { SettingsEditor } from '../editor/SettingsEditor.js'
+import { WebView } from './WebView.js'
 
 import {
     PageDecorator, IPageDecorator, BasePage, sleep
-} from '../utils'
-import { Workbench as WorkbenchLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { Workbench as WorkbenchLocators } from '../../locators/1.73.0.js'
 
 export interface Workbench extends IPageDecorator<typeof WorkbenchLocators> {}
 /**
@@ -186,7 +186,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
         if (webview.length > 0) {
             const tab = await editorView.getActiveTab()
             if (tab) {
-                await tab.elem.addValue(['F1'])
+                await tab.elem.addValue('F1')
                 const inputBox = new InputBox(this.locatorMap).wait()
                 return inputBox
             }

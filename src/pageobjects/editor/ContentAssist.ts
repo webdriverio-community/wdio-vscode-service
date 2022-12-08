@@ -1,12 +1,12 @@
-import { ChainablePromiseElement } from 'webdriverio'
+import { Key, ChainablePromiseElement } from 'webdriverio'
 
 import {
     TextEditor, Menu, MenuItem, DebugConsoleView
-} from '..'
+} from '../index.js'
 import {
     PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
-} from '../utils'
-import { ContentAssist as ContentAssistLocators } from '../../locators/1.73.0'
+} from '../utils.js'
+import { ContentAssist as ContentAssistLocators } from '../../locators/1.73.0.js'
 
 export interface ContentAssist extends IPageDecorator<typeof ContentAssistLocators> {}
 /**
@@ -38,11 +38,13 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
      */
     async getItem (name: string): Promise<ContentAssistItem | undefined> {
         let lastItem = false
-        const scrollable = await this.itemList$
+        await this.itemList$.click()
 
         let firstItem = await this.firstItem$$
         while (firstItem.length < 1) {
-            await scrollable.addValue(['Page Up'])
+            await browser.action('key')
+                .down(Key.PageUp).up(Key.PageUp)
+                .perform()
             firstItem = await this.firstItem$$
         }
 
@@ -56,7 +58,9 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
                 lastItem = lastItem || (await item.elem.getAttribute('data-last-element')) === 'true'
             }
             if (!lastItem) {
-                await scrollable.addValue(['PageDown'])
+                await browser.action('key')
+                    .down(Key.PageDown).up(Key.PageDown)
+                    .perform()
                 await sleep(100)
             }
         }

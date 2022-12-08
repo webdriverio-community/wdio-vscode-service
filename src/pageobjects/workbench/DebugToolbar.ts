@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { BasePage, PageDecorator, IPageDecorator } from '../utils'
-import { DebugToolbar as DebugToolbarLocators } from '../../locators/1.73.0'
+import { BasePage, PageDecorator, IPageDecorator } from '../utils.js'
+import { DebugToolbar as DebugToolbarLocators } from '../../locators/1.73.0.js'
 
 export interface DebugToolbar extends IPageDecorator<typeof DebugToolbarLocators> {}
 /**

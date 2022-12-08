@@ -1,8 +1,8 @@
-import { Editor, EditorLocators } from './Editor'
-import { TextEditor } from './TextEditor'
-import { EditorView } from './EditorView'
-import { PageDecorator, IPageDecorator } from '../utils'
-import { DiffEditor as DiffEditorLocators } from '../../locators/1.73.0'
+import { Editor, EditorLocators } from './Editor.js'
+import { TextEditor } from './TextEditor.js'
+import { EditorView } from './EditorView.js'
+import { PageDecorator, IPageDecorator } from '../utils.js'
+import { DiffEditor as DiffEditorLocators } from '../../locators/1.73.0.js'
 
 export interface DiffEditor extends IPageDecorator<EditorLocators> {}
 /**

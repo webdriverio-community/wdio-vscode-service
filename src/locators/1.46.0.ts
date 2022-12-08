@@ -1,6 +1,6 @@
-import { CustomTreeItem as CustomTreeItemImport } from './1.45.0'
+import { CustomTreeItem as CustomTreeItemImport } from './1.45.0.js'
 
-export * from './1.45.0'
+export * from './1.45.0.js'
 export const locatorVersion = '1.46.0'
 export const CustomTreeItem = {
     ...CustomTreeItemImport,

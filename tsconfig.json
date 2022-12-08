@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
+    "target": "ES2021",
+    "module": "ESNext",
     "baseUrl": "src",
     "outDir": "./dist",
     "moduleResolution": "node",
@@ -13,12 +13,12 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "inlineSources": true,
+    "inlineSourceMap": true,
     "skipLibCheck": true,
-    "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "newLine": "lf",
     "noEmitOnError": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "noImplicitAny": true,
     "resolveJsonModule": true,
     "allowJs": true,
@@ -27,7 +27,7 @@
     "types": [
       "node",
       "vscode",
-      "webdriverio/async",
+      "@wdio/globals/types",
       "@wdio/mocha-framework",
       "expect-webdriverio"
     ]

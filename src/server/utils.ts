@@ -1,8 +1,9 @@
-import fs from 'fs/promises'
-import path from 'path'
-import { URI } from 'vscode-uri'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
-import { fsProviderExtensionPrefix, fsProviderFolderUri } from './constants'
+import { fsProviderExtensionPrefix, fsProviderFolderUri } from './constants.js'
+
+const { URI } = await import('vscode-uri')
 
 export interface IConfig {
     readonly extensionPaths: string[] | undefined
