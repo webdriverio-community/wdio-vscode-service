@@ -29,7 +29,7 @@ jobs:
       - name: Install Dependencies
         run: |
           yarn install --frozen-lockfile
-          yarn add chromedriver@latest
+          yarn add chromedriver@107.0.3
       - name: Build
         run: yarn build
       - name: Run Tests
