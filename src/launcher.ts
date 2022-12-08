@@ -152,9 +152,8 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             const chromedriverPath = path.join(this._cachePath, `chromedriver-${content[version]?.chromedriver}`)
             const vscodePath = (
                 cap[VSCODE_CAPABILITY_KEY]?.binary
-                || path.join(this._cachePath, `vscode-${process.platform}-${content[version]?.vscode}`)
+                || path.join(this._cachePath, `vscode-${process.platform}-${process.arch}-${content[version]?.vscode}`)
             )
-
             if (content[version] && await fileExist(chromedriverPath) && await fileExist(vscodePath)) {
                 log.info(
                     `Skipping download, bundles for VSCode v${content[version]?.vscode} `

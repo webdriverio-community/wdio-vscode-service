@@ -143,7 +143,6 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         const input = await this.inputField$
         await input.clearValue()
         await input.addValue(message)
-        await input.click()
         await browser.action('key')
             .down(CMD_KEY).down(Key.Enter)
             .up(CMD_KEY).up(Key.Enter)

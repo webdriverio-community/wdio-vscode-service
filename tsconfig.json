@@ -32,7 +32,13 @@
       "expect-webdriverio"
     ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/server/fs-provider/fsExtensionMain.js"],
+  "include": [
+    "src/**/*",
+    "src/chromium/package.json",
+    "src/proxy/cjs/package.json"
+  ],
+  "exclude": [
+    "src/server/fs-provider/fsExtensionMain.js"
+  ],
   "ignore": ["node_modules", "dist"]
 }

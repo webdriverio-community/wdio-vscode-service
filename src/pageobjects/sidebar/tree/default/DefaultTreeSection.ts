@@ -38,7 +38,6 @@ export class DefaultTreeSection extends TreeSection {
     async findItem (label: string, maxLevel = 0): Promise<TreeItem | undefined> {
         await this.expand()
         const container = await this.rowContainer$
-        await container.click()
         await browser.action('key').down(Key.Home).up(Key.Home).perform()
         let item: TreeItem | undefined
         do {
@@ -55,7 +54,6 @@ export class DefaultTreeSection extends TreeSection {
                 if (lastrow.length > 0) {
                     break
                 }
-                await container.click()
                 await browser.action('key').down(Key.PageDown).up(Key.PageDown).perform()
             }
         } while (!item)

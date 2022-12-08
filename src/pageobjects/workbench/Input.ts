@@ -55,7 +55,6 @@ export abstract class Input extends BasePage<AllInputLocators> {
         if (currentText !== text) {
             await clipboard.write(text)
             if (currentText?.length) {
-                await input.click()
                 const backSpaces: string[] = new Array(currentText.length).fill(Key.Backspace)
                 const keyAction = browser.action('key')
                 for (const key of backSpaces) {
@@ -80,8 +79,6 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving when the input is confirmed
      */
     async confirm (): Promise<void> {
-        const input = this.inputBox$.$(this.locators.input)
-        await input.click()
         await browser.action('key').down(Key.Enter).up(Key.Enter).perform()
     }
 
@@ -90,7 +87,6 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving when the input is cancelled
      */
     async cancel (): Promise<void> {
-        await this.inputBox$.$(this.locators.input).click()
         await browser.action('key').down(Key.Escape).up(Key.Escape).perform()
     }
 
@@ -171,7 +167,6 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolvnig to QuickPickItem if found, to undefined otherwise
      */
     async findQuickPick (indexOrText: string | number): Promise<QuickPickItem | undefined> {
-        const input = await this.inputBox$.$(this.locators.input)
         const first = await this.quickPickPosition$$(1)
         if (first.length < 1) {
             await this.resetPosition()
@@ -199,7 +194,6 @@ export abstract class Input extends BasePage<AllInputLocators> {
                 }
             }
             if (!endReached) {
-                await input.click()
                 await browser.action('key').down(Key.PageDown).up(Key.PageDown).perform()
             }
         }

@@ -38,8 +38,6 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
      */
     async getItem (name: string): Promise<ContentAssistItem | undefined> {
         let lastItem = false
-        await this.itemList$.click()
-
         let firstItem = await this.firstItem$$
         while (firstItem.length < 1) {
             await browser.action('key')

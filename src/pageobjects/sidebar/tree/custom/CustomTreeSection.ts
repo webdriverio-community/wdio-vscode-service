@@ -39,8 +39,6 @@ export class CustomTreeSection extends TreeSection {
 
         const container = await this.rowContainer$
         await container.waitForExist({ timeout: 5000 })
-
-        await container.click()
         await browser.action('key').down(Key.Home).up(Key.Home).perform()
         let item: TreeItem | undefined
 

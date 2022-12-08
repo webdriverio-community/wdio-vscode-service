@@ -99,13 +99,7 @@ export class ExtensionsViewSection extends ViewSection {
      */
     async clearSearch (): Promise<void> {
         const progress = await this.content.progress$
-        const searchField = await this.content.elem.$(this.locators.searchBox)
-        const textField = await this.content.elem.$(this.locators.textContainer)
-
         try {
-            await textField.$(this.locators.textField)
-
-            await searchField.click()
             await browser.action('key')
                 .down(CMD_KEY).down('a')
                 .up(CMD_KEY).up('a')

@@ -1,8 +1,12 @@
 #!/usr/bin/env node
+/* eslint-disable node/shebang, @typescript-eslint/no-var-requires */
 
-// eslint-disable-next-line node/shebang
-import childProcess from 'node:child_process'
-import argvParser from 'yargs-parser'
+/**
+ * we require here because `pkg` doesn't support ESM yet
+ * see https://github.com/vercel/pkg/pull/1323
+ */
+const childProcess: typeof import('node:child_process') = require('node:child_process')
+const argvParser: typeof import('yargs-parser') = require('yargs-parser')
 
 /**
  * Chrome wrapper run method

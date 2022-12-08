@@ -32,8 +32,6 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      * Save the editor
      */
     async save (): Promise<void> {
-        const tab = await this.getTab()
-        await tab.elem.click()
         await browser.action('key')
             .down(CMD_KEY).down('s')
             .up(CMD_KEY).up('s')
@@ -46,9 +44,6 @@ export class CustomEditor extends Editor<typeof EditorLocators> {
      * @returns InputBox serving as a simple file dialog
      */
     async saveAs (): Promise<InputBox> {
-        const tab = await this.getTab()
-
-        await tab.elem.click()
         await browser.action('key')
             .down(CMD_KEY).down(Key.Shift).down('s')
             .up(CMD_KEY).down(Key.Shift).up('s')

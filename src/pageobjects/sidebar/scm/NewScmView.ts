@@ -135,7 +135,6 @@ export class MultiScmProvider extends ScmProvider {
         const input = await this.view.itemIndex$(index)
         await input.clearValue()
         await input.addValue(message)
-        await input.click()
         await browser.action('key')
             .down(CMD_KEY).down(Key.Enter)
             .up(CMD_KEY).up(Key.Enter)

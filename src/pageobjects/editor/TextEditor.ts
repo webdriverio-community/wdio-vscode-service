@@ -42,8 +42,6 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Promise resolving when ctrl+s is invoked
      */
     async save (): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.click()
         await browser.action('key')
             .down(CMD_KEY).down('s')
             .up(CMD_KEY).up('s')
@@ -56,8 +54,6 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns InputBox serving as a simple file dialog
      */
     async saveAs (): Promise<InputBox> {
-        const tab = await this.getTab()
-        await tab.elem.click()
         await browser.action('key')
             .down(CMD_KEY).down(Key.Shift).down('s')
             .up(CMD_KEY).down(Key.Shift).up('s')
@@ -100,9 +96,6 @@ export class TextEditor extends Editor<EditorLocators> {
         } catch (err) {
             isHidden = true
         }
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.click()
-
         if (open) {
             if (isHidden) {
                 await browser.action('key')
@@ -129,14 +122,14 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Promise resolving to editor text
      */
     async getText (): Promise<string> {
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.click()
         await browser.action('key')
             .down(CMD_KEY).down('a').down('c')
             .up(CMD_KEY).up('a').up('c')
             .perform()
         const text = clipboard.readSync()
-        await browser.action('key').down(Key.ArrowUp).down(Key.ArrowUp).perform()
+        await browser.action('key')
+            .down(Key.ArrowUp).up(Key.ArrowUp)
+            .perform()
         clipboard.writeSync('')
 
         /**
@@ -154,9 +147,7 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Promise resolving once the new text is copied over
      */
     async setText (text: string, formatText = false): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
         clipboard.writeSync(text)
-        await inputarea.click()
         await browser.action('key')
             .down(CMD_KEY).down('a').down('v')
             .up(CMD_KEY).up('a').up('v')
@@ -172,8 +163,6 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Promise resolving once the text is deleted
      */
     async clearText (): Promise<void> {
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.click()
         await browser.action('key')
             .down(CMD_KEY).down('a').down(Key.Backspace)
             .up(CMD_KEY).up('a').up(Key.Backspace)
@@ -254,8 +243,6 @@ export class TextEditor extends Editor<EditorLocators> {
 
         await this.moveCursor(lineNum, column)
 
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.click()
         await browser.action('key')
             .down(CMD_KEY).down(Key.Shift).down(Key.ArrowRight)
             .up(CMD_KEY).up(Key.Shift).up(Key.ArrowRight)
@@ -266,8 +253,6 @@ export class TextEditor extends Editor<EditorLocators> {
      * Get the text that is currently selected as string
      */
     async getSelectedText (): Promise<string> {
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await inputarea.click()
         await browser.action('key')
             .down(CMD_KEY).down('c')
             .up(CMD_KEY).up('c')
@@ -333,11 +318,9 @@ export class TextEditor extends Editor<EditorLocators> {
         if (column < 1) {
             throw new Error(`Column number ${column} does not exist`)
         }
-        const inputarea = await this.elem.$(this.locatorMap.Editor.inputArea as string)
         let coordinates = await this.getCoordinates()
         const lineGap = coordinates[0] - line
         const lineKey = lineGap >= 0 ? Key.ArrowUp : Key.ArrowDown
-        await inputarea.click()
         for (let i = 0; i < Math.abs(lineGap); i += 1) {
             await browser.action('key')
                 .down(lineKey).up(lineKey)
@@ -349,10 +332,9 @@ export class TextEditor extends Editor<EditorLocators> {
         coordinates = await this.getCoordinates()
         const columnGap = coordinates[1] - column
         const columnKey = columnGap >= 0 ? Key.ArrowLeft : Key.ArrowRight
-        await inputarea.click()
         for (let i = 0; i < Math.abs(columnGap); i += 1) {
             await browser.action('key')
-                .down(lineKey).up(columnKey)
+                .down(columnKey).up(columnKey)
                 .perform()
             // eslint-disable-next-line wdio/no-pause
             await browser.pause(50)
@@ -586,7 +568,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
         const klass = await btn.getAttribute('class')
 
         if ((replace && klass.includes('collapsed')) || (!replace && !klass.includes('collapsed'))) {
-            await browser.action('key').down(Key.Space).up(Key.Space).perform()
+            await btn.addValue(' ')
             const repl = await browser.$(this.locators.replacePart)
             await repl.waitForExist({ timeout: 2000 })
             if (replace) {
