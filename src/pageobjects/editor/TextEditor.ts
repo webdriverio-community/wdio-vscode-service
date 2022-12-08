@@ -44,6 +44,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async save (): Promise<void> {
         await browser.action('key')
             .down(CMD_KEY).down('s')
+            .pause(10)
             .up(CMD_KEY).up('s')
             .perform()
     }
@@ -56,6 +57,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async saveAs (): Promise<InputBox> {
         await browser.action('key')
             .down(CMD_KEY).down(Key.Shift).down('s')
+            .pause(10)
             .up(CMD_KEY).down(Key.Shift).up('s')
             .perform()
         const inputBox = browser.$(this.locatorMap.InputBox.elem as string)
@@ -124,6 +126,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async getText (): Promise<string> {
         await browser.action('key')
             .down(CMD_KEY).down('a').down('c')
+            .pause(10)
             .up(CMD_KEY).up('a').up('c')
             .perform()
         const text = clipboard.readSync()
@@ -150,6 +153,7 @@ export class TextEditor extends Editor<EditorLocators> {
         clipboard.writeSync(text)
         await browser.action('key')
             .down(CMD_KEY).down('a').down('v')
+            .pause(10)
             .up(CMD_KEY).up('a').up('v')
             .perform()
         clipboard.writeSync('')
@@ -165,6 +169,7 @@ export class TextEditor extends Editor<EditorLocators> {
     async clearText (): Promise<void> {
         await browser.action('key')
             .down(CMD_KEY).down('a').down(Key.Backspace)
+            .pause(10)
             .up(CMD_KEY).up('a').up(Key.Backspace)
             .perform()
     }
@@ -245,6 +250,7 @@ export class TextEditor extends Editor<EditorLocators> {
 
         await browser.action('key')
             .down(CMD_KEY).down(Key.Shift).down(Key.ArrowRight)
+            .pause(10)
             .up(CMD_KEY).up(Key.Shift).up(Key.ArrowRight)
             .perform()
     }
@@ -323,7 +329,7 @@ export class TextEditor extends Editor<EditorLocators> {
         const lineKey = lineGap >= 0 ? Key.ArrowUp : Key.ArrowDown
         for (let i = 0; i < Math.abs(lineGap); i += 1) {
             await browser.action('key')
-                .down(lineKey).up(lineKey)
+                .down(lineKey).pause(10).up(lineKey)
                 .perform()
             // eslint-disable-next-line wdio/no-pause
             await browser.pause(50)
@@ -336,7 +342,7 @@ export class TextEditor extends Editor<EditorLocators> {
         const columnKey = columnGap >= 0 ? Key.ArrowLeft : Key.ArrowRight
         for (let i = 0; i < Math.abs(columnGap); i += 1) {
             await browser.action('key')
-                .down(columnKey).up(columnKey)
+                .down(columnKey).pause(10).up(columnKey)
                 .perform()
             // eslint-disable-next-line wdio/no-pause
             await browser.pause(50)
