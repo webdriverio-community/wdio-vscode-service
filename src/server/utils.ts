@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import { fsProviderExtensionPrefix, fsProviderFolderUri } from './constants.js'
 
-const { URI } = await import('vscode-uri')
+const { URI } = (await import('vscode-uri')).default
 
 export interface IConfig {
     readonly extensionPaths: string[] | undefined
