@@ -325,6 +325,8 @@ export class TextEditor extends Editor<EditorLocators> {
             await browser.action('key')
                 .down(lineKey).up(lineKey)
                 .perform()
+            // eslint-disable-next-line wdio/no-pause
+            await browser.pause(50)
         }
 
         // eslint-disable-next-line wdio/no-pause
