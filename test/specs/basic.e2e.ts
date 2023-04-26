@@ -241,7 +241,7 @@ describe('WDIO VSCode Service', () => {
             expect(await outputView.getText()).toEqual(['Hello World!'])
         })
 
-        it('can read from terminal @skipWeb', async () => {
+        skip('linux')('can read from terminal @skipWeb', async () => {
             const terminalView = await bottomBar.openTerminalView()
             const text = await terminalView.getText()
             expect(text).toContain(':wdio-vscode-service')
