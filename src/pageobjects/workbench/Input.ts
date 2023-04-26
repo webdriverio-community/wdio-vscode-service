@@ -244,7 +244,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
     private async resetPosition (): Promise<void> {
         const text = await this.getText()
         await this.clear()
-        await this.setText(text)
+        await this.setText(text || '')
     }
 }
 
