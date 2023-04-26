@@ -189,12 +189,12 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
         await workbench.executeCommand('terminal select all')
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500)
-        await workbench.executeCommand('terminal copy selection')
+        await browser.keys([Key.Ctrl, 'c'])
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500)
         const text = clipboard.readSync()
         clipboard.writeSync('')
-        return text
+        return text.trim()
     }
 
     /**

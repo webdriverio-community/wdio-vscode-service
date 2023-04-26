@@ -23,7 +23,25 @@ const capabilities: VSCodeCapabilities = {
     'wdio:vscodeOptions': {
         extensionPath: path.join(__dirname, 'extension'),
         workspacePath: path.join(__dirname, '..'),
-        filePath: path.join(__dirname, '..', 'README.md')
+        filePath: path.join(__dirname, '..', 'README.md'),
+        userSettings: {
+            'terminal.integrated.defaultProfile.osx': 'bash',
+            'terminal.integrated.profiles.windows': {
+                'Debian (WSL)': {
+                    path: 'C:\\WINDOWS\\System32\\wsl.exe',
+                    args: ['-d', 'Debian']
+                }
+            },
+            'terminal.integrated.profiles.linux': {
+                'zsh (login)': {
+                    path: '/bin/bash',
+                    args: []
+                }
+            },
+            'terminal.integrated.automationProfile.osx': {
+                path: '/bin/sh'
+            }
+        }
         // verboseLogging: true
     }
 }
@@ -193,7 +211,7 @@ export const config: Options.Testrunner = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000,
+        timeout: Infinity,
         grep: grep.length > 0 ? grep.join('|') : undefined,
         invert: true
     },

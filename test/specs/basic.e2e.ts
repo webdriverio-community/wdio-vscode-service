@@ -240,6 +240,12 @@ describe('WDIO VSCode Service', () => {
             expect(await outputView.getCurrentChannel()).toBe('Guinea Pig')
             expect(await outputView.getText()).toEqual(['Hello World!'])
         })
+
+        it('can read from terminal', async () => {
+            const terminalView = await bottomBar.openTerminalView()
+            const text = await terminalView.getText()
+            expect(text).toContain(':wdio-vscode-service')
+        })
     })
 
     describe('statusbar', () => {
