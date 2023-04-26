@@ -133,16 +133,21 @@ describe('WDIO VSCode Service', () => {
         it('can send parameters to VSCode API invocation @skipWeb', async () => {
             const workbench = await browser.getWorkbench()
             const message = 'I passed this message as a parameter!'
-            await browser.executeWorkbench((vscode, msg) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                vscode.window.showInformationMessage(msg)
-            }, message)
+
+            let messages: string[] = []
             await browser.waitUntil(async () => {
+                await browser.executeWorkbench((vscode, msg) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                    vscode.window.showInformationMessage(msg)
+                }, message)
                 const notifs = await workbench.getNotifications()
-                const messages = await Promise.all(notifs.map((n) => n.getMessage()))
+                messages = await Promise.all(notifs.map((n) => n.getMessage()))
                 return messages.includes(message)
             }, {
-                timeoutMsg: 'Could not find custom notification',
+                timeoutMsg: (
+                    'Could not find custom notification: '
+                    + `expected "${message}" but received "${messages.join('", "')}"`
+                ),
                 timeout: 5000
             })
         })
@@ -226,7 +231,7 @@ describe('WDIO VSCode Service', () => {
             const outputView = await bottomBar.openOutputView()
             const channels = await outputView.getChannelNames()
             expect(channels).toContain('Tasks')
-            expect(channels).toContain('Markdown Language Server')
+            expect(channels).toContain('Guinea Pig')
         })
 
         it('can get extension logs', async () => {
