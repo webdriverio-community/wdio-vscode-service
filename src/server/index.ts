@@ -39,7 +39,7 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
     await app.register(fastifyCors, {
         methods: ['GET'],
         credentials: true,
-        origin: (origin, cb) => cb(null, webviewHostRegexp.test(origin))
+        origin: (origin, cb) => cb(null, webviewHostRegexp.test(origin || ''))
     })
 
     app.addHook('preHandler', async (req: COIRequest, reply) => {

@@ -4,7 +4,6 @@ import { WebView as WebViewLocators } from '../../locators/1.73.0.js'
 import type { VSCodeLocatorMap } from '../utils'
 
 export interface WebView extends IPageDecorator<typeof WebViewLocators> { }
-// @ts-expect-error `PageDecorator` doesn't allow static methods
 @PageDecorator(WebViewLocators)
 export class WebView extends BasePage<typeof WebViewLocators> {
     /**
