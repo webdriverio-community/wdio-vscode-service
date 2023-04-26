@@ -61,7 +61,7 @@
   "parserOptions": {
     "ecmaVersion": 2021,
     "sourceType": "module",
-    "project": ["./tsconfig.json", "./test/tsconfig.json", "./example/tsconfig.json"]
+    "project": ["./tsconfig.json", "./test/tsconfig.json"]
   },
   "settings": {
     "node": {

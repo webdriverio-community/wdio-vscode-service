@@ -16,7 +16,7 @@ jobs:
         vscodeVersion:
           - insiders
           - stable
-          - 1.72.0
+          - 1.75.0
           - web
     runs-on: ${{ matrix.os }}
 
@@ -27,15 +27,15 @@ jobs:
         with:
           node-version: 18
       - name: Install Dependencies
-        run: |
-          yarn install --frozen-lockfile
-          yarn add chromedriver@107.0.3
+        run: npm ci
+        env:
+          DETECT_CHROMEDRIVER_VERSION: true
       - name: Build
-        run: yarn build
+        run: npm run build
       - name: Run Tests
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: yarn test
+          run: npm test
         env:
           VSCODE_VERSION: ${{ matrix.vscodeVersion }}
           VSCODE_WEB_TESTS: ${{ matrix.vscodeVersion == 'web' && '1' || '0' }}

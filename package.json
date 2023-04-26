@@ -18,7 +18,7 @@
     "build:compile": "pkg --target win --out-path ./dist/chromium ./dist/chromium/index.js",
     "build:chmod": "chmod +x ./dist/chromium/index.js",
     "ci": "run-s test:lint build test",
-    "clean": "rimraf ./node_modules yarn-lock.yaml ./dist",
+    "clean": "rimraf ./node_modules ./dist",
     "docs": "typedoc",
     "prepare": "husky install",
     "release": "release-it --github.release",
@@ -28,11 +28,11 @@
     "release:major": "npm run release -- major",
     "test": "run-s test:*",
     "test:setup": "node ./.github/scripts/link.mjs",
-    "test:lint": "eslint src test example",
+    "test:lint": "eslint src test",
     "test:e2e": "run-s test:e2e:*",
     "test:e2e:run": "wdio run ./test/wdio.conf.ts",
     "test:e2e:cleanup": "git checkout -- package.json",
-    "watch": "yarn run build:ts --watch"
+    "watch": "npm run build:ts --watch"
   },
   "keywords": [
     "webdriverio",
