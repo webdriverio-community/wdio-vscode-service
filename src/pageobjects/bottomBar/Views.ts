@@ -184,7 +184,7 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
      * Beware, no formatting.
      * @returns Promise resolving to all terminal text
      */
-    async getText (): Promise<string> {
+    async getText (retry = 3): Promise<string> {
         const workbench = new Workbench(this.locatorMap)
         await workbench.executeCommand('terminal select all')
         // eslint-disable-next-line wdio/no-pause
@@ -192,7 +192,12 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
         await browser.keys([Key.Ctrl, 'c'])
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500)
-        const text = clipboard.readSync()
+        const text = await clipboard.read()
+
+        if (!text && retry > 0) {
+            return this.getText(retry - 1)
+        }
+
         clipboard.writeSync('')
         return text.trim()
     }
