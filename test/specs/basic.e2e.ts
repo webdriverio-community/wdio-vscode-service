@@ -19,6 +19,7 @@ function skip (param: string | string[] = process.platform) {
     const platforms = Array.isArray(param) ? param : [param]
     return platforms.includes(process.platform) ? it.skip : it
 }
+const skipCI = process.env.CI ? it.skip : it
 
 const locators = {
     marquee: {
@@ -241,7 +242,7 @@ describe('WDIO VSCode Service', () => {
             expect(await outputView.getText()).toEqual(['Hello World!'])
         })
 
-        skip('linux')('can read from terminal @skipWeb', async () => {
+        skipCI('can read from terminal @skipWeb', async () => {
             const terminalView = await bottomBar.openTerminalView()
             const text = await terminalView.getText()
             expect(text).toContain(':wdio-vscode-service')
