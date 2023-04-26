@@ -25,7 +25,7 @@ const capabilities: VSCodeCapabilities = {
         workspacePath: path.join(__dirname, '..'),
         filePath: path.join(__dirname, '..', 'README.md'),
         userSettings: {
-            'terminal.integrated.defaultProfile.osx': 'bash',
+            'terminal.integrated.cwd': `${path.join(__dirname, '..')}`,
             'terminal.integrated.profiles.windows': {
                 'Debian (WSL)': {
                     path: 'C:\\WINDOWS\\System32\\wsl.exe',
@@ -33,11 +33,13 @@ const capabilities: VSCodeCapabilities = {
                 }
             },
             'terminal.integrated.profiles.linux': {
-                'zsh (login)': {
-                    path: '/bin/bash',
-                    args: []
+                'custom-bash': {
+                    path: 'bash',
+                    icon: 'terminal-bash',
+                    overrideName: true
                 }
             },
+            'terminal.integrated.defaultProfile.linux': 'custom-bash',
             'terminal.integrated.automationProfile.osx': {
                 path: '/bin/sh'
             }
