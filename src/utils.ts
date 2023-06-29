@@ -23,8 +23,11 @@ function isEmulatedRosettaEnvironment () {
     return processTranslated === '1'
 }
 
-function getMacOsRealArch () {
+function getMacOsRealArch (chromeDriverVersion: string) {
     if (process.arch === 'arm64' || isEmulatedRosettaEnvironment()) {
+        if (parseInt(chromeDriverVersion.split('.')[0], 10) > 106) {
+            return 'mac_arm64'
+        }
         return 'mac64_m1'
     }
 
@@ -35,7 +38,7 @@ function getMacOsRealArch () {
     return null
 }
 
-export function validatePlatform () {
+export function validatePlatform (chromeDriverVersion: string) {
     if (process.platform === 'linux') {
         if (process.arch === 'arm64' || process.arch === 'x64') {
             return `${process.platform}64`
@@ -45,7 +48,7 @@ export function validatePlatform () {
     }
 
     if (process.platform === 'darwin' || process.platform === 'freebsd') {
-        const osxPlatform = getMacOsRealArch()
+        const osxPlatform = getMacOsRealArch(chromeDriverVersion)
 
         if (!osxPlatform) {
             throw new Error('Only Mac 64 bits supported.')

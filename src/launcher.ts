@@ -198,7 +198,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
             log.info(`Download Chromedriver (v${chromedriverVersion})`)
             await downloadBundle(
-                format(CHROMEDRIVER_DOWNLOAD_PATH, chromedriverVersion, validatePlatform()),
+                format(CHROMEDRIVER_DOWNLOAD_PATH, chromedriverVersion, validatePlatform(chromedriverVersion)),
                 this._cachePath,
                 { extract: true, strip: 1 }
             )
