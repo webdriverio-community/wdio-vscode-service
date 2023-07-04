@@ -26,7 +26,7 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
         try {
             const titleBar = new TitleBarItem(
                 this.locatorMap,
-                this.locators.itemConstructor(name),
+                name,
                 this
             )
             await titleBar.wait()

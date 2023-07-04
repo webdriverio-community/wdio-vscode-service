@@ -10,7 +10,7 @@ import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
     ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem,
-    DefaultTreeItem, ViewSection, TreeItem, sleep
+    DefaultTreeItem, ViewSection, TreeItem, sleep, TitleBar
 } from '../../dist/index.js'
 
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
@@ -246,6 +246,26 @@ describe('WDIO VSCode Service', () => {
             const terminalView = await bottomBar.openTerminalView()
             const text = await terminalView.getText()
             expect(text).toContain(':wdio-vscode-service')
+        })
+    })
+
+    describe('titlebar', () => {
+        let titleBar: TitleBar
+
+        before(async () => {
+            const workbench = await browser.getWorkbench()
+            titleBar = workbench.getTitleBar()
+        })
+
+        it('can find all items', async () => {
+            const items = await titleBar.getItems()
+            expect(await items[0].getLabel()).toBe('File')
+            expect(await items[1].getLabel()).toBe('Edit')
+        })
+
+        it('can select item by name', async () => {
+            const item = await titleBar.getItem('Edit')
+            expect(await item?.getLabel()).toBe('Edit')
         })
     })
 
