@@ -135,7 +135,7 @@ export interface VSCodeOptions {
     serverOptions?: ServerOptions
 
     /**
-     * Define a custom location for vscode to store all its data (root for extensionPath, userDataDir etc)
+     * Define a custom location for VS Code to store all its data (root for extensionPath, userDataDir etc.)
      */
     storagePath?: string
 }
