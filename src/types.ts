@@ -133,6 +133,11 @@ export interface VSCodeOptions {
      * Define options when testing VSCode web extensions
      */
     serverOptions?: ServerOptions
+
+    /**
+     * Define a custom location for VS Code to store all its data (root for extensionPath, userDataDir etc.)
+     */
+    storagePath?: string
 }
 
 export interface WDIOLogs {

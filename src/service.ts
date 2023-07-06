@@ -50,7 +50,6 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             }
 
             resolver(message.error, message.result)
-            return
         } catch (err: any) {
             log.error(`Error parsing remote response: ${err.message}`)
         }
@@ -81,8 +80,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
 
         const customArgs: ArgsParams = { ...VSCODE_APPLICATION_ARGS }
-        const storagePath = await tmp.dir()
-        const userSettingsPath = path.join(storagePath.path, 'settings', 'User')
+        const storagePath = this._vscodeOptions.storagePath ?? (await tmp.dir()).path
+        const userSettingsPath = path.join(storagePath, 'settings', 'User')
         const userSettings: Record<string, any> = {
             ...DEFAULT_VSCODE_SETTINGS,
             ...(this._vscodeOptions.userSettings || {})
@@ -113,8 +112,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
 
         customArgs.extensionDevelopmentPath = slash(this._vscodeOptions.extensionPath)
         customArgs.extensionTestsPath = slash(path.join(__dirname, 'proxy', 'cjs', 'entry.js'))
-        customArgs.userDataDir = slash(path.join(storagePath.path, 'settings'))
-        customArgs.extensionsDir = slash(path.join(storagePath.path, 'extensions'))
+        customArgs.userDataDir = slash(path.join(storagePath, 'settings'))
+        customArgs.extensionsDir = slash(path.join(storagePath, 'extensions'))
         customArgs.vscodeBinaryPath = this._vscodeOptions.binary as string
 
         log.info(`Setting up VSCode directory at ${userSettingsPath}`)
