@@ -512,7 +512,9 @@ describe('WDIO VSCode Service', () => {
             await browser.waitUntil(async () => (await treeViewSection.getVisibleItems()).length > 0)
 
             const visItems = await treeViewSection.getVisibleItems()
-            visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+            for (const visItem of visItems) {
+                expect(visItem).toBeInstanceOf(TreeItem)
+            }
             expect(visItems.length).toBe(2)
 
             expect(await Promise.all(visItems.map(
@@ -582,7 +584,9 @@ describe('WDIO VSCode Service', () => {
         it('should be able to iterate over the (default) tree items', async () => {
             if (treeViewSection !== undefined) {
                 const visItems = await treeViewSection.getVisibleItems()
-                visItems.forEach((visItem) => expect(visItem).toBeInstanceOf(TreeItem))
+                for (const visItem of visItems) {
+                    expect(visItem).toBeInstanceOf(TreeItem)
+                }
                 expect(visItems.length).toBeGreaterThanOrEqual(1) // at least README.md
 
                 /* gives a read ECONNRESET RequestError... often
