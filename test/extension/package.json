@@ -48,6 +48,11 @@
           "when": "view == testExtensionTreeview",
           "group": "inline"
         }
+      ],
+      "menuBar/edit/copy": [
+        {
+          "command": "test-extension.callme"
+        }
       ]
     }
   },

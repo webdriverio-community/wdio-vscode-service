@@ -170,10 +170,13 @@ export const ContextMenu = {
 }
 export const TitleBar = {
     elem: 'div[id="workbench.parts.titlebar"]',
-    itemConstructor: (label: string) => `.//div[@aria-label="${label}"]`,
+    topLevelItemConstructor: (label: string) => `.//div[@aria-label="${label}"]`,
+    overflowItemConstructor: (label: string) => `.//li[a/span/@aria-label="${label}"]`,
     itemElement: '.menubar-menu-button',
     itemLabel: 'aria-label',
-    title: '.window-title'
+    itemNesting: '.submenu-indicator',
+    title: '.window-title',
+    menubar: '.menubar'
 }
 export const WindowControls = {
     elem: '.window-controls-container',

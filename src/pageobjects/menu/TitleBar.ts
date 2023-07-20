@@ -1,4 +1,6 @@
-import { PageDecorator, IPageDecorator, VSCodeLocatorMap } from '../utils.js'
+import {
+    PageDecorator, IPageDecorator, VSCodeLocatorMap, sleep
+} from '../utils.js'
 import { WindowControls, ContextMenu } from '../index.js'
 import { Menu } from './Menu.js'
 import { MenuItem } from './MenuItem.js'
@@ -23,17 +25,13 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      * @returns Promise resolving to TitleBarItem object
      */
     async getItem (name: string): Promise<TitleBarItem | undefined> {
-        try {
-            const titleBar = new TitleBarItem(
-                this.locatorMap,
-                name,
-                this
-            )
-            await titleBar.wait()
-            return titleBar
-        } catch (err) {
-            return undefined
+        const all = await this.getItems()
+        for (const item of all) {
+            if (item.label === name) {
+                return item
+            }
         }
+        return undefined
     }
 
     /**
@@ -41,22 +39,56 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
      * @returns Promise resolving to array of TitleBarItem objects
      */
     async getItems (): Promise<TitleBarItem[]> {
-        const items: TitleBarItem[] = []
-        const elements = await this.itemElement$$
+        // can't search in this. because in web version the overflow menu is in activity bar
+        const menubar = await browser.$(this.locators.menubar)
+        if (!(await menubar.isExisting())) {
+            throw new Error(
+                'Menubar not found in TitleBar, this probably means you are using "native" Title Bar Style. '
+                + 'Title Items can only be found when using "custom" style.'
+            )
+        }
 
-        for (const element of elements) {
+        const items: TitleBarItem[] = []
+        for (const element of await menubar.$$(this.locators.itemElement)) {
             const isDisplayed = await element.isDisplayed()
             if (!isDisplayed) {
                 continue
             }
-
-            const item = new TitleBarItem(
-                this.locatorMap,
-                await element.getAttribute(this.locators.itemLabel),
-                this
-            )
-            await item.wait()
-            items.push(item)
+            const label = await element.getAttribute(this.locators.itemLabel)
+            if (
+                label === 'More' // electron
+                || label === 'Application Menu' // web
+            ) {
+                await element.click()
+                const overflow = await new ContextMenu(this.locatorMap).wait()
+                for (const overflowItem of await overflow.getItems()) {
+                    const item = new TitleBarItem(
+                        this.locatorMap,
+                        (this.locators.overflowItemConstructor as Function),
+                        async (self) => {
+                            await element.click() // make sure the overflow menu is open
+                            await self.elem.click()
+                        },
+                        await overflowItem.getLabel(),
+                        this
+                    )
+                    await item.wait()
+                    items.push(item)
+                }
+                await browser.keys('Escape')
+            } else {
+                const item = new TitleBarItem(
+                    this.locatorMap,
+                    (this.locators.topLevelItemConstructor as Function),
+                    async (self) => {
+                        await self.elem.click()
+                    },
+                    label,
+                    this
+                )
+                await item.wait()
+                items.push(item)
+            }
         }
         return items
     }
@@ -103,12 +135,12 @@ export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
+        ctor: Function,
+        private openMenu: (self: TitleBarItem) => Promise<void>,
         public label: string,
         public parentMenu: Menu<typeof TitleBarLocators>
     ) {
-        super(locators, (locators.TitleBar.itemConstructor as Function)(label) as string)
-        this.parentMenu = parentMenu
-        this.label = label
+        super(locators, ctor(label) as string)
     }
 
     async select () {
@@ -116,7 +148,8 @@ export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
         if (openMenus.length > 0 && await openMenus[0].isDisplayed()) {
             await browser.keys('Escape')
         }
-        await this.elem.click()
+        await this.openMenu(this)
+        await sleep(500)
 
         const menu = new ContextMenu(this.locatorMap, this.elem)
         await menu.wait()

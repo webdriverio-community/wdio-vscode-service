@@ -114,10 +114,13 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
     }
 
     async select () {
+        const nesting = await this.isNesting()
         await this.elem.click()
         await sleep(500)
-        if (await this.isNesting()) {
-            await new ContextMenu(this.locatorMap, this.elem).wait()
+        if (nesting) {
+            const menu = new ContextMenu(this.locatorMap, this.elem)
+            await menu.wait()
+            return menu
         }
         return undefined
     }
