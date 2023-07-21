@@ -10,8 +10,9 @@ import {
     PageDecorator, IPageDecorator, BasePage, BottomBarPanel,
     StatusBar, SettingsEditor, TextEditor, FindWidget, MarkerType,
     ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem,
-    DefaultTreeItem, ViewSection, TreeItem, sleep
+    DefaultTreeItem, ViewSection, TreeItem, sleep, TitleBar
 } from '../../dist/index.js'
+import { Workbench } from '../../dist/locators/1.37.0.js'
 
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
 
@@ -246,6 +247,63 @@ describe('WDIO VSCode Service', () => {
             const terminalView = await bottomBar.openTerminalView()
             const text = await terminalView.getText()
             expect(text).toContain(':wdio-vscode-service')
+        })
+    })
+
+    describe('titlebar', () => {
+        let titleBar: TitleBar
+
+        before(async () => {
+            const workbench = await browser.getWorkbench()
+            titleBar = workbench.getTitleBar()
+        })
+
+        skip('darwin')('can find all items', async () => {
+            const items = await titleBar.getItems()
+            expect(await items[0].getLabel()).toBe('File')
+            expect(await items[1].getLabel()).toBe('Edit')
+            expect(await items[items.length - 1].getLabel()).toBe('Help')
+        })
+
+        skip('darwin')('can select item by name', async () => {
+            const item = await titleBar.getItem('Help')
+            expect(await item?.getLabel()).toBe('Help')
+        })
+
+        // skipped because it changes editor content which breaks other tests
+        skipCI('can click top level item', async () => {
+            const workbench = await browser.getWorkbench()
+            const itemHelp = await titleBar.getItem('Help')
+            const menuHelp = await itemHelp?.select()
+            const itemWelcome = await menuHelp?.getItem('Welcome')
+            await itemWelcome?.select()
+
+            const activeTab = await workbench.getEditorView().getActiveTab()
+            expect(await activeTab?.getTitle()).toEqual('Welcome')
+        })
+
+        skip('darwin')('can click nested item', async () => {
+            const workbench = await browser.getWorkbench()
+
+            const itemEdit = await titleBar.getItem('Edit')
+            const menuEdit = await itemEdit?.select()
+            const itemCopyAs = await menuEdit?.getItem('Copy As')
+            const menuCopyAs = await itemCopyAs?.select()
+            const itemCallMe = await menuCopyAs?.getItem('Call Me!')
+            await itemCallMe?.select()
+
+            await browser.waitUntil(async () => {
+                const notifs = await workbench.getNotifications()
+                for (const n of notifs) {
+                    if ((await n.getMessage()).includes('I got called!')) {
+                        await n.dismiss()
+                        return true
+                    }
+                }
+                return false
+            }, {
+                timeoutMsg: 'Could not find notification as reaction to action item click'
+            })
         })
     })
 
