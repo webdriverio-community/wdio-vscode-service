@@ -14,10 +14,11 @@ export async function run (vscode: typeof VSCodeImport): Promise<void> {
     ws.on('open', () => console.log('WebSocket proxy connected'))
     ws.on('message', async (data) => {
         try {
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             const message = data.toString()
             console.log(`Received remote command: ${message}`)
 
-            const { id, fn, params } = JSON.parse(data.toString()) as RemoteCommand
+            const { id, fn, params } = JSON.parse(message) as RemoteCommand
 
             try {
                 // eslint-disable-next-line no-eval, @typescript-eslint/no-unsafe-call

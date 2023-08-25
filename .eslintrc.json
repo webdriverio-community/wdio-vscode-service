@@ -57,7 +57,8 @@
     "@typescript-eslint/no-this-alias": 0,
     "@typescript-eslint/no-namespace": 0,
     "@typescript-eslint/naming-convention": 0,
-    "@typescript-eslint/no-floating-promises": 0
+    "@typescript-eslint/no-floating-promises": 0,
+    "@typescript-eslint/no-unsafe-declaration-merging": 0
   },
   "parserOptions": {
     "ecmaVersion": 2021,

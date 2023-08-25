@@ -42,7 +42,8 @@ const capabilities: VSCodeCapabilities = {
             'terminal.integrated.defaultProfile.linux': 'custom-bash',
             'terminal.integrated.automationProfile.osx': {
                 path: '/bin/sh'
-            }
+            },
+            'terminal.integrated.defaultProfile.osx': 'bash'
         }
         // verboseLogging: true
     }

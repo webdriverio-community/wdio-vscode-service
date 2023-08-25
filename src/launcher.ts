@@ -241,7 +241,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
      *                              or a concrete version e.g. 1.66.0
      * @returns "main" if `desiredReleaseChannel` is "insiders" otherwise a concrete VSCode version
      */
-    private async _fetchVSCodeVersion (desiredReleaseChannel?: string | string) {
+    private async _fetchVSCodeVersion (desiredReleaseChannel?: string) {
         if (desiredReleaseChannel === 'insiders') {
             return 'main'
         }
@@ -249,7 +249,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
         try {
             log.info(`Fetch releases from ${VSCODE_RELEASES}`)
             const { body: versions } = await request(VSCODE_RELEASES, {})
-            const availableVersions: string[] = await versions.json()
+            const availableVersions: string[] = await versions.json() as string[]
 
             if (desiredReleaseChannel) {
                 /**
@@ -282,7 +282,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
     private async _fetchChromedriverVersion (vscodeVersion: string) {
         try {
             const { body } = await request(format(VSCODE_MANIFEST_URL, vscodeVersion), {})
-            const manifest: Manifest = await body.json()
+            const manifest = await body.json() as Manifest
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
 
             if (!chromium) {
@@ -311,7 +311,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
         try {
             const { body } = await request(format(VSCODE_WEB_STANDALONE, vscodeVersion), {})
-            const info: WebStandaloneResponse = await body.json()
+            const info = await body.json() as WebStandaloneResponse
             const folder = path.join(this._cachePath, `vscode-web-${vscodeVersion}-${info.version}`)
 
             if (!(await directoryExists(folder))) {

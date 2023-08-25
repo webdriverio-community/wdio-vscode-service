@@ -89,6 +89,7 @@ export interface VSCodeOptions {
      *
      * @default `stable`
      */
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     version?: 'insiders' | 'stable' | string
     /**
      * Define the directory to the extension you want to test

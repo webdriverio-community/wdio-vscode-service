@@ -12,7 +12,6 @@ import {
     ProblemsView, EditorView, WebView, SideBarView, CustomTreeItem,
     DefaultTreeItem, ViewSection, TreeItem, sleep, TitleBar
 } from '../../dist/index.js'
-import { Workbench } from '../../dist/locators/1.37.0.js'
 
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
 

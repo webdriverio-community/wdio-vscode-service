@@ -4,6 +4,7 @@ import {
 } from '../utils.js'
 import { SideBarView as SideBarViewLocators } from '../../locators/1.73.0.js'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface SideBarView<T> extends IPageDecorator<typeof SideBarViewLocators> { }
 /**
  * Page object for the side bar view

@@ -11,7 +11,7 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      */
     public locatorKey = 'WebView' as const
 
-    get activeFrame () {
+    get activeFrame (): ChainablePromiseElement<WebdriverIO.Element> {
         return $(this._locators.WebView.activeFrame as string)
     }
 
