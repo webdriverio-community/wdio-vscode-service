@@ -16,7 +16,7 @@ jobs:
         vscodeVersion:
           - insiders
           - stable
-          - 1.78.0
+          - 1.80.0
           - web
     runs-on: ${{ matrix.os }}
 
