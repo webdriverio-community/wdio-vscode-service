@@ -91,7 +91,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
     }
 
     /**
-     * Clear the inpur field
+     * Clear the input field
      * @returns Promise resolving when the field is cleared
      */
     async clear (): Promise<void> {
