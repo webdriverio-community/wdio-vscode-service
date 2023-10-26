@@ -46,7 +46,7 @@ type Versions = { [desiredVersion: string]: BundeInformation | undefined }
 
 // set up proxy if environment variable HTTPS_PROXY or https_proxy is set
 let downloadAgentConfiguration: Partial<DownloadOptions> | undefined
-const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy
+const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy || process.env.npm_config_proxy
 if (httpsProxy) {
     const proxyUrl = new URL(httpsProxy)
     const token = proxyUrl.username && proxyUrl.password
