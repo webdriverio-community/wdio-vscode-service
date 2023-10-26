@@ -5,7 +5,7 @@ import { format } from 'node:util'
 
 import downloadBundle from 'download'
 import logger from '@wdio/logger'
-import { request } from 'undici'
+import { setGlobalDispatcher, request, ProxyAgent } from 'undici'
 import { download } from '@vscode/test-electron'
 import { SevereServiceError } from 'webdriverio'
 import { launcher as ChromedriverServiceLauncher } from 'wdio-chromedriver-service'
@@ -42,6 +42,17 @@ interface Registration {
     }
 }
 type Versions = { [desiredVersion: string]: BundeInformation | undefined }
+
+// set up proxy if environment variable HTTPS_PROXY or https_proxy is set
+const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy
+if (httpsProxy) {
+    const proxyUrl = new URL(httpsProxy)
+    const token = proxyUrl.username && proxyUrl.password
+        ? `Basic ${btoa(`${proxyUrl.username}:${proxyUrl.password}`)}`
+        : undefined
+
+    setGlobalDispatcher(new ProxyAgent({ uri: proxyUrl.protocol + proxyUrl.host, token }))
+}
 
 const VERSIONS_TXT = 'versions.txt'
 const log = logger('wdio-vscode-service/launcher')
