@@ -56,6 +56,10 @@ if (httpsProxy) {
     setGlobalDispatcher(new ProxyAgent({ uri: proxyUrl.protocol + proxyUrl.host, token }))
     downloadAgentConfiguration = { agent: new HttpsProxyAgent({ proxy: proxyUrl }) }
 }
+// use HTTPS_PROXY or https_proxy for @vscode/test-electron if not already set
+if (httpsProxy !== process.env.npm_config_proxy) {
+    process.env.npm_config_proxy = httpsProxy
+}
 
 const VERSIONS_TXT = 'versions.txt'
 const log = logger('wdio-vscode-service/launcher')
