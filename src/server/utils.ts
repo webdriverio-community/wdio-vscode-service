@@ -1,10 +1,9 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import {URI} from "vscode-uri";
+import { URI } from 'vscode-uri'
 
 import { fsProviderExtensionPrefix, fsProviderFolderUri } from './constants.js'
-
 
 export interface IConfig {
     readonly extensionPaths: string[] | undefined
