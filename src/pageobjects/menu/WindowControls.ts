@@ -1,10 +1,13 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
+import logger from '@wdio/logger'
 import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap
 } from '../utils.js'
 import { TitleBar } from '../../index.js'
 import { WindowControls as WindowControlsLocators } from '../../locators/1.73.0.js'
+
+const log = logger('wdio-vscode-service')
 
 export interface WindowControls extends IPageDecorator<typeof WindowControlsLocators> {}
 /**
@@ -44,7 +47,7 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
         try {
             await this.maximize$.click()
         } catch (err) {
-            console.log('Window is already maximized')
+            log.error('Window is already maximized', err)
         }
     }
 
@@ -56,7 +59,7 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
         try {
             await this.restore$.click()
         } catch (err) {
-            console.log('Window is not maximized')
+            log.error('Window is not maximized', err)
         }
     }
 

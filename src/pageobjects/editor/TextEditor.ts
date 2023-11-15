@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url'
 import clipboard from 'clipboardy'
 import { Key, ChainablePromiseElement } from 'webdriverio'
 
+import logger from '@wdio/logger'
 import { ContentAssist, ContextMenu, InputBox } from '../index.js'
 import { StatusBar } from '../statusBar/StatusBar.js'
 import { Editor, EditorLocators } from './Editor.js'
@@ -14,6 +15,8 @@ import {
     FindWidget as FindWidgetLocators
 } from '../../locators/1.73.0.js'
 import { CMD_KEY } from '../../constants.js'
+
+const log = logger('wdio-vscode-service')
 
 export interface TextEditor extends IPageDecorator<EditorLocators> {}
 /**
@@ -370,7 +373,7 @@ export class TextEditor extends Editor<EditorLocators> {
         try {
             await menu.select('Format Document')
         } catch (err) {
-            console.log('Warn: Format Document not available for selected language')
+            log.error('Warn: Format Document not available for selected language')
             if (await menu.elem.isDisplayed()) {
                 await menu.close()
             }
