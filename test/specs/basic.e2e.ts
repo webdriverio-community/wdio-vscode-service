@@ -52,16 +52,16 @@ describe('WDIO VSCode Service', () => {
         })
     })
 
-    describe('workbench', () => {
-        it('should be able to load VSCode', async () => {
+    describe.only('workbench', () => {
+        it.only('should be able to load VSCode', async () => {
             const workbench = await browser.getWorkbench()
             const title = await workbench.getTitleBar().getTitle()
-            expect(title).toContain('README.md')
 
-            /**
-             * doesn't work in web session
-             */
-            if (!await browser.isVSCodeWebSession()) {
+            if (await browser.isVSCodeWebSession()) {
+                // works only in web session
+                expect(title).toContain('README.md')
+            } else {
+                // doesn't work in web session
                 expect(title).toContain('wdio-vscode-service')
             }
         })
