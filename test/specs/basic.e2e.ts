@@ -15,11 +15,17 @@ import {
 
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
 
-function skip (param: string | string[] = process.platform) {
-    const platforms = Array.isArray(param) ? param : [param]
-    return platforms.includes(process.platform) ? it.skip : it
+type ToSkip = NodeJS.Platform | 'CI'
+
+/**
+ * Skips tests on certain platforms or CI
+ * @param param platforms to skip the test on or 'CI' to skip on CI
+ * @returns it or it.skip function
+ */
+function skip (param: ToSkip | ToSkip[] = process.platform) {
+    const toSkip = Array.isArray(param) ? param : [param]
+    return toSkip.includes(process.platform) || (toSkip.includes('CI') && process.env.CI) ? it.skip : it
 }
-const skipCI = process.env.CI ? it.skip : it
 
 const locators = {
     marquee: {
@@ -52,8 +58,8 @@ describe('WDIO VSCode Service', () => {
         })
     })
 
-    describe.only('workbench', () => {
-        it.only('should be able to load VSCode', async () => {
+    describe('workbench', () => {
+        it('should be able to load VSCode', async () => {
             const workbench = await browser.getWorkbench()
             const title = await workbench.getTitleBar().getTitle()
 
@@ -242,7 +248,7 @@ describe('WDIO VSCode Service', () => {
             expect(await outputView.getText()).toEqual(['Hello World!'])
         })
 
-        skipCI('can read from terminal @skipWeb', async () => {
+        skip('CI')('can read from terminal @skipWeb', async () => {
             const terminalView = await bottomBar.openTerminalView()
             const text = await terminalView.getText()
             expect(text).toContain(':wdio-vscode-service')
@@ -270,7 +276,7 @@ describe('WDIO VSCode Service', () => {
         })
 
         // skipped because it changes editor content which breaks other tests
-        skipCI('can click top level item', async () => {
+        skip(['darwin', 'CI'])('can click top level item', async () => {
             const workbench = await browser.getWorkbench()
             const itemHelp = await titleBar.getItem('Help')
             const menuHelp = await itemHelp?.select()
