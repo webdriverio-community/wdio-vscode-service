@@ -290,7 +290,7 @@ describe('WDIO VSCode Service', () => {
         /**
          * started to fail in web environment with VS Code v1.83.0
          */
-        skip('darwin')('can click nested item @skipWeb', async () => {
+        it.skip('can click nested item', async () => {
             const workbench = await browser.getWorkbench()
 
             const itemEdit = await titleBar.getItem('Edit')
@@ -355,7 +355,7 @@ describe('WDIO VSCode Service', () => {
     /**
      * started to fail in web environment with VS Code v1.83.0
      */
-    describe('TextEditor @skipWeb', () => {
+    describe.skip('TextEditor', () => {
         let tab: TextEditor
         before(async () => {
             const workbench = await browser.getWorkbench()
