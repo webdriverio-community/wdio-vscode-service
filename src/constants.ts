@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { Key } from 'webdriverio'
-import type { ArgsParams, VSCodeProxyOptions } from './types'
+import type { ArgsParams, VSCodeProxyOptions } from './types.js'
 
 export const VSCODE_CAPABILITY_KEY = 'wdio:vscodeOptions' as const
 export const DEFAULT_CHANNEL = 'stable'
@@ -32,7 +32,6 @@ export const VSCODE_RELEASES = 'https://update.code.visualstudio.com/api/release
 export const VSCODE_MANIFEST_URL = 'https://raw.githubusercontent.com/microsoft/vscode/%s/cgmanifest.json'
 export const VSCODE_WEB_STANDALONE = 'https://update.code.visualstudio.com/api/update/web-standalone/%s/latest'
 export const CHROMEDRIVER_RELEASES = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE_%s'
-export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleapis.com/%s/chromedriver_%s.zip'
 
 export const DEFAULT_VSCODE_WEB_HOSTNAME = 'localhost'
 export const DEFAULT_VSCODE_WEB_PORT = 3000

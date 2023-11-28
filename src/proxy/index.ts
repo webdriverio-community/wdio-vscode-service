@@ -4,7 +4,7 @@ import type VSCodeImport from 'vscode'
 import WebSocket from 'ws'
 
 import { SETTINGS_KEY } from '../constants.js'
-import type { RemoteCommand, RemoteResponse } from '../types'
+import type { RemoteCommand, RemoteResponse } from '../types.js'
 
 export async function run (vscode: typeof VSCodeImport): Promise<void> {
     const config = vscode.workspace.getConfiguration(SETTINGS_KEY)

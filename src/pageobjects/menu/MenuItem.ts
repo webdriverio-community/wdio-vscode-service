@@ -1,5 +1,5 @@
 import { BasePage } from '../utils.js'
-import type { Menu } from './Menu'
+import type { Menu } from './Menu.js'
 
 /**
  * Abstract element representing a menu item

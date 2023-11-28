@@ -1,6 +1,6 @@
 import { ElementWithContextMenu } from '../utils.js'
 import { ActivityBar as ActivityBarLocators } from '../../locators/1.73.0.js'
-import type { ContextMenu } from '../menu/ContextMenu'
+import type { ContextMenu } from '../menu/ContextMenu.js'
 
 /**
  * Page object representing the global action controls on the bottom of the action bar.

@@ -1,6 +1,6 @@
 import VSCodeServiceLauncher from './launcher.js'
 import VSCodeWorkerService from './service.js'
-import type { WDIOVSCodeServiceOptions as WDIOVSCodeServiceOptionsExtension } from './types'
+import type { WDIOVSCodeServiceOptions as WDIOVSCodeServiceOptionsExtension } from './types.js'
 
 export default VSCodeWorkerService
 export const launcher = VSCodeServiceLauncher

@@ -128,7 +128,7 @@ export class ExtensionsViewSection extends ViewSection {
     }
 
     private getSectionForCategory (title: string): string {
-        const category = title.split(' ')[0].toLowerCase()
+        const category = title.split(' ')[0].toLowerCase() as ExtensionCategory
         switch (category) {
             case ExtensionCategory.Disabled:
                 return 'Disabled'

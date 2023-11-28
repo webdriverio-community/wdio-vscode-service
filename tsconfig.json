@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "ESNext",
+    "module": "node16",
     "baseUrl": "src",
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "esModuleInterop": true,
     "strict": true,
     "declaration": true,
