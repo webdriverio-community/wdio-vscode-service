@@ -13,12 +13,15 @@ export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
     * @returns Promise resolving to array of strings - channel names
     */
     async getChannelNames (): Promise<string[]> {
+        // stabilize view otherwise we might run into stale element issues
+        // eslint-disable-next-line wdio/no-pause
+        await browser.pause(500)
         const select = await this.parent.$(this.locatorMap.BottomBarViews.outputChannels as string)
         await select.click()
 
-        // stabelise view otherwise we might run into stale element issues
+        // stabilize view otherwise we might run into stale element issues
         // eslint-disable-next-line wdio/no-pause
-        await browser.pause(100)
+        await browser.pause(500)
         const channels = await this.parent.$$(`${this.locatorMap.BottomBarViews.outputChannels} option`)
 
         const names = []
