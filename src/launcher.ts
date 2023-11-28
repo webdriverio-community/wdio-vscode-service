@@ -3,13 +3,14 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { format } from 'node:util'
 
-import downloadBundle from 'download'
+import downloadBundle, { DownloadOptions } from 'download'
 import logger from '@wdio/logger'
-import { request } from 'undici'
+import { setGlobalDispatcher, request, ProxyAgent } from 'undici'
 import { download } from '@vscode/test-electron'
 import { SevereServiceError } from 'webdriverio'
 import { launcher as ChromedriverServiceLauncher } from 'wdio-chromedriver-service'
 import type { Options, Capabilities } from '@wdio/types'
+import { HttpsProxyAgent } from 'hpagent'
 
 import startServer from './server/index.js'
 import {
@@ -42,6 +43,23 @@ interface Registration {
     }
 }
 type Versions = { [desiredVersion: string]: BundeInformation | undefined }
+
+// set up proxy if environment variable HTTPS_PROXY or https_proxy is set
+let downloadAgentConfiguration: Partial<DownloadOptions> | undefined
+const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy || process.env.npm_config_proxy
+if (httpsProxy) {
+    const proxyUrl = new URL(httpsProxy)
+    const token = proxyUrl.username && proxyUrl.password
+        ? `Basic ${btoa(`${proxyUrl.username}:${proxyUrl.password}`)}`
+        : undefined
+
+    setGlobalDispatcher(new ProxyAgent({ uri: proxyUrl.protocol + proxyUrl.host, token }))
+    downloadAgentConfiguration = { agent: new HttpsProxyAgent({ proxy: proxyUrl }) }
+}
+// use HTTPS_PROXY or https_proxy for @vscode/test-electron if not already set
+if (httpsProxy !== process.env.npm_config_proxy) {
+    process.env.npm_config_proxy = httpsProxy
+}
 
 const VERSIONS_TXT = 'versions.txt'
 const log = logger('wdio-vscode-service/launcher')
@@ -200,7 +218,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             await downloadBundle(
                 format(CHROMEDRIVER_DOWNLOAD_PATH, chromedriverVersion, validatePlatform(chromedriverVersion)),
                 this._cachePath,
-                { extract: true, strip: 1 }
+                { extract: true, strip: 1, ...downloadAgentConfiguration }
             )
 
             const ext = os.platform().startsWith('win') ? '.exe' : ''
@@ -315,7 +333,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             const folder = path.join(this._cachePath, `vscode-web-${vscodeVersion}-${info.version}`)
 
             if (!(await directoryExists(folder))) {
-                await downloadBundle(info.url, folder, { extract: true, strip: 1 })
+                await downloadBundle(info.url, folder, { extract: true, strip: 1, ...downloadAgentConfiguration })
             }
 
             return { path: folder, vscodeVersion, version: info.version }
