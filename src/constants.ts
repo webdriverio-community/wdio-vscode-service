@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { Key } from 'webdriverio'
-import type { ArgsParams, VSCodeProxyOptions } from './types'
+import type { ArgsParams, VSCodeProxyOptions } from './types.js'
 
 export const VSCODE_CAPABILITY_KEY = 'wdio:vscodeOptions' as const
 export const DEFAULT_CHANNEL = 'stable'

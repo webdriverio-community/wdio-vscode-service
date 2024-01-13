@@ -5,8 +5,8 @@ import child_process from 'node:child_process'
 import type { Dirent, Stats } from 'node:fs'
 
 import { VSCODE_CAPABILITY_KEY } from './constants.js'
-import type { VSCodeLocatorMap } from './pageobjects/utils'
-import type { VSCodeCapabilities } from './types'
+import type { VSCodeLocatorMap } from './pageobjects/utils.js'
+import type { VSCodeCapabilities } from './types.js'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 

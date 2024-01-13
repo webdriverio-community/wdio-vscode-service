@@ -1,4 +1,4 @@
-import type { TemplateOptions } from '../types'
+import type { TemplateOptions } from '../types.js'
 
 export default function getWorkbench (opts: TemplateOptions) {
     return /* html */`

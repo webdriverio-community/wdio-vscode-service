@@ -25,7 +25,7 @@ import {
 import type {
     ServiceOptions, ServiceCapability, VSCodeCapabilities, WebStandaloneResponse,
     Bundle
-} from './types'
+} from './types.js'
 
 interface BundeInformation {
     chromedriver: string
@@ -54,6 +54,7 @@ if (httpsProxy) {
         : undefined
 
     setGlobalDispatcher(new ProxyAgent({ uri: proxyUrl.protocol + proxyUrl.host, token }))
+    // @ts-expect-error downloadAgentConfiguration is not part of the official API
     downloadAgentConfiguration = { agent: new HttpsProxyAgent({ proxy: proxyUrl }) }
 }
 // use HTTPS_PROXY or https_proxy for @vscode/test-electron if not already set
@@ -69,7 +70,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
 
     constructor (
         private _options: ServiceOptions,
-        private _capabilities: Capabilities.Capabilities,
+        private _capabilities: WebdriverIO.Capabilities,
         config: Options.Testrunner
     ) {
         super(_options, _capabilities, config)
@@ -371,7 +372,7 @@ export default class VSCodeServiceLauncher extends ChromedriverServiceLauncher {
             throw new SevereServiceError('This service deson\'t support multiremote yet')
         }
 
-        for (const cap of this._capabilities as any as Capabilities.Capabilities[]) {
+        for (const cap of this._capabilities as any as WebdriverIO.Capabilities[]) {
             if (isChrome(cap)) {
                 Object.assign(cap, options)
             }

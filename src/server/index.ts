@@ -14,7 +14,7 @@ import { getWorkbenchOptions } from './utils.js'
 import { getFileType } from '../utils.js'
 import { fsProviderExtensionPrefix } from './constants.js'
 import { DEFAULT_VSCODE_WEB_PORT, DEFAULT_CHANNEL, DEFAULT_VSCODE_WEB_HOSTNAME } from '../constants.js'
-import type { VSCodeOptions, Bundle } from '../types'
+import type { VSCodeOptions, Bundle } from '../types.js'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const log = logger('wdio-vscode-service/server')

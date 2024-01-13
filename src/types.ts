@@ -1,6 +1,5 @@
 import type { ServiceOptions as ChromedriverServiceOptions } from 'wdio-chromedriver-service'
-import type { Capabilities } from '@wdio/types'
-import type { VSCODE_CAPABILITY_KEY } from './constants'
+import type { VSCODE_CAPABILITY_KEY } from './constants.js'
 
 /**
  * extend WebdriverIO capabilities object
@@ -9,7 +8,7 @@ export interface WDIOVSCodeServiceOptions {
     [VSCODE_CAPABILITY_KEY]?: VSCodeOptions
 }
 
-export interface VSCodeCapabilities extends Capabilities.Capabilities, WDIOVSCodeServiceOptions {}
+export interface VSCodeCapabilities extends WebdriverIO.Capabilities, WDIOVSCodeServiceOptions {}
 
 /**
  * Settings to handle VSCode Proxy API

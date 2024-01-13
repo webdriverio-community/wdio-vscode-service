@@ -20,7 +20,7 @@ import {
 import type {
     VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
     PendingMessageResolver, VSCodeProxyOptions, VSCodeOptions
-} from './types'
+} from './types.js'
 
 const log = logger('wdio-vscode-service')
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
