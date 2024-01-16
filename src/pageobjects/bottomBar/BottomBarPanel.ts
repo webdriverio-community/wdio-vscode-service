@@ -64,7 +64,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openProblemsView (): Promise<ProblemsView> {
         await this.openTab(this.locators.problemsTab)
-        return new ProblemsView(this.locatorMap, this).wait()
+        return new ProblemsView(this.locatorMap, this).poll()
     }
 
     /**
@@ -73,7 +73,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openOutputView (): Promise<OutputView> {
         await this.openTab(this.locators.outputTab)
-        return new OutputView(this.locatorMap, this).wait()
+        return new OutputView(this.locatorMap, this).poll()
     }
 
     /**
@@ -82,7 +82,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openDebugConsoleView (): Promise<DebugConsoleView> {
         await this.openTab(this.locators.debugTab)
-        return new DebugConsoleView(this.locatorMap, this).wait()
+        return new DebugConsoleView(this.locatorMap, this).poll()
     }
 
     /**
@@ -91,7 +91,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
      */
     async openTerminalView (): Promise<TerminalView> {
         await this.openTab(this.locators.terminalTab)
-        return new TerminalView(this.locatorMap, this).wait()
+        return new TerminalView(this.locatorMap, this).poll()
     }
 
     /**
