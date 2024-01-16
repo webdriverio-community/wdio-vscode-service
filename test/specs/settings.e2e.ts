@@ -8,12 +8,11 @@ import { browser, expect } from '@wdio/globals'
 import {
     SettingsEditor
 } from '../../dist/index.js'
-import { skip } from './utils.js'
 
 describe('settings @skipWeb', () => {
     let settings: SettingsEditor
 
-    skip('linux')('openSettings', async () => {
+    it('openSettings', async () => {
         const workbench = await browser.getWorkbench()
         settings = await workbench.openSettings()
         const setting = await settings.findSetting('Cursor Style', 'Editor')

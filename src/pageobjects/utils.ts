@@ -173,6 +173,17 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
         await this.elem.waitForDisplayed({ timeout })
         return this
     }
+
+    /**
+     * Poll for the element to become visible
+     * @param timeout custom timeout for the wait
+     * @param interval custom interval to control polling
+     * @returns thenable self reference
+     */
+    async poll (timeout = 10000, interval = 2000): Promise<this> {
+        await this.elem.waitForDisplayed({ timeout, interval })
+        return this
+    }
 }
 
 /**

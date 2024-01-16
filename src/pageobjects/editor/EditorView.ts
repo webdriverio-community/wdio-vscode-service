@@ -127,13 +127,11 @@ export class EditorView extends BasePage<typeof EditorViewLocators> {
      * @returns promise resolving to an array of EditorGroup objects
      */
     async getEditorGroups (): Promise<EditorGroup[]> {
-        const elements = await this.editorGroup$$
-        const groups = await Promise.all(
-            elements.map(async (element) => (
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new EditorGroup(this.locatorMap, element as any, this).wait()
-            ))
-        )
+        const groups: EditorGroup[] = []
+        for await (const elements of this.editorGroup$$) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            groups.push(await (new EditorGroup(this.locatorMap, elements as any, this).poll()))
+        }
 
         // sort the groups by x coordinates, so the leftmost is always at index 0
         for (let i = 0; i < groups.length - 1; i += 1) {
