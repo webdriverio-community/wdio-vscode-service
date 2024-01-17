@@ -172,7 +172,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
         await this.executeCommand('Preferences: Open User Settings')
         await new EditorView(this.locatorMap).openEditor('Settings')
         await this.elem.$(this.locatorMap.Editor.elem as string).waitForExist()
-        await sleep(500)
+        await sleep(1500)
         return new SettingsEditor(this.locatorMap)
     }
 
