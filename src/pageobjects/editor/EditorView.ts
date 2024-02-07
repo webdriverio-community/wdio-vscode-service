@@ -301,13 +301,11 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
      * @returns promise resolving to EditorTab list
      */
     async getOpenTabs (): Promise<EditorTab[]> {
-        const tabs = await this.tab$$
-        return Promise.all(
-            tabs.map(async (tab) => (
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                new EditorTab(this.locatorMap, tab as any, this.view).wait()
-            ))
-        )
+        const tabs = this.tab$$
+        return tabs.map(async (tab) => (
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            new EditorTab(this.locatorMap, tab as any, this.view).wait()
+        ))
     }
 
     /**
