@@ -12,16 +12,16 @@ Tested on:
 
 > WebdriverIO service for testing VSCode extensions.
 
-This WebdriverIO service allows you to seamlessly test your VSCode extensions from end to end in the VSCode Desktop IDE or as web extension. You only need to provide a path to your extension and the service does the rest by:
+This WebdriverIO service allows you to seamlessly test your VSCode extensions from end to end in the VSCode Desktop IDE or as a web extension. You only need to provide a path to your extension and the service does the rest by:
 
 - 🏗️ Installing VSCode (either `stable`, `insiders` or a specified version)
-- ⬇️ Downloading Chromedriver specific to given VSCode version
+- ⬇️ Downloading Chromedriver specific to a given VSCode version
 - 🚀 Enables you to access the VSCode API from your tests
 - 🖥️ Starting VSCode with custom user settings (including support for VSCode on Ubuntu, MacOS and Windows)
 - 🌐 Or serves VSCode from a server to be accessed by any browser for testing [web extensions](https://code.visualstudio.com/api/extension-guides/web-extensions)
 - 📔 Bootstrapping page objects with locators matching your VSCode version
 
-This project was highly inspired by the [vscode-extension-tester](https://www.npmjs.com/package/vscode-extension-tester) project which is based on Selenium. This package takes the idea and adapts it for WebdriverIO.
+This project was highly inspired by the [vscode-extension-tester](https://www.npmjs.com/package/vscode-extension-tester) project which is based on Selenium. This package takes the idea and adapts it to WebdriverIO.
 
 ## Installation
 
@@ -31,17 +31,17 @@ To initiate a new WebdriverIO project, run:
 npm create wdio ./
 ```
 
-An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed. Then make sure to select `chromedriver` and `vscode` within the list of services:
+An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed. Then make sure to select `vscode` within the list of services:
 
 ![Install Demo](https://raw.githubusercontent.com/webdriverio-community/wdio-vscode-service/main/.github/assets/demo.gif "Install Demo")
 
-__Note:__ remove `chromedriver` from the list of services in the generated `wdio.conf.ts` afterwards. See also configuration example below.
+__Note:__ remove `chromedriver` from the list of services in the generated `wdio.conf.ts` afterward. See also the configuration example below.
 
 For more information on how to install `WebdriverIO`, please check the [project docs](https://webdriver.io/docs/gettingstarted).
 
 ## Example Configuration
 
-To use the service you need to add `vscode` to your list of services, optionally followed by a configuration object. This will make WebdriverIO download given VSCode binaries and appropiate Chromedriver version:
+To use the service you need to add `vscode` to your list of services, optionally followed by a configuration object. This will make WebdriverIO download given VSCode binaries and appropriate Chromedriver version:
 
 ```js
 // wdio.conf.ts
@@ -68,7 +68,7 @@ export const config = {
 };
 ```
 
-If you define `wdio:vscodeOptions` with any other `browserName` but `vscode`, e.g. `chrome`, the service will serve the extension as web extension. If you test on Chrome no additional driver service is required, e.g.:
+If you define `wdio:vscodeOptions` with any other `browserName` but `vscode`, e.g. `chrome`, the service will serve the extension as a web extension. If you test on Chrome no additional driver service is required, e.g.:
 
 ```js
 // wdio.conf.ts
@@ -125,7 +125,7 @@ describe('WDIO VSCode Service', () => {
 
 ### Accessing VSCode APIs
 
-If you like to execute certain automation through the [VSCode API](https://code.visualstudio.com/api/references/vscode-api) you can do that by running remote commands via the custom `executeWorkbench` command. This command allows to remote execute code from your test inside the VSCode environment and enables to access the VSCode API. You can pass arbitrary paramaters into the function which will then be propagated into the function. The `vscode` object will be always passed in as first argument following the outer function parameters. Note that you can not access variables outside of the function scoped as the callback is executed remotely. Here is an example:
+If you like to execute certain automation through the [VSCode API](https://code.visualstudio.com/api/references/vscode-api) you can do that by running remote commands via the custom `executeWorkbench` command. This command allows you to remotely execute code from your test inside the VSCode environment and enables you to access the VSCode API. You can pass arbitrary parameters into the function which will then be propagated into the function. The `vscode` object will be always passed in as the first argument following the outer function parameters. Note that you can not access variables outside of the function scope as the callback is executed remotely. Here is an example:
 
 ```ts
 const workbench = await browser.getWorkbench()
@@ -137,19 +137,19 @@ const notifs = await workbench.getNotifications()
 console.log(await notifs[0].getMessage()) // outputs: "I am an API call!"
 ```
 
-For the full page object documentation, check out the [docs](https://webdriverio-community.github.io/wdio-vscode-service/modules.html). You can find various usage examples in this [projects test suite](https://github.com/webdriverio-community/wdio-vscode-service/blob/main/test/specs/basic.e2e.ts).
+For the full page object documentation, check out the [docs](https://webdriverio-community.github.io/wdio-vscode-service/modules.html). You can find various usage examples in this [project's test suite](https://github.com/webdriverio-community/wdio-vscode-service/blob/main/test/specs/basic.e2e.ts).
 
 ## Configuration
 
-Through service configuration you can manage the VSCode version as well as user settings for VSCode:
+Through service configuration, you can manage the VSCode version as well as user settings for VSCode:
 
 ### Service Options
 
-Service options are options needed for the service to setup the test environment. They are a superset of the [Chromedriver options](https://webdriver.io/docs/wdio-chromedriver-service#options) which can be applied for this service as well.
+Service options are options needed for the service to set up the test environment. They are a superset of the [Chromedriver options](https://webdriver.io/docs/wdio-chromedriver-service#options) which can be applied for this service as well.
 
 #### `cachePath`
 
-Define a cache path to avoid re-downloading all bundles. This is useful for CI/CD to avoid re-downloading VSCode and Chromedriver for every testrun.
+Define a cache path to avoid re-downloading VS Code bundles. This is useful for CI/CD to avoid re-downloading VSCode and Chromedriver for every test run.
 
 Type: `string`<br />
 Default: `process.cwd()`
@@ -160,7 +160,7 @@ In order to run tests through VSCode you have to define `vscode` as `browserName
 
 #### `binary`
 
-Path to a local installed VSCode installation. If option is not provided the service will download VSCode based on given `browserVersion` (or `stable` if not given).
+Path to a locally installed VSCode installation. If the option is not provided the service will download VSCode based on the given `browserVersion` (or `stable` if not given).
 
 Type: `string`
 
@@ -201,7 +201,7 @@ Type: `string`
 
 #### `vscodeArgs`
 
-Additional start-up arguments as object, e.g.
+Additional start-up arguments as an object, e.g.
 
 ```ts
 vscodeArgs: { fooBar: true, 'bar-foo': '/foobar' }
@@ -218,7 +218,7 @@ Default: see [`constants.ts#L5-L14`](https://github.com/webdriverio-community/wd
 
 #### `verboseLogging`
 
-If set to true, service logs VSCode output from the extension host and console API.
+If set to true, the service logs VSCode output from the extension host and console API.
 
 Type: `boolean`<br />
 Default: `false`
@@ -255,7 +255,7 @@ Default:
 
 ## Create Your Own PageObjects
 
-You can re-use the components used in this service for your own webview page objects. For that first create a file that defines all your selectors, e.g.:
+You can reuse the components used in this service for your own review page objects. For that first create a file that defines all your selectors, e.g.:
 
 ```ts
 // e.g. in /test/pageobjects/locators.ts
@@ -267,7 +267,7 @@ export const componentA = {
 }
 ```
 
-Now you can create a page object as following:
+Now you can create a page object as follows:
 
 ```ts
 // e.g. in /test/pageobjects/loginForm.ts
@@ -289,7 +289,7 @@ export class LoginForm extends BasePage<typeof componentALocators, typeof locato
 }
 ```
 
-Now in your test you can use your page object as follows:
+Now in your test, you can use your page object as follows:
 
 ```ts
 import { LoginForm } from '../pageobjects/loginForm'
