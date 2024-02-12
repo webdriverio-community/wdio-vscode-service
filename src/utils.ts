@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises'
 import url from 'node:url'
 import path from 'node:path'
-import child_process from 'node:child_process'
 import type { Dirent, Stats } from 'node:fs'
 
 import { VSCODE_CAPABILITY_KEY } from './constants.js'
@@ -9,60 +8,6 @@ import type { VSCodeLocatorMap } from './pageobjects/utils.js'
 import type { VSCodeCapabilities } from './types.js'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-
-function isEmulatedRosettaEnvironment () {
-    const archName = child_process.spawnSync('uname', ['-m']).stdout.toString().trim()
-
-    if (archName !== 'x86_64') {
-        return false
-    }
-
-    const processTranslated = child_process.spawnSync('sysctl', ['-in', 'sysctl.proc_translated'])
-        .stdout.toString()
-        .trim()
-    return processTranslated === '1'
-}
-
-function getMacOsRealArch (chromeDriverVersion: string) {
-    if (process.arch === 'arm64' || isEmulatedRosettaEnvironment()) {
-        if (parseInt(chromeDriverVersion.split('.')[0], 10) > 106) {
-            return 'mac_arm64'
-        }
-        return 'mac64_m1'
-    }
-
-    if (process.arch === 'x64') {
-        return 'mac64'
-    }
-
-    return null
-}
-
-export function validatePlatform (chromeDriverVersion: string) {
-    if (process.platform === 'linux') {
-        if (process.arch === 'arm64' || process.arch === 'x64') {
-            return `${process.platform}64`
-        }
-
-        throw new Error('Only Linux 64 bits supported.')
-    }
-
-    if (process.platform === 'darwin' || process.platform === 'freebsd') {
-        const osxPlatform = getMacOsRealArch(chromeDriverVersion)
-
-        if (!osxPlatform) {
-            throw new Error('Only Mac 64 bits supported.')
-        }
-
-        return osxPlatform
-    }
-
-    if (process.platform !== 'win32') {
-        throw new Error(`Unexpected platform or architecture: ${process.platform}, ${process.arch}`)
-    }
-
-    return process.platform
-}
 
 export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
     if (version === 'insiders') {

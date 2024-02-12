@@ -60,8 +60,7 @@ export const config = {
     }],
     services: ['vscode'],
     /**
-     * optionally you can define the path WebdriverIO stores all
-     * VSCode and Chromedriver binaries, e.g.:
+     * Optionally define the path WebdriverIO stores all VSCode binaries, e.g.:
      * services: [['vscode', { cachePath: __dirname }]]
      */
     // ...
@@ -149,7 +148,7 @@ Service options are options needed for the service to set up the test environmen
 
 #### `cachePath`
 
-Define a cache path to avoid re-downloading VS Code bundles. This is useful for CI/CD to avoid re-downloading VSCode and Chromedriver for every test run.
+Define a cache path to avoid re-downloading VS Code bundles. This is useful for CI/CD to avoid re-downloading VSCode for every test run.
 
 Type: `string`<br />
 Default: `process.cwd()`
