@@ -332,6 +332,14 @@ If you use WebdriverIO with TypeScript make sure to add `wdio-vscode-service` to
 }
 ```
 
+## Proxy Support
+
+During the initialization of this service, a ChromeDriver and VSCode distribution is downloaded. You can tunnel this requests through a proxy by setting the environment variable `HTTPS_PROXY` or `https_proxy`. E. g.:
+
+```bash
+HTTPS_PROXY=http://127.0.0.1:1080 npm run wdio
+```
+
 ## References
 
 The following VS Code extensions use `wdio-vscode-service`:
@@ -340,6 +348,7 @@ The following VS Code extensions use `wdio-vscode-service`:
 - [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) (27.8m downloads)
 - [DVC Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=Iterative.dvc) (11.2k downloads)
 - [Nx Console](https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console) (1.2m downloads)
+- [inlang – i18n supercharged](https://marketplace.visualstudio.com/items?itemName=inlang.vs-code-extension) (3k downloads)
 
 ## Contributing
 
