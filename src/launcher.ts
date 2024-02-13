@@ -24,6 +24,7 @@ import type {
 } from './types.js'
 
 interface BundeInformation {
+    chromium: string
     vscode: string
 }
 interface Manifest {
@@ -155,36 +156,33 @@ export default class VSCodeServiceLauncher {
             throw new Error(`No key "${VSCODE_CAPABILITY_KEY}" found in caps`)
         }
 
-        /*
         if (versionsFileExist) {
             const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
+            const vscodeVersion = content[version]?.vscode
             const vscodePath = (
                 cap[VSCODE_CAPABILITY_KEY]?.binary
-                || path.join(this._cachePath, `vscode-${process.platform}-${process.arch}-${content[version]?.vscode}`)
+                || path.join(this._cachePath, `vscode-${process.platform}-${process.arch}-${vscodeVersion}`)
             )
-            if (content[version] && await fileExist(vscodePath)) {
+            if (vscodeVersion && await fileExist(vscodePath)) {
                 log.info(
-                    `Skipping download, bundle for VSCode v${content[version]?.vscode} already exists`
+                    `Skipping download, bundle for VSCode v${vscodeVersion} already exists`
                 )
 
-                // this._updateVersionsTxt(version, content[version]?.vscode, )
+                const chromiumVersion = content[version]?.chromium || await this._fetchChromiumVersion(vscodeVersion)
 
-                cap.browserName = 'chrome';
-                cap.browserVersion = content[version]?.chromium
-                    || await this._fetchChromiumVersion(content[version]?.vscode);
+                this._updateVersionsTxt(version, vscodeVersion, chromiumVersion, versionsFileExist)
+
+                cap.browserName = 'chromedriver';
+                cap.browserVersion = chromiumVersion;
                 Object.assign(cap, this._options)
-                cap[VSCODE_CAPABILITY_KEY].binary = (
-                    cap[VSCODE_CAPABILITY_KEY].binary
-                    || await this._downloadVSCode(content[version]?.vscode as string)
-                )
+                cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
                 return
             }
         }
-*/
 
         const vscodeVersion = await this._fetchVSCodeVersion(version)
         const chromiumVersion = await this._fetchChromiumVersion(vscodeVersion)
-        cap.browserName = 'chrome'
+        cap.browserName = 'chromedriver'
         cap.browserVersion = chromiumVersion
         Object.assign(cap, this._options)
         cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
@@ -301,6 +299,7 @@ export default class VSCodeServiceLauncher {
     ) {
         const newContent: Versions = {
             [version]: {
+                chromium: chromiumVersion,
                 vscode: vscodeVersion
             }
         }
