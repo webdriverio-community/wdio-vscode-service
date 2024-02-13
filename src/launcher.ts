@@ -172,7 +172,7 @@ export default class VSCodeServiceLauncher {
 
                 this._updateVersionsTxt(version, vscodeVersion, chromiumVersion, versionsFileExist)
 
-                cap.browserName = 'chromedriver'
+                cap.browserName = 'chrome'
                 cap.browserVersion = chromiumVersion
                 Object.assign(cap, this._options)
                 cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
@@ -182,7 +182,7 @@ export default class VSCodeServiceLauncher {
 
         const vscodeVersion = await this._fetchVSCodeVersion(version)
         const chromiumVersion = await this._fetchChromiumVersion(vscodeVersion)
-        cap.browserName = 'chromedriver'
+        cap.browserName = 'chrome'
         cap.browserVersion = chromiumVersion
         Object.assign(cap, this._options)
         cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
@@ -258,6 +258,11 @@ export default class VSCodeServiceLauncher {
 
             if (!chromium) {
                 throw new Error('Can\'t find "chromium" version in manifest response')
+            }
+
+            // The version number cannot have 4 groups of digits.
+            if (chromium.version.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+                chromium.version = chromium.version.replace(/\.\d+$/, '')
             }
 
             return chromium.version
