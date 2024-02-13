@@ -24,7 +24,7 @@ import type {
 } from './types.js'
 
 interface BundeInformation {
-    chromium: string
+    chromedriver: string
     vscode: string
 }
 interface Manifest {
@@ -158,34 +158,31 @@ export default class VSCodeServiceLauncher {
 
         if (versionsFileExist) {
             const content = JSON.parse((await fs.readFile(versionsFilePath, 'utf-8')).toString()) as Versions
+
             const vscodeVersion = content[version]?.vscode
-            const vscodePath = (
-                cap[VSCODE_CAPABILITY_KEY]?.binary
+            const chromedriverVersion = content[version]?.chromedriver
+            const vscodePath = cap[VSCODE_CAPABILITY_KEY]?.binary
                 || path.join(this._cachePath, `vscode-${process.platform}-${process.arch}-${vscodeVersion}`)
-            )
-            if (vscodeVersion && await fileExist(vscodePath)) {
+
+            if (vscodeVersion && chromedriverVersion && await fileExist(vscodePath)) {
                 log.info(
                     `Skipping download, bundle for VSCode v${vscodeVersion} already exists`
                 )
 
-                const chromiumVersion = content[version]?.chromium || await this._fetchChromiumVersion(vscodeVersion)
-
-                this._updateVersionsTxt(version, vscodeVersion, chromiumVersion, versionsFileExist)
-
-                cap.browserVersion = chromiumVersion
                 Object.assign(cap, this._options)
+                cap.browserVersion = chromedriverVersion
                 cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
                 return
             }
         }
 
         const vscodeVersion = await this._fetchVSCodeVersion(version)
-        const chromiumVersion = await this._fetchChromiumVersion(vscodeVersion)
+        const chromedriverVersion = await this._fetchChromedriverVersion(vscodeVersion)
 
-        cap.browserVersion = chromiumVersion
         Object.assign(cap, this._options)
+        cap.browserVersion = chromedriverVersion
         cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
-        await this._updateVersionsTxt(version, vscodeVersion, chromiumVersion, versionsFileExist)
+        await this._updateVersionsTxt(version, vscodeVersion, chromedriverVersion, versionsFileExist)
     }
 
     /**
@@ -245,28 +242,23 @@ export default class VSCodeServiceLauncher {
     }
 
     /**
-     * Fetches required Chromium version for given VSCode version
+     * Fetches required Chromedriver version for given VSCode version
      * @param vscodeVersion branch or tag version of VSCode repository
-     * @returns required Chromium version
+     * @returns required Chromedriver version
      */
-    private async _fetchChromiumVersion (vscodeVersion: string) {
+    private async _fetchChromedriverVersion (vscodeVersion: string) {
         try {
             const { body } = await request(format(VSCODE_MANIFEST_URL, vscodeVersion), {})
             const manifest = await body.json() as Manifest
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
 
             if (!chromium) {
-                throw new Error('Can\'t find "chromium" version in manifest response')
+                throw new Error('Can\'t find chromium version in manifest response')
             }
 
-            // The version number cannot have 4 groups of digits.
-            if (chromium.version.match(/^\d+\.\d+\.\d+\.\d+$/)) {
-                chromium.version = chromium.version.replace(/\.\d+$/, '')
-            }
-
-            return chromium.version
+            return chromium.version.split('.')[0]
         } catch (err: any) {
-            throw new SevereServiceError(`Couldn't fetch Chromium version: ${err.message}`)
+            throw new SevereServiceError(`Couldn't fetch Chromedriver version: ${err.message}`)
         }
     }
 
@@ -298,12 +290,12 @@ export default class VSCodeServiceLauncher {
     private async _updateVersionsTxt (
         version: string,
         vscodeVersion: string,
-        chromiumVersion: string,
+        chromedriverVersion: string,
         versionsFileExist: boolean
     ) {
         const newContent: Versions = {
             [version]: {
-                chromium: chromiumVersion,
+                chromedriver: chromedriverVersion,
                 vscode: vscodeVersion
             }
         }
@@ -326,7 +318,7 @@ export default class VSCodeServiceLauncher {
 
     private _mapBrowserCapabilities (options: ServiceOptions) {
         if (isMultiremote(this._capabilities)) {
-            throw new SevereServiceError('This service does not support multiremote yet')
+            throw new SevereServiceError('This service doesn\'t support multiremote yet')
         }
 
         for (const cap of this._capabilities as any as WebdriverIO.Capabilities[]) {
