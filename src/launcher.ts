@@ -157,7 +157,7 @@ export default class VSCodeServiceLauncher {
         }
 
         if (versionsFileExist) {
-            const content = JSON.parse((await fs.readFile(versionsFilePath)).toString()) as Versions
+            const content = JSON.parse((await fs.readFile(versionsFilePath, 'utf-8')).toString()) as Versions
             const vscodeVersion = content[version]?.vscode
             const vscodePath = (
                 cap[VSCODE_CAPABILITY_KEY]?.binary
@@ -172,8 +172,8 @@ export default class VSCodeServiceLauncher {
 
                 this._updateVersionsTxt(version, vscodeVersion, chromiumVersion, versionsFileExist)
 
-                cap.browserName = 'chromedriver';
-                cap.browserVersion = chromiumVersion;
+                cap.browserName = 'chromedriver'
+                cap.browserVersion = chromiumVersion
                 Object.assign(cap, this._options)
                 cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
                 return
