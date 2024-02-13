@@ -172,7 +172,6 @@ export default class VSCodeServiceLauncher {
 
                 this._updateVersionsTxt(version, vscodeVersion, chromiumVersion, versionsFileExist)
 
-                cap.browserName = 'chrome'
                 cap.browserVersion = chromiumVersion
                 Object.assign(cap, this._options)
                 cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
@@ -182,7 +181,7 @@ export default class VSCodeServiceLauncher {
 
         const vscodeVersion = await this._fetchVSCodeVersion(version)
         const chromiumVersion = await this._fetchChromiumVersion(vscodeVersion)
-        cap.browserName = 'chrome'
+
         cap.browserVersion = chromiumVersion
         Object.assign(cap, this._options)
         cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
