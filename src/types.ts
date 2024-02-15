@@ -1,4 +1,3 @@
-import type { ServiceOptions as ChromedriverServiceOptions } from 'wdio-chromedriver-service'
 import type { VSCODE_CAPABILITY_KEY } from './constants.js'
 
 /**
@@ -58,9 +57,9 @@ export type ArgsParams = Record<string, string | boolean>
 /**
  * wdio-vscode-service options
  */
-export interface ServiceOptions extends ChromedriverServiceOptions {
+export interface ServiceOptions {
     /**
-     * Define a cache path to avoid re-downloading all bundles
+     * Define a cache path to avoid re-downloading VS Code bundles
      */
     cachePath?: string
 }
@@ -68,11 +67,6 @@ export interface ServiceOptions extends ChromedriverServiceOptions {
 export interface BundleInformation {
     version: string
     path: string
-}
-
-export interface ServiceCapability {
-    vscode: BundleInformation
-    chromedriver: BundleInformation
 }
 
 /**

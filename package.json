@@ -57,24 +57,18 @@
     "tmp-promise": "^3.0.3",
     "undici": "^5.23.0",
     "vscode-uri": "^3.0.8",
-    "wdio-chromedriver-service": "^8.1.1",
     "ws": "^8.16.0",
     "yargs-parser": "^21.1.1"
   },
   "peerDependencies": {
-    "chromedriver": "latest",
-    "webdriverio": "^8.0.0"
+    "webdriverio": "^8.14.0"
   },
   "peerDependenciesMeta": {
     "webdriverio": {
       "optional": true
-    },
-    "chromedriver": {
-      "optional": false
     }
   },
   "devDependencies": {
-    "@types/chromedriver": "^81.0.5",
     "@types/download": "^8.0.5",
     "@types/node": "^18.16.1",
     "@types/vscode": "^1.77.0",
@@ -86,7 +80,6 @@
     "@wdio/mocha-framework": "^8.27.2",
     "@wdio/spec-reporter": "^8.27.2",
     "@wdio/types": "^8.27.2",
-    "chromedriver": "*",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-base-typescript": "^1.1.0",

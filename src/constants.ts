@@ -31,8 +31,6 @@ export const DEFAULT_VSCODE_SETTINGS = {
 export const VSCODE_RELEASES = 'https://update.code.visualstudio.com/api/releases/stable'
 export const VSCODE_MANIFEST_URL = 'https://raw.githubusercontent.com/microsoft/vscode/%s/cgmanifest.json'
 export const VSCODE_WEB_STANDALONE = 'https://update.code.visualstudio.com/api/update/web-standalone/%s/latest'
-export const CHROMEDRIVER_RELEASES = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE_%s'
-export const CHROMEDRIVER_DOWNLOAD_PATH = 'https://chromedriver.storage.googleapis.com/%s/chromedriver_%s.zip'
 
 export const DEFAULT_VSCODE_WEB_HOSTNAME = 'localhost'
 export const DEFAULT_VSCODE_WEB_PORT = 3000
