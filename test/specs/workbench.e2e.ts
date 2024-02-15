@@ -86,7 +86,7 @@ describe('workbench', () => {
         })
     })
 
-    it('can access the VSCode API after a new folder is opened', async () => {
+    it('can access the VSCode API after a new folder is opened @skipWeb', async () => {
         const workspaceRoot = await browser.executeWorkbench<string | undefined>((vscode) => vscode.workspace.rootPath)
         expect(workspaceRoot).not.toBe(undefined)
         const newWorkspaceRoot = path.join(workspaceRoot!, 'test')
