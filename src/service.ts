@@ -55,6 +55,12 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
+    private _handleSocketClose (code: number, reason: Buffer) {
+        const msg = `Connection closed. Code: ${code}, reason: ${reason.toString()}`
+        this._promisedSocket = Promise.reject(new Error(msg))
+        this._pendingMessages.forEach((resolver) => resolver(msg, null))
+    }
+
     async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
         this._isWebSession = capabilities.browserName !== 'vscode'
 
@@ -103,9 +109,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
                 )
                 wss.on('connection', (socket) => {
                     log.info('Connected with VSCode workbench')
+                    this._promisedSocket = Promise.resolve(socket)
                     resolve(socket)
                     clearTimeout(socketTimeout)
                     socket.on('message', this._handleIncoming.bind(this))
+                    socket.once('close', this._handleSocketClose.bind(this))
                 })
             })
         }

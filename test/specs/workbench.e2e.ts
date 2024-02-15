@@ -3,6 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../dist/service.d.ts" />
 
+import path from 'node:path'
 import { browser, expect } from '@wdio/globals'
 import { skip } from './utils.js'
 
@@ -82,6 +83,20 @@ describe('workbench', () => {
             return messages.includes('I am an another API call!')
         }, {
             timeoutMsg: 'Could not find another custom notification'
+        })
+    })
+
+    it('can access the VSCode API after a new folder is opened @skipWeb', async () => {
+        const workspaceRoot = await browser.executeWorkbench<string | undefined>((vscode) => vscode.workspace.rootPath)
+        expect(workspaceRoot).not.toBe(undefined)
+        const newWorkspaceRoot = path.join(workspaceRoot!, 'test')
+        await browser.executeWorkbench((vscode, newRoot) => {
+            const uri = vscode.Uri.file(newRoot)
+            vscode.commands.executeCommand('vscode.openFolder', uri)
+        }, newWorkspaceRoot)
+        await browser.waitUntil(async () => {
+            const root = await browser.executeWorkbench((vscode) => vscode.workspace.rootPath)
+            return root === newWorkspaceRoot
         })
     })
 
