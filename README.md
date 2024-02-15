@@ -23,6 +23,8 @@ This WebdriverIO service allows you to seamlessly test your VSCode extensions fr
 
 This project was highly inspired by the [vscode-extension-tester](https://www.npmjs.com/package/vscode-extension-tester) project which is based on Selenium. This package takes the idea and adapts it to WebdriverIO.
 
+Starting from VSCode v1.86 it is required to use `webdriverio` v8.14 or later to install Chromedriver with no configuration necessary. If you need to test  earlier versions of VSCode, see the [Chromedriver configuration](#chromedriver) section below.
+
 ## Installation
 
 To initiate a new WebdriverIO project, run:
@@ -34,8 +36,6 @@ npm create wdio ./
 An installation wizard will guide you through the process. Ensure you select TypeScript as compiler and don't have it generate page objects for you given this project comes with all page objects needed. Then make sure to select `vscode` within the list of services:
 
 ![Install Demo](https://raw.githubusercontent.com/webdriverio-community/wdio-vscode-service/main/.github/assets/demo.gif "Install Demo")
-
-__Note:__ remove `chromedriver` from the list of services in the generated `wdio.conf.ts` afterward. See also the configuration example below.
 
 For more information on how to install `WebdriverIO`, please check the [project docs](https://webdriver.io/docs/gettingstarted).
 
@@ -50,7 +50,7 @@ export const config = {
     // ...
     capabilities: [{
         browserName: 'vscode',
-        browserVersion: '1.71.0', // "insiders" or "stable" for latest VSCode version
+        browserVersion: '1.86.0', // "insiders" or "stable" for latest VSCode version
         'wdio:vscodeOptions': {
             extensionPath: __dirname,
             userSettings: {
@@ -144,7 +144,7 @@ Through service configuration, you can manage the VSCode version as well as user
 
 ### Service Options
 
-Service options are options needed for the service to set up the test environment. They are a superset of the [Chromedriver options](https://webdriver.io/docs/wdio-chromedriver-service#options) which can be applied for this service as well.
+Service options are options needed for the service to set up the test environment.
 
 #### `cachePath`
 
@@ -250,6 +250,24 @@ Default:
      */
     commandTimeout: 5000
 }
+```
+
+### Chromedriver
+
+Starting from VSCode v1.86 it is required to use `webdriverio` v8.14 or later to install Chromedriver with no configuration necessary. The [simplified browser automation setup](https://webdriver.io/blog/2023/07/31/driver-management) handles everything for you.
+
+To test earlier versions of VS Code, find the expected version of Chromedriver from the logs, download [Chromedriver](https://chromedriver.chromium.org/downloads), and configure the path. For example:
+
+```
+[0-0] ERROR webdriver: Failed downloading chromedriver v108: Download failed: ...
+```
+
+```ts
+    capabilities: [{
+        browserName: 'vscode',
+        browserVersion: '1.80.0',
+        'wdio:chromedriverOptions': {
+            binary: path.join(cacheDir, 'chromedriver-108.0.5359.71')
 ```
 
 ## Create Your Own PageObjects
