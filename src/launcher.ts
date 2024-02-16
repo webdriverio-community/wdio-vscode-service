@@ -11,9 +11,7 @@ import type { Capabilities } from '@wdio/types'
 import { HttpsProxyAgent } from 'hpagent'
 
 import startServer from './server/index.js'
-import {
-    fileExist, directoryExists, isMultiremote, isChrome
-} from './utils.js'
+import { fileExist, directoryExists } from './utils.js'
 import {
     DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, DEFAULT_CACHE_PATH,
     VSCODE_CAPABILITY_KEY, VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME
@@ -64,10 +62,7 @@ export default class VSCodeServiceLauncher {
     private _cachePath: string
     private _vscodeServerPort?: number
 
-    constructor (
-        private _options: ServiceOptions,
-        private _capabilities: WebdriverIO.Capabilities
-    ) {
+    constructor (private _options: ServiceOptions) {
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
     }
 
@@ -105,7 +100,6 @@ export default class VSCodeServiceLauncher {
              * setup VSCode Web
              */
             await this._setupVSCodeWeb(version, cap)
-            this._mapBrowserCapabilities(this._options)
         }
     }
 
@@ -168,8 +162,6 @@ export default class VSCodeServiceLauncher {
                 log.info(
                     `Skipping download, bundle for VSCode v${vscodeVersion} already exists`
                 )
-
-                Object.assign(cap, this._options)
                 cap.browserVersion = chromedriverVersion
                 cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
                 return
@@ -179,7 +171,6 @@ export default class VSCodeServiceLauncher {
         const vscodeVersion = await this._fetchVSCodeVersion(version)
         const chromedriverVersion = await this._fetchChromedriverVersion(vscodeVersion)
 
-        Object.assign(cap, this._options)
         cap.browserVersion = chromedriverVersion
         cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
         await this._updateVersionsTxt(version, vscodeVersion, chromedriverVersion, versionsFileExist)
@@ -314,17 +305,5 @@ export default class VSCodeServiceLauncher {
             JSON.stringify({ ...content, ...newContent }, null, 4),
             'utf-8'
         )
-    }
-
-    private _mapBrowserCapabilities (options: ServiceOptions) {
-        if (isMultiremote(this._capabilities)) {
-            throw new SevereServiceError('This service doesn\'t support multiremote yet')
-        }
-
-        for (const cap of this._capabilities as any as WebdriverIO.Capabilities[]) {
-            if (isChrome(cap)) {
-                Object.assign(cap, options)
-            }
-        }
     }
 }
