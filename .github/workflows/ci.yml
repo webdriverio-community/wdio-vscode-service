@@ -1,3 +1,4 @@
+---
 name: CI
 
 on:
@@ -7,6 +8,17 @@ on:
     tags:
       - v[0-9]+.[0-9]+.[0-9]+*
   pull_request:
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: 'Node.js version'
+        required: true
+        default: 18
+        type: choice
+        options:
+          - 16
+          - 18
+          - 20
 
 jobs:
   build:
@@ -25,7 +37,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 18
+          node-version: ${{ inputs.node_version || 18 }}
       - name: Install Dependencies
         run: npm ci
         env:
@@ -44,4 +56,3 @@ jobs:
         with:
           name: screenshots
           path: test/screenshots
-
