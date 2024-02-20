@@ -71,7 +71,7 @@
   "devDependencies": {
     "@types/download": "^8.0.5",
     "@types/node": "^18.19.17",
-    "@types/vscode": "^1.77.0",
+    "@types/vscode": "^1.86.0",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
     "@wdio/cli": "^8.32.2",
