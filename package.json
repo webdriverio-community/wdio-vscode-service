@@ -55,7 +55,7 @@
     "hpagent": "^1.2.0",
     "slash": "^5.1.0",
     "tmp-promise": "^3.0.3",
-    "undici": "^5.23.0",
+    "undici": "^5.28.3",
     "vscode-uri": "^3.0.8",
     "ws": "^8.16.0",
     "yargs-parser": "^21.1.1"
