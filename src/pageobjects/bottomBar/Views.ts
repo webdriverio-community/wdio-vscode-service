@@ -189,7 +189,10 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
         await workbench.executeCommand('terminal select all')
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500)
-        await browser.keys([Key.Ctrl, 'c'])
+        await browser.executeWorkbench((vscode) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            vscode.commands.executeCommand('workbench.action.terminal.copySelection')
+        })
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500)
         const text = await clipboard.read()
