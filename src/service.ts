@@ -33,6 +33,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _proxyOptions: VSCodeProxyOptions
     private _vscodeOptions: VSCodeOptions
     private _isWebSession = false
+    private _isCucumberSession = false
+    private _deletingSession = false
 
     constructor (_: never, private _capabilities: VSCodeCapabilities) {
         this._vscodeOptions = this._capabilities[VSCODE_CAPABILITY_KEY] || <VSCodeOptions>{}
@@ -56,6 +58,14 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     private _handleSocketClose (code: number, reason: Buffer) {
+        /*
+         * Prevent this block from running when deleting a session using the Cucumber framework.
+         * Otherwise the specs fail with the "Connection closed" error.
+         */
+        if (this._isCucumberSession && this._deletingSession) {
+            return
+        }
+
         const msg = `Connection closed. Code: ${code}, reason: ${reason.toString()}`
         this._promisedSocket = Promise.reject(new Error(msg))
         this._pendingMessages.forEach((resolver) => resolver(msg, null))
@@ -63,6 +73,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
 
     async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
         this._isWebSession = capabilities.browserName !== 'vscode'
+        this._isCucumberSession = option.framework === 'cucumber'
 
         /**
          * only run setup for VSCode capabilities
@@ -102,6 +113,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             userSettings[SETTINGS_KEY].port = port
             log.info(`Start VSCode proxy server on port ${port}`)
             const wss = this._wss = new WebSocketServer({ port })
+            this._deletingSession = false
             this._promisedSocket = new Promise((resolve, reject) => {
                 const socketTimeout = setTimeout(
                     () => reject(new Error('Connection timeout exceeded')),
@@ -161,6 +173,12 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         capabilities.browserName = 'chrome'
         capabilities['goog:chromeOptions'] = { binary, args, windowTypes: ['webview'] }
         log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
+    }
+
+    beforeCommand (commandName: string): void {
+        if (commandName === 'deleteSession') {
+            this._deletingSession = true
+        }
     }
 
     async before (capabilities: VSCodeCapabilities, __: never, browser: WebdriverIO.Browser) {
