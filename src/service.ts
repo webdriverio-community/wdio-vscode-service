@@ -33,6 +33,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _proxyOptions: VSCodeProxyOptions
     private _vscodeOptions: VSCodeOptions
     private _isWebSession = false
+    private _isCucumberSession = false
     private _deletingSession = false
 
     constructor (_: never, private _capabilities: VSCodeCapabilities) {
@@ -57,9 +58,14 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     private _handleSocketClose (code: number, reason: Buffer) {
-        if (this._deletingSession) {
+        /*
+         * Prevent this block from running when deleting a session using the Cucumber framework.
+         * Otherwise the specs fail with the "Connection closed" error.
+         */
+        if (this._isCucumberSession && this._deletingSession) {
             return
         }
+
         const msg = `Connection closed. Code: ${code}, reason: ${reason.toString()}`
         this._promisedSocket = Promise.reject(new Error(msg))
         this._pendingMessages.forEach((resolver) => resolver(msg, null))
@@ -67,6 +73,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
 
     async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
         this._isWebSession = capabilities.browserName !== 'vscode'
+        this._isCucumberSession = option.framework === 'cucumber'
 
         /**
          * only run setup for VSCode capabilities
