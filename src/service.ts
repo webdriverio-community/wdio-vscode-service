@@ -57,11 +57,12 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     }
 
     private _handleSocketClose (code: number, reason: Buffer) {
-        if (!this._deletingSession) {
-            const msg = `Connection closed. Code: ${code}, reason: ${reason.toString()}`
-            this._promisedSocket = Promise.reject(new Error(msg))
-            this._pendingMessages.forEach((resolver) => resolver(msg, null))
+        if (this._deletingSession) {
+            return
         }
+        const msg = `Connection closed. Code: ${code}, reason: ${reason.toString()}`
+        this._promisedSocket = Promise.reject(new Error(msg))
+        this._pendingMessages.forEach((resolver) => resolver(msg, null))
     }
 
     async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
