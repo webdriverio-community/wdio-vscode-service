@@ -34,9 +34,9 @@ describe('bottombar', () => {
         expect(await outputView.getText()).toEqual(['Hello World!'])
     })
 
-    skip('CI')('can read from terminal @skipWeb', async () => {
+    it('can read from terminal @skipWeb', async () => {
         const terminalView = await bottomBar.openTerminalView()
         const text = await terminalView.getText()
-        expect(text).toContain(':wdio-vscode-service')
+        expect(text).toContain('wdio-vscode-service')
     })
 })
