@@ -28,7 +28,7 @@ export interface TestPageObject extends IPageDecorator<typeof locators.marquee> 
 export class TestPageObject extends BasePage<typeof locators.marquee, typeof locators> {
     public locatorKey = 'marquee' as const
 
-    itemCnt () {
+    itemCnt (): Promise<number> {
         return this.menuitems$$.length
     }
 }
