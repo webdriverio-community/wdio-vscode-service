@@ -159,12 +159,16 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
 
         const binary = path.join(__dirname, 'chromium', `index.${process.platform === 'win32' ? 'exe' : 'js'}`)
         const args = Object.entries({ ...customArgs, ...this._vscodeOptions.vscodeArgs }).reduce(
-            (prev, [key, value]) => [
-                ...prev,
-                Array.isArray(value) ? value.reduce((all: string, val) => {
-                    return all + `--${decamelize(key, { separator: '-' })}${getValueSuffix(val)} `;
-                }, "").trim() : `--${decamelize(key, { separator: '-' })}${getValueSuffix(value)}`
-            ],
+            (prev, [key, value]) => {
+                if (Array.isArray(value)) {
+                    const expandedArgs = value.map(
+                        (val) => `--${decamelize(key, { separator: '-' })}${getValueSuffix(val)}`
+                    )
+                    return [...prev, ...expandedArgs]
+                }
+
+                return [...prev, `--${decamelize(key, { separator: '-' })}${getValueSuffix(value)}`]
+            },
             [] as string[]
         )
 
