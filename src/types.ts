@@ -52,7 +52,7 @@ export interface ServerOptions {
     port: number
 }
 
-export type ArgsParams = Record<string, string | boolean>
+export type ArgsParams = Record<string, string | string[] | boolean>
 
 /**
  * wdio-vscode-service options
