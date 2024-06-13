@@ -161,7 +161,12 @@ export abstract class TreeItem extends ViewItem {
     async getActionButton (label: string): Promise<ViewItemAction | undefined> {
         const actions = await this.getActionButtons()
         if (actions.length > 0) {
-            return actions.find((item) => item.getLabel().indexOf(label) > -1)
+            for (const item of actions) {
+                const itemLabel = item.getLabel() ?? await item.elem.getAttribute('aria-label')
+                if (itemLabel.indexOf(label) > -1) {
+                    return item
+                }
+            }
         }
         return undefined
     }
