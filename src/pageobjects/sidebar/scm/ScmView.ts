@@ -77,7 +77,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public view: ScmView
     ) {
         super(locators, element, view.elem)
@@ -104,12 +104,12 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
      */
     async takeAction (title: string): Promise<boolean> {
         const header = await this.providerHeader$
-        let actions: ChainablePromiseElement<WebdriverIO.Element>[] = []
+        let actions: WebdriverIO.Element[] = []
         if ((await header.getAttribute('class')).indexOf('hidden') > -1) {
             actions = (await this.view.getTitlePart().getActions()).map((action) => action.elem)
         } else {
             await this.elem.moveTo()
-            actions = await header.$$(this.locators.action) as any as ChainablePromiseElement<WebdriverIO.Element>[]
+            actions = await header.$$(this.locators.action) as any as WebdriverIO.Element[]
         }
         const names = await Promise.all(actions.map((action) => action.getAttribute('title')))
         const index = names.findIndex((item) => item === title)
@@ -158,7 +158,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         const changes = await this.getChangeCount(staged)
         const label = staged ? 'STAGED CHANGES' : 'CHANGES'
 
-        let elements: ChainablePromiseElement<WebdriverIO.Element>[] = []
+        let elements: WebdriverIO.Element[] = []
         if (changes > 0) {
             let i = -1
             elements = await this.changeItem$$ as any
@@ -214,7 +214,7 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        row: ChainablePromiseElement<WebdriverIO.Element>,
+        row: WebdriverIO.Element,
         public provider: ScmProvider
     ) {
         super(locators, row, provider.elem)

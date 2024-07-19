@@ -107,7 +107,7 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        base: ChainablePromiseElement<WebdriverIO.Element>,
+        base: WebdriverIO.Element,
         public parentMenu: Menu<typeof ContextMenuLocators>
     ) {
         super(locators, base, parentMenu.elem)

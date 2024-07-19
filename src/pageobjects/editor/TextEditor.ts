@@ -491,7 +491,7 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public editor: TextEditor
     ) {
         super(locators, element)
@@ -524,7 +524,7 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public editor: TextEditor
     ) {
         super(locators, element)
@@ -564,7 +564,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public textEditor: TextEditor
     ) {
         super(locators, element)

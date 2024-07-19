@@ -13,7 +13,7 @@ type ClassWithFunctionLocators$<T> = {
     [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$`]: (
         // @ts-expect-error this fails compiling here but works when applied to a class
         ...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>
-    ) => ChainablePromiseElement<WebdriverIO.Element>
+    ) => WebdriverIO.Element
 }
 
 type ClassWithFunctionLocators$$<T> = {
@@ -27,7 +27,7 @@ type ClassWithFunctionLocators$$<T> = {
 type ClassWithLocators$<T> = {
     [key in keyof T & string as T[key] extends String | undefined
         ? `${key}$`
-        : never]: ChainablePromiseElement<WebdriverIO.Element>
+        : never]: WebdriverIO.Element
 }
 type ClassWithLocators$$<T> = {
     [key in keyof T & string as T[key] extends String | undefined
@@ -96,8 +96,8 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
      */
     constructor (
         protected _locators: LocatorMap,
-        private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
-        private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
+        private _baseElem?: string | WebdriverIO.Element,
+        private _parentElem?: string | WebdriverIO.Element
     ) {}
 
     /**
@@ -160,7 +160,7 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
     /**
      * @private
      */
-    setParentElement (parentElem: string | ChainablePromiseElement<WebdriverIO.Element>) {
+    setParentElement (parentElem: string | WebdriverIO.Element) {
         this._parentElem = parentElem
     }
 

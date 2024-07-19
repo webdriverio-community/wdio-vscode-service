@@ -32,7 +32,7 @@ export interface ViewSection extends IPageDecorator<AllViewSectionLocators> { }
 export abstract class ViewSection extends BasePage<AllViewSectionLocators> {
     constructor (
         locators: VSCodeLocatorMap,
-        panel: ChainablePromiseElement<WebdriverIO.Element>,
+        panel: WebdriverIO.Element,
         public content: ViewContent
     ) {
         super(locators, panel)
@@ -231,7 +231,7 @@ export class ViewPanelAction extends BasePage<typeof ViewSectionLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         viewPart: ViewSection
     ) {
         super(locators, element, viewPart.elem)
