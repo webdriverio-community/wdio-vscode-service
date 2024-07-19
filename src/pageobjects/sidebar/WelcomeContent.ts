@@ -1,5 +1,3 @@
-import { ChainablePromiseElement } from 'webdriverio'
-
 import { ViewSection } from '../index.js'
 import {
     BasePage, PageDecorator, IPageDecorator, VSCodeLocatorMap
@@ -27,7 +25,7 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
      */
     constructor (
         locators: VSCodeLocatorMap,
-        panel: ChainablePromiseElement<WebdriverIO.Element>,
+        panel: WebdriverIO.Element,
         public welcomeSection: WelcomeContentSection
     ) {
         super(locators, panel)
@@ -67,7 +65,7 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
      */
     constructor (
         locators: VSCodeLocatorMap,
-        panel: ChainablePromiseElement<WebdriverIO.Element>,
+        panel: WebdriverIO.Element,
         parent: ViewSection
     ) {
         super(locators, panel, parent.elem)

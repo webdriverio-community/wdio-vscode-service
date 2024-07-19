@@ -191,7 +191,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public view = new EditorView(locators)
     ) {
         super(locators, element)
@@ -362,7 +362,7 @@ export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> 
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public view: EditorView
     ) {
         super(locators, element)

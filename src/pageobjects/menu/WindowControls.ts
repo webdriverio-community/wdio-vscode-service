@@ -24,7 +24,7 @@ export class WindowControls extends BasePage<typeof WindowControlsLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element?: ChainablePromiseElement<WebdriverIO.Element> | string,
+        element?: WebdriverIO.Element | string,
         public bar: TitleBar = new TitleBar(locators)
     ) {
         super(locators, element)

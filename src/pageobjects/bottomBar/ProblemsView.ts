@@ -127,7 +127,7 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public view: ProblemsView
     ) {
         super(locators, element, view.elem)

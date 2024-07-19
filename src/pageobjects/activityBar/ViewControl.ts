@@ -38,7 +38,7 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public bar: ActivityBar
     ) {
         super(locators, element, bar.elem)

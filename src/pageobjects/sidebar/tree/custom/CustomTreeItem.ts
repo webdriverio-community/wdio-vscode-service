@@ -23,7 +23,7 @@ export class CustomTreeItem extends TreeItem {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: WebdriverIO.Element,
         public viewPart: TreeSection
     ) {
         super(locators, element, viewPart.elem)

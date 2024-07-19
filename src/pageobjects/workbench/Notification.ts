@@ -1,4 +1,3 @@
-import { ChainablePromiseElement } from 'webdriverio'
 import {
     BasePage, IPageDecorator, PageDecorator, VSCodeLocatorMap
 } from '../utils.js'
@@ -94,7 +93,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      * @returns Promise resolving when notification is dismissed
      */
     async dismiss (): Promise<void> {
-        const btn = await this.dismiss$
+        const btn = await this.dismiss$.getElement()
 
         /**
          * make button interactable given they only contain
@@ -117,6 +116,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
         const buttons: NotificationButton[] = []
         const elements = await this.actions$
             .$$(this.locators.action)
+            .getElements()
 
         for (const button of elements) {
             buttons.push(await new NotificationButton(
@@ -165,7 +165,7 @@ export class StandaloneNotification extends Notification {
 
     constructor (
         locators: VSCodeLocatorMap,
-        notification: ChainablePromiseElement<WebdriverIO.Element>
+        notification: WebdriverIO.Element
     ) {
         super(locators, notification, locators.Notification.standaloneContainer as string)
     }

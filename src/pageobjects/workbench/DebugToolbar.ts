@@ -1,4 +1,3 @@
-import { ChainablePromiseElement } from 'webdriverio'
 import { BasePage, PageDecorator, IPageDecorator } from '../utils.js'
 import { DebugToolbar as DebugToolbarLocators } from '../../locators/1.73.0.js'
 
@@ -19,10 +18,7 @@ export class DebugToolbar extends BasePage<typeof DebugToolbarLocators> {
      * Wait for the execution to pause at the next breakpoint
      */
     async waitForBreakPoint (): Promise<void> {
-        await browser.waitUntil(async () => {
-            const btn = await this.button$('continue')
-            return btn.isEnabled()
-        })
+        await browser.waitUntil(() => this.button$('continue').isEnabled())
     }
 
     /**
@@ -81,7 +77,7 @@ export class DebugToolbar extends BasePage<typeof DebugToolbarLocators> {
         await this.getButton('stop').click()
     }
 
-    private getButton (name: string): ChainablePromiseElement<WebdriverIO.Element> {
+    private getButton (name: string): WebdriverIO.Element {
         return this.button$(name)
     }
 }

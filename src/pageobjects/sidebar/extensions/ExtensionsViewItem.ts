@@ -25,7 +25,7 @@ export class ExtensionsViewItem extends ViewItem {
 
     constructor (
         locators: VSCodeLocatorMap,
-        extensionElement: ChainablePromiseElement<WebdriverIO.Element>,
+        extensionElement: WebdriverIO.Element,
         public section: ExtensionsViewSection
     ) {
         super(locators, extensionElement, section.elem)

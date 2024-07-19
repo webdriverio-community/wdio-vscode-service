@@ -119,7 +119,7 @@ export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        item: string | ChainablePromiseElement<WebdriverIO.Element>,
+        item: string | WebdriverIO.Element,
         contentAssist: ContentAssist
     ) {
         super(locators, item)
