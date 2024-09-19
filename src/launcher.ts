@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { format } from 'node:util'
 
-import downloadBundle, { DownloadOptions } from 'download'
+import type { DownloadOptions } from 'download'
 import logger from '@wdio/logger'
 import { setGlobalDispatcher, request, ProxyAgent } from 'undici'
 import { download } from '@vscode/test-electron'
@@ -21,7 +21,10 @@ import type {
     Bundle
 } from './types.js'
 
-interface BundeInformation {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const downloadBundle: typeof import('download') = require('@xhmikosr/downloader')
+
+interface BundleInformation {
     chromedriver: string
     vscode: string
 }
@@ -36,7 +39,7 @@ interface Registration {
         }
     }
 }
-type Versions = { [desiredVersion: string]: BundeInformation | undefined }
+type Versions = { [desiredVersion: string]: BundleInformation | undefined }
 
 // set up proxy if environment variable HTTPS_PROXY or https_proxy is set
 let downloadAgentConfiguration: Partial<DownloadOptions> | undefined
