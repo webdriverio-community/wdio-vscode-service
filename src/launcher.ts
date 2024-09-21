@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { format } from 'node:util'
 
-import type { DownloadOptions } from 'download'
+import downloadBundle, { DownloadOptions } from '@xhmikosr/downloader'
 import logger from '@wdio/logger'
 import { setGlobalDispatcher, request, ProxyAgent } from 'undici'
 import { download } from '@vscode/test-electron'
@@ -20,9 +20,6 @@ import type {
     ServiceOptions, VSCodeCapabilities, WebStandaloneResponse,
     Bundle
 } from './types.js'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const downloadBundle: typeof import('download') = require('@xhmikosr/downloader')
 
 interface BundleInformation {
     chromedriver: string
