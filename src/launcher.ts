@@ -87,7 +87,8 @@ export default class VSCodeServiceLauncher {
             }
 
             const version = cap[VSCODE_CAPABILITY_KEY].version || cap.browserVersion || DEFAULT_CHANNEL
-
+            cap[VSCODE_CAPABILITY_KEY].version = version
+            
             /**
              * setup VSCode Desktop
              */

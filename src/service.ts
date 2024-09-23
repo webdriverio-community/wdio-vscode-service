@@ -203,12 +203,13 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             await browser.url('/')
         }
 
+        const vsCodeVersion = capabilities[VSCODE_CAPABILITY_KEY]?.version || capabilities.browserVersion || 'insiders'
         this._browser = browser
-        const locators = await getLocators(capabilities.browserVersion || 'insiders')
+        const locators = await getLocators(vsCodeVersion)
         const workbenchPO = new Workbench(locators)
         this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
         this._browser.addCommand('executeWorkbench', this._executeVSCode.bind(this))
-        this._browser.addCommand('getVSCodeVersion', () => capabilities.browserVersion)
+        this._browser.addCommand('getVSCodeVersion', () => vsCodeVersion)
         this._browser.addCommand('isVSCodeWebSession', () => this._isWebSession)
         this._browser.addCommand('getVSCodeChannel', () => (
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
