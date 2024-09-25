@@ -29,7 +29,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
      */
     async getText (): Promise<string> {
         const input = await this.inputBox$.$(this.locators.input)
-        return input.getAttribute('value')
+        return input.getValue()
     }
 
     /**

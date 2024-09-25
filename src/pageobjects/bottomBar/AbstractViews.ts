@@ -37,7 +37,7 @@ export abstract class ChannelView<T> extends ElementWithContextMenu<T> {
      */
     async getCurrentChannel (): Promise<string> {
         const combo = await this.parent.$(this.locatorMap.BottomBarViews.channelCombo as string)
-        return combo.getAttribute('title')
+        return combo.getValue()
     }
 
     /**
