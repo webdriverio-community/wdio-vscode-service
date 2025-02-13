@@ -13,8 +13,8 @@ import { HttpsProxyAgent } from 'hpagent'
 import startServer from './server/index.js'
 import { fileExist, directoryExists } from './utils.js'
 import {
-    DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL, DEFAULT_CACHE_PATH,
-    VSCODE_CAPABILITY_KEY, VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME
+    DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_INSIDER_RELEASES, VSCODE_MANIFEST_URL, VSCODE_INSIDER_MANIFEST_URL,
+    DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY, VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME
 } from './constants.js'
 import type {
     ServiceOptions, VSCodeCapabilities, WebStandaloneResponse,
@@ -201,11 +201,14 @@ export default class VSCodeServiceLauncher {
      * @returns "main" if `desiredReleaseChannel` is "insiders" otherwise a concrete VSCode version
      */
     private async _fetchVSCodeVersion (desiredReleaseChannel?: string) {
-        if (desiredReleaseChannel === 'insiders') {
-            return 'main'
-        }
-
         try {
+            if (desiredReleaseChannel === 'insiders') {
+                log.info(`Fetch latest insider release from ${VSCODE_INSIDER_RELEASES}`)
+                const { body: versions } = await request(VSCODE_INSIDER_RELEASES, {})
+                const availableVersions: string[] = await versions.json() as string[]
+
+                return availableVersions[0]
+            }
             log.info(`Fetch releases from ${VSCODE_RELEASES}`)
             const { body: versions } = await request(VSCODE_RELEASES, {})
             const availableVersions: string[] = await versions.json() as string[]
@@ -240,7 +243,12 @@ export default class VSCodeServiceLauncher {
      */
     private async _fetchChromedriverVersion (vscodeVersion: string) {
         try {
-            const { body } = await request(format(VSCODE_MANIFEST_URL, vscodeVersion), {})
+            const manifestUrl = vscodeVersion.includes('insider')
+                ? VSCODE_INSIDER_MANIFEST_URL
+                : format(VSCODE_MANIFEST_URL, vscodeVersion)
+
+            log.info(`manifest url: ${manifestUrl}`)
+            const { body } = await request(manifestUrl, {})
             const manifest = await body.json() as Manifest
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
 

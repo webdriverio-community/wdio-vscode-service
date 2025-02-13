@@ -28,8 +28,11 @@ export const DEFAULT_VSCODE_SETTINGS = {
      */
     [SETTINGS_KEY]: {}
 }
+const VSCODE_RAW_REPO = 'https://raw.githubusercontent.com/microsoft/vscode/'
 export const VSCODE_RELEASES = 'https://update.code.visualstudio.com/api/releases/stable'
-export const VSCODE_MANIFEST_URL = 'https://raw.githubusercontent.com/microsoft/vscode/%s/cgmanifest.json'
+export const VSCODE_INSIDER_RELEASES = 'https://update.code.visualstudio.com/api/releases/insider'
+export const VSCODE_MANIFEST_URL = `${VSCODE_RAW_REPO}%s/cgmanifest.json`
+export const VSCODE_INSIDER_MANIFEST_URL = `${VSCODE_RAW_REPO}refs/heads/main/cgmanifest.json`
 export const VSCODE_WEB_STANDALONE = 'https://update.code.visualstudio.com/api/update/web-standalone/%s/latest'
 
 export const DEFAULT_VSCODE_WEB_HOSTNAME = 'localhost'
