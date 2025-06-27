@@ -51,6 +51,7 @@ export const config = {
     capabilities: [{
         browserName: 'vscode',
         browserVersion: '1.86.0', // "insiders" or "stable" for latest VSCode version
+        'wdio:enforceWebDriverClassic': true, // this is important for using WebdriverIO v9!
         'wdio:vscodeOptions': {
             extensionPath: __dirname,
             userSettings: {
