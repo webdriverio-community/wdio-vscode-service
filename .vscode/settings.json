@@ -1,5 +1,8 @@
 {
-    "marquee.widgets.npm-stats.packageNames": [
-        "wdio-vscode-service"
-    ]
+  "marquee.widgets.npm-stats.packageNames": [
+    "wdio-vscode-service"
+  ],
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
 }

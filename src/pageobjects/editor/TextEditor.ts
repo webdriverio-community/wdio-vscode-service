@@ -1,15 +1,13 @@
 import { fileURLToPath } from 'node:url'
 import clipboard from 'clipboardy'
-import semver from 'semver'
 import { Key, ChainablePromiseElement } from 'webdriverio'
 
 import logger from '@wdio/logger'
 import { ContentAssist, ContextMenu, InputBox } from '../index.js'
 import { StatusBar } from '../statusBar/StatusBar.js'
 import { Editor, EditorLocators } from './Editor.js'
-
 import {
-    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap, semverLt
 } from '../utils.js'
 import {
     TextEditor as TextEditorLocators,
@@ -633,7 +631,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      */
     async nextMatch (): Promise<void> {
         const version = await browser.getVSCodeVersion()
-        const name = semver.lt(version, '1.59.0') ? 'Next match' : 'Next Match'
+        const name = semverLt(version, '1.59.0') ? 'Next match' : 'Next Match'
         await this.clickButton(name, 'find')
     }
 
@@ -642,7 +640,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      */
     async previousMatch (): Promise<void> {
         const version = await browser.getVSCodeVersion()
-        const name = semver.lt(version, '1.59.0')
+        const name = semverLt(version, '1.59.0')
             ? 'Previous match'
             : 'Previous Match'
         await this.clickButton(name, 'find')

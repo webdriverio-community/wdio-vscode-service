@@ -1,4 +1,3 @@
-import semver from 'semver'
 import { TitleBar } from '../menu/TitleBar.js'
 import { SideBarView } from '../sidebar/SideBarView.js'
 import { ActivityBar } from '../activityBar/ActivityBar.js'
@@ -12,7 +11,7 @@ import { SettingsEditor } from '../editor/SettingsEditor.js'
 import { WebView } from './WebView.js'
 
 import {
-    PageDecorator, IPageDecorator, BasePage, sleep
+    PageDecorator, IPageDecorator, BasePage, sleep, semverGte
 } from '../utils.js'
 import { Workbench as WorkbenchLocators } from '../../locators/1.73.0.js'
 
@@ -196,7 +195,7 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
         const version = await browser.getVSCodeVersion()
         if (
             ((await browser.getVSCodeChannel()) === 'vscode'
-                && semver.gte(version, '1.44.0'))
+                && semverGte(version, '1.44.0'))
             || version === 'insiders'
         ) {
             return new InputBox(this.locatorMap).wait()
