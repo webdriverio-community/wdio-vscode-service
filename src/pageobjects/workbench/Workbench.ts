@@ -1,3 +1,4 @@
+import semver from 'semver'
 import { TitleBar } from '../menu/TitleBar.js'
 import { SideBarView } from '../sidebar/SideBarView.js'
 import { ActivityBar } from '../activityBar/ActivityBar.js'
@@ -192,9 +193,11 @@ export class Workbench extends BasePage<typeof WorkbenchLocators> {
             }
         }
         await browser.keys(['F1'])
+        const version = await browser.getVSCodeVersion()
         if (
-            (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.44.0')
-            || await browser.getVSCodeVersion() === 'insiders'
+            ((await browser.getVSCodeChannel()) === 'vscode'
+                && semver.gte(version, '1.44.0'))
+            || version === 'insiders'
         ) {
             return new InputBox(this.locatorMap).wait()
         }

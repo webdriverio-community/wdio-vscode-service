@@ -1,4 +1,5 @@
 import type { ChainablePromiseElement } from 'webdriverio'
+import semver from 'semver'
 
 import {
     ActivityBar, DebugView, SideBarView, ScmView
@@ -57,7 +58,11 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
         }
         const view = await new SideBarView(this.locatorMap).wait()
         if ((await view.elem.$$(this.locators.scmId)).length > 0) {
-            if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.47.0') {
+            const version = await browser.getVSCodeVersion()
+            if (
+                (await browser.getVSCodeChannel()) === 'vscode'
+                && semver.gte(version, '1.47.0')
+            ) {
                 return new NewScmView(this.locatorMap).wait()
             }
             return new ScmView(this.locatorMap).wait()

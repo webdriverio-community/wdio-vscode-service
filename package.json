@@ -53,6 +53,7 @@
     "fastify": "^4.26.1",
     "get-port": "7.0.0",
     "hpagent": "^1.2.0",
+    "semver": "^7.7.2",
     "slash": "^5.1.0",
     "tmp-promise": "^3.0.3",
     "undici": "^5.28.3",

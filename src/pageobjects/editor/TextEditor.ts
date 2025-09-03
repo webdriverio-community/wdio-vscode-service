@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import clipboard from 'clipboardy'
+import semver from 'semver'
 import { Key, ChainablePromiseElement } from 'webdriverio'
 
 import logger from '@wdio/logger'
@@ -631,7 +632,8 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Next match'
      */
     async nextMatch (): Promise<void> {
-        const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Next match' : 'Next Match'
+        const version = await browser.getVSCodeVersion()
+        const name = semver.lt(version, '1.59.0') ? 'Next match' : 'Next Match'
         await this.clickButton(name, 'find')
     }
 
@@ -639,7 +641,10 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Previous match'
      */
     async previousMatch (): Promise<void> {
-        const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Previous match' : 'Previous Match'
+        const version = await browser.getVSCodeVersion()
+        const name = semver.lt(version, '1.59.0')
+            ? 'Previous match'
+            : 'Previous Match'
         await this.clickButton(name, 'find')
     }
 
