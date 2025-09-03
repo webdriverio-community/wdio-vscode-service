@@ -228,7 +228,7 @@ export function sleep (ms = 500) {
  * @returns true if version is 'stable' or if version >= targetVersion
  */
 export function semverGte (version: string, targetVersion: string): boolean {
-    if (version === 'stable') {
+    if (version === 'stable' || version === 'insiders') {
         return true
     }
     return semver.gte(version, targetVersion)
@@ -241,7 +241,7 @@ export function semverGte (version: string, targetVersion: string): boolean {
  * @returns true if version is 'stable', otherwise returns version < targetVersion
  */
 export function semverLt (version: string, targetVersion: string): boolean {
-    if (version === 'stable') {
+    if (version === 'stable' || version === 'insiders') {
         return true
     }
     return semver.lt(version, targetVersion)
