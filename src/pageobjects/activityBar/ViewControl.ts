@@ -6,7 +6,7 @@ import {
 import { NewScmView } from '../sidebar/scm/NewScmView.js'
 
 import {
-    PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, ElementWithContextMenu, VSCodeLocatorMap, semverGte
 } from '../utils.js'
 import { ViewControl as ViewControlLocators } from '../../locators/1.73.0.js'
 
@@ -57,7 +57,11 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
         }
         const view = await new SideBarView(this.locatorMap).wait()
         if ((await view.elem.$$(this.locators.scmId)).length > 0) {
-            if (await browser.getVSCodeChannel() === 'vscode' && await browser.getVSCodeVersion() >= '1.47.0') {
+            const version = await browser.getVSCodeVersion()
+            if (
+                (await browser.getVSCodeChannel()) === 'vscode'
+                && semverGte(version, '1.47.0')
+            ) {
                 return new NewScmView(this.locatorMap).wait()
             }
             return new ScmView(this.locatorMap).wait()

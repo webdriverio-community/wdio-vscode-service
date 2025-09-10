@@ -1,5 +1,6 @@
 /* eslint-disable object-shorthand */
 import type { ChainablePromiseElement, ChainablePromiseArray } from 'webdriverio'
+import semver from 'semver'
 
 import * as allLocatorsTypes from '../locators/insiders.js'
 import { ContextMenu } from './index.js'
@@ -218,4 +219,30 @@ export function sleep (ms = 500) {
     return new Promise<void>((res) => {
         setTimeout(res, ms)
     })
+}
+
+/**
+ * Semver utility function that handles the special case where version is 'stable'
+ * @param version The version to compare
+ * @param targetVersion The target version to compare against
+ * @returns true if version is 'stable' or if version >= targetVersion
+ */
+export function semverGte (version: string, targetVersion: string): boolean {
+    if (version === 'stable' || version === 'insiders') {
+        return true
+    }
+    return semver.gte(version, targetVersion)
+}
+
+/**
+ * Semver utility function that handles the special case where version is 'stable'
+ * @param version The version to compare
+ * @param targetVersion The target version to compare against
+ * @returns true if version is 'stable', otherwise returns version < targetVersion
+ */
+export function semverLt (version: string, targetVersion: string): boolean {
+    if (version === 'stable' || version === 'insiders') {
+        return true
+    }
+    return semver.lt(version, targetVersion)
 }

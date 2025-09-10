@@ -6,9 +6,8 @@ import logger from '@wdio/logger'
 import { ContentAssist, ContextMenu, InputBox } from '../index.js'
 import { StatusBar } from '../statusBar/StatusBar.js'
 import { Editor, EditorLocators } from './Editor.js'
-
 import {
-    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap
+    PageDecorator, IPageDecorator, BasePage, ElementWithContextMenu, VSCodeLocatorMap, semverLt
 } from '../utils.js'
 import {
     TextEditor as TextEditorLocators,
@@ -631,7 +630,8 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Next match'
      */
     async nextMatch (): Promise<void> {
-        const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Next match' : 'Next Match'
+        const version = await browser.getVSCodeVersion()
+        const name = semverLt(version, '1.59.0') ? 'Next match' : 'Next Match'
         await this.clickButton(name, 'find')
     }
 
@@ -639,7 +639,10 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * Click 'Previous match'
      */
     async previousMatch (): Promise<void> {
-        const name = (await browser.getVSCodeVersion()) < '1.59.0' ? 'Previous match' : 'Previous Match'
+        const version = await browser.getVSCodeVersion()
+        const name = semverLt(version, '1.59.0')
+            ? 'Previous match'
+            : 'Previous Match'
         await this.clickButton(name, 'find')
     }
 
