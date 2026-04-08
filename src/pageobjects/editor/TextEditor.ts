@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url'
-import clipboard from 'clipboardy'
+import * as clipboard from 'tinyclip'
 import { Key, ChainablePromiseElement } from 'webdriverio'
 
 import logger from '@wdio/logger'
@@ -131,11 +131,11 @@ export class TextEditor extends Editor<EditorLocators> {
             .pause(10)
             .up(CMD_KEY).up('a').up('c')
             .perform()
-        const text = clipboard.readSync()
+        const text = await clipboard.readText()
         await browser.action('key')
             .down(Key.ArrowUp).up(Key.ArrowUp)
             .perform()
-        clipboard.writeSync('')
+        await clipboard.writeText('')
 
         /**
          * let's return "" if the editor is empty rather than "\n"
@@ -152,13 +152,13 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Promise resolving once the new text is copied over
      */
     async setText (text: string, formatText = false): Promise<void> {
-        clipboard.writeSync(text)
+        await clipboard.writeText(text)
         await browser.action('key')
             .down(CMD_KEY).down('a').down('v')
             .pause(10)
             .up(CMD_KEY).up('a').up('v')
             .perform()
-        clipboard.writeSync('')
+        await clipboard.writeText('')
         if (formatText) {
             await this.formatDocument()
         }
@@ -265,7 +265,7 @@ export class TextEditor extends Editor<EditorLocators> {
             .down(CMD_KEY).down('c')
             .up(CMD_KEY).up('c')
             .perform()
-        return clipboard.read()
+        return clipboard.readText()
     }
 
     /**

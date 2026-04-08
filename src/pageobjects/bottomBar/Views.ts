@@ -1,4 +1,4 @@
-import clipboard from 'clipboardy'
+import * as clipboard from 'tinyclip'
 import { Key } from 'webdriverio'
 
 import { Workbench, BottomBarPanel, ContentAssist } from '../../index.js'
@@ -83,8 +83,8 @@ export class DebugConsoleView extends ElementWithContextMenu<typeof DebugConsole
     async getText (): Promise<string> {
         const menu = await this.openContextMenu()
         await menu.select('Copy All')
-        const text = await clipboard.read()
-        await clipboard.write('')
+        const text = await clipboard.readText()
+        await clipboard.writeText('')
         return text
     }
 
@@ -195,13 +195,13 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
         })
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500)
-        const text = await clipboard.read()
+        const text = await clipboard.readText()
 
         if (!text && retry > 0) {
             return this.getText(retry - 1)
         }
 
-        clipboard.writeSync('')
+        await clipboard.writeText('')
         return text.trim()
     }
 
