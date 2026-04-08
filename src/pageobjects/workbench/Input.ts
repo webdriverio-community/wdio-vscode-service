@@ -1,4 +1,4 @@
-import clipboard from 'clipboardy'
+import * as clipboard from 'tinyclip'
 import { Key } from 'webdriverio'
 
 import {
@@ -53,7 +53,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
         // fallback to clipboard if the text gets malformed
         const currentText = await this.getText()
         if (currentText !== text) {
-            await clipboard.write(text)
+            await clipboard.writeText(text)
             if (currentText?.length) {
                 const backSpaces: string[] = new Array(currentText.length).fill(Key.Backspace)
                 const keyAction = browser.action('key')
@@ -62,7 +62,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
                 }
                 await keyAction.perform()
             }
-            await clipboard.write('')
+            await clipboard.writeText('')
         }
     }
 
