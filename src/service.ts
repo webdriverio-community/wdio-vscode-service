@@ -32,6 +32,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _promisedSocket?: Promise<WebSocket>
     private _proxyOptions: VSCodeProxyOptions
     private _vscodeOptions: VSCodeOptions
+    private _workspacePath?: string
     private _isWebSession = false
     private _isCucumberSession = false
     private _deletingSession = false
@@ -71,7 +72,31 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         this._pendingMessages.forEach((resolver) => resolver(msg, null))
     }
 
-    async beforeSession (option: Options.Testrunner, capabilities: VSCodeCapabilities) {
+    private async _resolveWorkspacePath (
+        config: Options.Testrunner,
+        capabilities: VSCodeCapabilities,
+        specs: string[],
+        cid: string
+    ) {
+        const { workspacePath } = this._vscodeOptions
+        if (typeof workspacePath !== 'function') {
+            return workspacePath
+        }
+
+        return workspacePath({
+            config,
+            capabilities,
+            specs,
+            cid
+        })
+    }
+
+    async beforeSession (
+        option: Options.Testrunner,
+        capabilities: VSCodeCapabilities,
+        specs: string[] = [],
+        cid = ''
+    ) {
         this._isWebSession = capabilities.browserName !== 'vscode'
         this._isCucumberSession = option.framework === 'cucumber'
 
@@ -81,6 +106,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         if (!isVSCodeCapability(capabilities)) {
             return
         }
+
+        this._workspacePath = await this._resolveWorkspacePath(option, capabilities, specs, cid)
 
         /**
          * if we run tests for a web extension
@@ -144,8 +171,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             'utf-8'
         )
 
-        if (this._vscodeOptions.workspacePath) {
-            customArgs.folderUri = `file:${slash(this._vscodeOptions.workspacePath)}`
+        if (this._workspacePath) {
+            customArgs.folderUri = `file:${slash(this._workspacePath)}`
         }
 
         if (this._vscodeOptions.filePath) {
@@ -220,8 +247,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
          * VSCode in the browser doesn't allow to have a file directly opened,
          * therefore we need to open it automatically
          */
-        if (this._isWebSession && this._vscodeOptions.filePath && this._vscodeOptions.workspacePath) {
-            const sections = this._vscodeOptions.filePath.replace(this._vscodeOptions.workspacePath, '')
+        if (this._isWebSession && this._vscodeOptions.filePath && this._workspacePath) {
+            const sections = this._vscodeOptions.filePath.replace(this._workspacePath, '')
                 .split(path.sep).filter(Boolean)
             const fileExplorer = await browser.$('.explorer-folders-view')
             while (sections.length > 0) {

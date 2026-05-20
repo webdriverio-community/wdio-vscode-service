@@ -36,6 +36,10 @@ type COIRequest = FastifyRequest<{
 export default async function startServer (standalone: Bundle, options: VSCodeOptions) {
     const app = fastify({ logger: true })
     const port = await getPort({ port: options.serverOptions?.port || DEFAULT_VSCODE_WEB_PORT })
+    const workspacePath = typeof options.workspacePath === 'string'
+        ? options.workspacePath
+        : undefined
+
     await app.register(fastifyCors, {
         methods: ['GET'],
         credentials: true,
@@ -75,18 +79,18 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
         decorateReply: false // the reply decorator has been added by the first plugin registration
     })
 
-    if (options.workspacePath) {
-        log.info(`Serve workspace from ${options.workspacePath}`)
+    if (workspacePath) {
+        log.info(`Serve workspace from ${workspacePath}`)
         app.addHook('preHandler', async (req, reply) => {
             const filePath = (req.params as { '*': string })['*']
             const queries = Object.keys(req.query as Record<string, string>)
 
-            if (!options.workspacePath || !filePath || !req.url.startsWith(mountPrefix)) {
+            if (!filePath || !req.url.startsWith(mountPrefix)) {
                 return null
             }
 
             const p = path.join(
-                options.workspacePath,
+                workspacePath,
                 filePath === mountPrefix.slice(1)
                     ? filePath.slice(mountPrefix.length - 1)
                     : filePath
@@ -129,7 +133,7 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
 
         await app.register(fastifyStatic, {
             prefix: `${mountPrefix}/`,
-            root: options.workspacePath,
+            root: workspacePath,
             dotfiles: 'allow',
             decorateReply: false // the reply decorator has been added by the first plugin registration
         })
@@ -183,7 +187,7 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
                 },
                 extensionTestsPath: undefined,
                 folderUri: undefined,
-                folderMountPath: options.workspacePath,
+                folderMountPath: workspacePath,
                 printServerLog: true
             }
         )

@@ -7,7 +7,7 @@ import logger from '@wdio/logger'
 import { setGlobalDispatcher, request, ProxyAgent } from 'undici'
 import { download } from '@vscode/test-electron'
 import { SevereServiceError } from 'webdriverio'
-import type { Capabilities } from '@wdio/types'
+import type { Capabilities, Options } from '@wdio/types'
 import { HttpsProxyAgent } from 'hpagent'
 
 import startServer from './server/index.js'
@@ -104,6 +104,25 @@ export default class VSCodeServiceLauncher {
         }
     }
 
+    async onWorkerStart (
+        cid: string,
+        caps: VSCodeCapabilities,
+        specs: string[],
+        args: Options.Testrunner
+    ) {
+        const vscodeOptions = caps[VSCODE_CAPABILITY_KEY]
+        if (typeof vscodeOptions?.workspacePath !== 'function') {
+            return
+        }
+
+        vscodeOptions.workspacePath = await vscodeOptions.workspacePath({
+            config: args,
+            capabilities: caps,
+            specs,
+            cid
+        })
+    }
+
     /**
      * Set up VSCode for web testing
      * @param versionsFileExist true if we already have information stored about cached VSCode bundles
@@ -114,6 +133,12 @@ export default class VSCodeServiceLauncher {
         version: string,
         cap: VSCodeCapabilities
     ) {
+        if (typeof cap[VSCODE_CAPABILITY_KEY]?.workspacePath === 'function') {
+            throw new SevereServiceError(
+                'workspacePath callbacks are only supported for VSCode Desktop sessions'
+            )
+        }
+
         /**
          * no need to do any work if we already started the server
          */

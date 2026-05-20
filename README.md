@@ -191,7 +191,19 @@ Default: `{}`
 
 Opens VSCode for a specific workspace. If not provided VSCode starts without a workspace opened.
 
-Type: `string`
+For desktop sessions this can also be a callback that resolves the workspace path
+for the current WDIO worker. This is useful when suites run in parallel and each
+suite needs an isolated workspace directory:
+
+```ts
+workspacePath: ({ cid, specs }) => getWorkspaceForSuite(cid, specs)
+```
+
+The callback is resolved before each worker starts. Web extension sessions require
+a static string because the shared VSCode Web server is started before workers are
+available.
+
+Type: `string | ({ config, capabilities, specs, cid }) => string | undefined | Promise<string | undefined>`
 
 #### `filePath`
 
