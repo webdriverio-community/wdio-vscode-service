@@ -243,9 +243,13 @@ export default class VSCodeServiceLauncher {
      */
     private async _fetchChromedriverVersion (vscodeVersion: string) {
         try {
+            // VS Code only tags .0 releases on GitHub (e.g. 1.122.0), not patch
+            // releases (e.g. 1.122.1). The Chromium version is the same across
+            // patch releases, so normalize to .0 for the manifest lookup.
+            const normalizedVersion = vscodeVersion.replace(/^(\d+\.\d+)\.\d+$/, '$1.0')
             const manifestUrl = vscodeVersion.includes('insider')
                 ? VSCODE_INSIDER_MANIFEST_URL
-                : format(VSCODE_MANIFEST_URL, vscodeVersion)
+                : format(VSCODE_MANIFEST_URL, normalizedVersion)
 
             log.info(`manifest url: ${manifestUrl}`)
             const { body } = await request(manifestUrl, {})
