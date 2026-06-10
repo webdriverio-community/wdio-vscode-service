@@ -114,15 +114,34 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
         await this.toggle(true)
         const tabContainer = await this.tabContainer$
         try {
-            const tabs = await tabContainer.$$(this.locators.tab(title))
+            const tabs = await tabContainer.$$(this.locators.tab(title)).getElements()
             if (tabs.length > 0) {
                 await tabs[0].click()
             } else {
-                const label = await tabContainer.$(`.//a[starts-with(@aria-label, '${title}')]`)
+                const label = await tabContainer.$(
+                    `.//a[starts-with(@aria-label, '${title}')]`
+                    + ` | .//a[starts-with(@title, '${title}')]`
+                    + ` | .//a[contains(@aria-label, '${title}')]`
+                )
                 await label.click()
             }
         } catch (err) {
-            await new TitleBar(this.locatorMap).select('View', title)
+            const commandMap: Record<string, string> = {
+                Output: 'workbench.action.output.toggleOutput',
+                Terminal: 'workbench.action.terminal.toggleTerminal',
+                Problems: 'workbench.actions.view.problems',
+                'Debug Console': 'workbench.debug.action.toggleRepl'
+            }
+            const command = commandMap[title]
+            if (command) {
+                await browser.executeWorkbench(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+                    (vscode, cmd) => vscode.commands.executeCommand(cmd),
+                    command
+                )
+            } else {
+                await new TitleBar(this.locatorMap).select('View', title)
+            }
         }
     }
 
@@ -133,6 +152,7 @@ export class BottomBarPanel extends BasePage<typeof BottomBarPanelLocators> {
             action = await this.elem
                 .$(this.locators.globalActions)
                 .$(this.locators.action(label))
+                .getElement()
         } catch (err) {
             // the panel is already maximized
         }

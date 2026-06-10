@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio'
+import type { ChainablePromiseElement } from 'webdriverio'
 
 import { ViewSection } from '../index.js'
 import {
@@ -27,7 +27,7 @@ export class WelcomeContentButton extends BasePage<typeof WelcomeContentLocators
      */
     constructor (
         locators: VSCodeLocatorMap,
-        panel: ChainablePromiseElement<WebdriverIO.Element>,
+        panel: ChainablePromiseElement,
         public welcomeSection: WelcomeContentSection
     ) {
         super(locators, panel)
@@ -67,7 +67,7 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
      */
     constructor (
         locators: VSCodeLocatorMap,
-        panel: ChainablePromiseElement<WebdriverIO.Element>,
+        panel: ChainablePromiseElement,
         parent: ViewSection
     ) {
         super(locators, panel, parent.elem)
@@ -78,16 +78,18 @@ export class WelcomeContentSection extends BasePage<typeof WelcomeContentLocator
      * view in the order that they appear.
      */
     public async getContents (): Promise<(WelcomeContentButton | string)[]> {
-        const elements = await this.buttonOrText$$
-        return Promise.all(elements.map(async (e) => {
+        const elements = await this.buttonOrText$$.getElements()
+        const results: (WelcomeContentButton | string)[] = []
+        for (const e of elements) {
             const tagName = await e.getTagName()
             if (tagName === 'p') {
-                return e.getText()
+                results.push(await e.getText())
+            } else {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                results.push(new WelcomeContentButton(this.locatorMap, e as any, this))
             }
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            return new WelcomeContentButton(this.locatorMap, e as any, this)
-        }))
+        }
+        return results
     }
 
     /** Finds all buttons in the welcome content */

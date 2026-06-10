@@ -49,14 +49,18 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
         }
 
         const items: TitleBarItem[] = []
-        for (const element of await menubar.$$(this.locators.itemElement)) {
+        const allElements = await menubar.$$(`${this.locators.itemElement}, .toolbar-toggle-more`)
+        for (const element of allElements) {
             const isDisplayed = await element.isDisplayed()
             if (!isDisplayed) {
                 continue
             }
-            const label = await element.getAttribute(this.locators.itemLabel)
+            const label = (await element.getAttribute(this.locators.itemLabel)) ?? ''
+            const elementClasses = (await element.getAttribute('class')) ?? ''
+            const isOverflow = elementClasses.includes('toolbar-toggle-more')
             if (
-                label === 'More' // electron
+                isOverflow
+                || label === 'More' // electron
                 || label === 'Application Menu' // web
             ) {
                 await element.click()
@@ -106,7 +110,7 @@ export class TitleBar extends Menu<typeof TitleBarLocators> {
          * to fetch the HTML
          */
         if (title.length === 0) {
-            return this.title$.getHTML(false)
+            return this.title$.getHTML({ includeSelectorTag: false })
         }
 
         return title
@@ -144,7 +148,7 @@ export class TitleBarItem extends MenuItem<typeof TitleBarLocators> {
     }
 
     async select () {
-        const openMenus = await browser.$$(this.locatorMap.ContextMenu.elem as string)
+        const openMenus = await browser.$$(this.locatorMap.ContextMenu.elem as string).getElements()
         if (openMenus.length > 0 && await openMenus[0].isDisplayed()) {
             await browser.keys('Escape')
         }

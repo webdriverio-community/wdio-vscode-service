@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio'
+import type { ChainablePromiseElement } from 'webdriverio'
 import { BasePage, PageDecorator, IPageDecorator } from '../utils.js'
 import { WebView as WebViewLocators } from '../../locators/1.73.0.js'
 import type { VSCodeLocatorMap } from '../utils.js'
@@ -11,7 +11,7 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      */
     public locatorKey = 'WebView' as const
 
-    get activeFrame (): ChainablePromiseElement<WebdriverIO.Element> {
+    get activeFrame (): ChainablePromiseElement {
         return $(this._locators.WebView.activeFrame as string)
     }
 
@@ -24,8 +24,8 @@ export class WebView extends BasePage<typeof WebViewLocators> {
      */
     public async open () {
         await browser.switchToFrame(this.elem)
-        await (await this.activeFrame).waitForExist()
-        await browser.switchToFrame(await this.activeFrame)
+        await this.activeFrame.waitForExist()
+        await browser.switchToFrame(await this.activeFrame.getElement())
     }
 
     /**
@@ -56,7 +56,7 @@ export class WebView extends BasePage<typeof WebViewLocators> {
 
         const frames = await browser.$$(locators.WebView.outerFrame as string)
         return frames.map((f) => (
-            new WebView(locators, f as any as ChainablePromiseElement<WebdriverIO.Element>)
+            new WebView(locators, f as any as ChainablePromiseElement)
         ))
     }
 }

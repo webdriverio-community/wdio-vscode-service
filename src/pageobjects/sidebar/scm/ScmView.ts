@@ -1,4 +1,4 @@
-import { Key, ChainablePromiseElement } from 'webdriverio'
+import { Key, type ChainablePromiseElement } from 'webdriverio'
 
 import { SideBarView } from '../SideBarView.js'
 import { ContextMenu } from '../../index.js'
@@ -42,8 +42,10 @@ export class ScmView extends SideBarView<typeof ScmViewLocators> {
      * @returns promise resolving to ScmProvider array
      */
     async getProviders (): Promise<ScmProvider[]> {
-        const headers = await this.providerHeader$$
-        const sections = await Promise.all(headers.map(async (header) => header.$(this.locators.providerRelative)))
+        const headers = await this.providerHeader$$.getElements()
+        const sections = await Promise.all(
+            [...headers].map(async (header) => header.$(this.locators.providerRelative))
+        )
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         return Promise.all(sections.map((section) => new ScmProvider(this.locatorMap, section as any, this)))
     }
@@ -53,7 +55,7 @@ export class ScmView extends SideBarView<typeof ScmViewLocators> {
      * @returns true if the action was completed succesfully, false if a provider already exists
      */
     async initializeRepository (): Promise<boolean> {
-        const buttons = await this.initButton$$
+        const buttons = await this.initButton$$.getElements()
         if (buttons.length > 0) {
             await buttons[0].click()
             return true
@@ -77,7 +79,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
     public locatorKey = 'ScmView' as const
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public view: ScmView
     ) {
         super(locators, element, view.elem)
@@ -87,14 +89,14 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
      * Get title of the scm provider
      */
     async getTitle (): Promise<string> {
-        return this.providerTitle$.getAttribute('innerHTML')
+        return (await this.providerTitle$.getAttribute('innerHTML')) ?? ''
     }
 
     /**
      * Get type of the scm provider (e.g. Git)
      */
     async getType (): Promise<string> {
-        return this.providerType$.getAttribute('innerHTML')
+        return (await this.providerType$.getAttribute('innerHTML')) ?? ''
     }
 
     /**
@@ -104,14 +106,16 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
      */
     async takeAction (title: string): Promise<boolean> {
         const header = await this.providerHeader$
-        let actions: ChainablePromiseElement<WebdriverIO.Element>[] = []
-        if ((await header.getAttribute('class')).indexOf('hidden') > -1) {
+        let actions: ChainablePromiseElement[] = []
+        if (((await header.getAttribute('class')) ?? '').indexOf('hidden') > -1) {
             actions = (await this.view.getTitlePart().getActions()).map((action) => action.elem)
         } else {
             await this.elem.moveTo()
-            actions = await header.$$(this.locators.action) as any as ChainablePromiseElement<WebdriverIO.Element>[]
+            actions = await header.$$(this.locators.action).getElements() as unknown as ChainablePromiseElement[]
         }
-        const names = await Promise.all(actions.map((action) => action.getAttribute('title')))
+        const names = await Promise.all(
+            [...actions].map(async (action) => action.getAttribute('title'))
+        )
         const index = names.findIndex((item) => item === title)
 
         if (index > -1) {
@@ -127,7 +131,7 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
      */
     async openMoreActions (): Promise<ContextMenu> {
         const header = await this.providerHeader$
-        if ((await header.getAttribute('class')).indexOf('hidden') > -1) {
+        if (((await header.getAttribute('class')) ?? '').indexOf('hidden') > -1) {
             return new MoreAction(this.locatorMap, this.view).openContextMenu()
         }
         await this.elem.moveTo()
@@ -158,10 +162,10 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
         const changes = await this.getChangeCount(staged)
         const label = staged ? 'STAGED CHANGES' : 'CHANGES'
 
-        let elements: ChainablePromiseElement<WebdriverIO.Element>[] = []
+        let elements: ChainablePromiseElement[] = []
         if (changes > 0) {
             let i = -1
-            elements = await this.changeItem$$ as any
+            elements = await this.changeItem$$.getElements() as unknown as ChainablePromiseElement[]
             for (const [index, item] of elements.entries()) {
                 const name = await item.$(this.locators.changeName)
                 if (await name.getText() === label) {
@@ -188,8 +192,8 @@ export class ScmProvider extends BasePage<typeof ScmViewLocators> {
      */
     async getChangeCount (staged = false): Promise<number> {
         const rows = staged
-            ? await this.stagedChanges$$
-            : await this.changes$$
+            ? await this.stagedChanges$$.getElements()
+            : await this.changes$$.getElements()
 
         if (rows.length < 1) {
             return 0
@@ -214,7 +218,7 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        row: ChainablePromiseElement<WebdriverIO.Element>,
+        row: ChainablePromiseElement,
         public provider: ScmProvider
     ) {
         super(locators, row, provider.elem)
@@ -231,7 +235,7 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
      * Get description as a string
      */
     async getDescription (): Promise<string> {
-        const desc = await this.changeDesc$$
+        const desc = await this.changeDesc$$.getElements()
         if (desc.length < 1) {
             return ''
         }
@@ -256,11 +260,11 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
      * @returns promise resolving to true if change is expanded, to false otherwise
      */
     async isExpanded (): Promise<boolean> {
-        const twisties = await this.expand$$
+        const twisties = await this.expand$$.getElements()
         if (twisties.length < 1) {
             return true
         }
-        return (await twisties[0].getAttribute('class')).indexOf('collapsed') < 0
+        return ((await twisties[0].getAttribute('class')) ?? '').indexOf('collapsed') < 0
     }
 
     /**
@@ -284,8 +288,10 @@ export class ScmChange extends ElementWithContextMenu<typeof ScmViewLocators> {
      */
     async takeAction (title: string): Promise<boolean> {
         await this.elem.moveTo()
-        const actions = await this.action$$
-        const names = await Promise.all(actions.map((action) => action.getAttribute('title')))
+        const actions = await this.action$$.getElements()
+        const names = await Promise.all(
+            [...actions].map(async (action) => action.getAttribute('title'))
+        )
         const index = names.findIndex((item) => item === title)
 
         if (index > -1) {
@@ -318,7 +324,7 @@ export class MoreAction extends ElementWithContextMenu<typeof ScmViewLocators> {
 
     async openContextMenu (): Promise<ContextMenu> {
         await this.elem.click()
-        const shadowRootHost = await this.scm.elem.$$('shadow-root-host')
+        const shadowRootHost = await this.scm.elem.$$('.shadow-root-host').getElements()
         await browser.keys('Escape')
 
         if (shadowRootHost.length > 0) {

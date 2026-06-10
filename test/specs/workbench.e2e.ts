@@ -21,7 +21,7 @@ describe('workbench', () => {
         }
     })
 
-    it('is able to read guinea pig notification', async () => {
+    it('is able to read guinea pig notification @skipWeb', async () => {
         const workbench = await browser.getWorkbench()
         await browser.waitUntil(async () => {
             const notifs = await workbench.getNotifications()
@@ -86,7 +86,9 @@ describe('workbench', () => {
         })
     })
 
-    it('can access the VSCode API after a new folder is opened @skipWeb', async () => {
+    // VS Code 1.123+ reloads the window on openFolder, killing the WebSocket connection.
+    // Skipped until the service supports session reconnection after window reload.
+    it.skip('can access the VSCode API after a new folder is opened @skipWeb', async () => {
         const workspaceRoot = await browser.executeWorkbench<string | undefined>((vscode) => vscode.workspace.rootPath)
         expect(workspaceRoot).not.toBe(undefined)
 

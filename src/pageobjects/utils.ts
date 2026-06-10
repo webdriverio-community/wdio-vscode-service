@@ -10,30 +10,28 @@ type ClassWithFunctionLocatorsAsString<T> = {
 }
 
 type ClassWithFunctionLocators$<T> = {
-    // @ts-expect-error this fails compiling here but works when applied to a class
     [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$`]: (
-        // @ts-expect-error this fails compiling here but works when applied to a class
+        // @ts-expect-error mapped type constraint
         ...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>
-    ) => ChainablePromiseElement<WebdriverIO.Element>
+    ) => ChainablePromiseElement
 }
 
 type ClassWithFunctionLocators$$<T> = {
-    // @ts-expect-error this fails compiling here but works when applied to a class
     [key in keyof ClassWithFunctionLocatorsAsString<T> as `${key}$$`]: (
-        // @ts-expect-error this fails compiling here but works when applied to a class
+        // @ts-expect-error mapped type constraint
         ...args: Parameters<ClassWithFunctionLocatorsAsString<T>[key]>
-    ) => ChainablePromiseArray<WebdriverIO.Element[]>
+    ) => ChainablePromiseArray
 }
 
 type ClassWithLocators$<T> = {
     [key in keyof T & string as T[key] extends String | undefined
         ? `${key}$`
-        : never]: ChainablePromiseElement<WebdriverIO.Element>
+        : never]: ChainablePromiseElement
 }
 type ClassWithLocators$$<T> = {
     [key in keyof T & string as T[key] extends String | undefined
         ? `${key}$$`
-        : never]: ChainablePromiseArray<WebdriverIO.Element[]>
+        : never]: ChainablePromiseArray
 }
 
 type LocatorProperties<T> = {
@@ -97,8 +95,8 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
      */
     constructor (
         protected _locators: LocatorMap,
-        private _baseElem?: string | ChainablePromiseElement<WebdriverIO.Element>,
-        private _parentElem?: string | ChainablePromiseElement<WebdriverIO.Element>
+        private _baseElem?: string | ChainablePromiseElement,
+        private _parentElem?: string | ChainablePromiseElement
     ) {}
 
     /**
@@ -161,7 +159,7 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
     /**
      * @private
      */
-    setParentElement (parentElem: string | ChainablePromiseElement<WebdriverIO.Element>) {
+    setParentElement (parentElem: string | ChainablePromiseElement) {
         this._parentElem = parentElem
     }
 
@@ -170,7 +168,7 @@ export abstract class BasePage<PageLocators, LocatorMap extends Record<string, L
      * @param timeout custom timeout for the wait
      * @returns thenable self reference
      */
-    async wait (timeout = 5000): Promise<this> {
+    async wait (timeout = 15000): Promise<this> {
         await this.elem.waitForDisplayed({ timeout })
         return this
     }
@@ -197,7 +195,7 @@ export abstract class ElementWithContextMenu<T> extends BasePage<T> {
     async openContextMenu (): Promise<ContextMenu> {
         const contextMenuLocators = this.locatorMap.ContextMenu as AllLocatorType['ContextMenu']
         const workbench = browser.$((this.locatorMap.Workbench as AllLocatorType['Workbench']).elem)
-        const menus = await browser.$$(contextMenuLocators.contextView)
+        const menus = await browser.$$(contextMenuLocators.contextView).getElements()
 
         if (menus.length < 1) {
             await this.elem.click({ button: 2 })
@@ -205,7 +203,7 @@ export abstract class ElementWithContextMenu<T> extends BasePage<T> {
             return new ContextMenu(this.locatorMap, workbench).wait()
         }
 
-        if (await workbench.$$(contextMenuLocators.viewBlock).length > 0) {
+        if ((await workbench.$$(contextMenuLocators.viewBlock).getElements()).length > 0) {
             await this.elem.click({ button: 2 })
             await this.elem.waitForDisplayed({ reverse: true, timeout: 1000 })
         }

@@ -6,6 +6,7 @@ import {
     PageDecorator, IPageDecorator, BasePage, VSCodeLocatorMap, sleep
 } from '../utils.js'
 import { SettingsEditor as SettingsEditorLocators } from '../../locators/1.73.0.js'
+import { CMD_KEY } from '../../constants.js'
 
 export interface SettingsEditor extends IPageDecorator<EditorLocators> {}
 /**
@@ -43,8 +44,12 @@ export class SettingsEditor extends Editor<EditorLocators> {
      */
     async findSetting (title: string, ...categories: string[]): Promise<Setting> {
         const category = categories.join(' › ')
-        const searchBox = await this.elem.$(this.locatorMap.Editor.inputArea as string)
-        await searchBox.setValue(`${category}: ${title}`)
+        const searchBox = await this.elem.$('.search-container')
+        await searchBox.click()
+        await sleep(200)
+        await browser.keys([CMD_KEY, 'a'])
+        await sleep(100)
+        await browser.keys(`${category}: ${title}`)
 
         const count = await this.itemCount$
         let textCount = await count.getText()
@@ -194,14 +199,19 @@ export class ComboSetting extends Setting {
      */
     public locatorKey = 'SettingsEditor' as const
 
-    getValue (): Promise<string> {
-        return this.comboSetting$.getAttribute('title')
+    async getValue (): Promise<string> {
+        const combo = await this.comboSetting$
+        const title = await combo.getAttribute('title')
+        if (title) {
+            return title
+        }
+        return (await combo.getValue()) ?? ''
     }
 
     async setValue (value: string): Promise<void> {
         const rows = await this.getOptions()
         for (let i = 0; i < rows.length; i += 1) {
-            if ((await rows[i].getAttribute('class')).indexOf('disabled') < 0) {
+            if (((await rows[i].getAttribute('class')) ?? '').indexOf('disabled') < 0) {
                 const text = await rows[i].$(this.locators.comboOption).getText()
                 if (value === text) {
                     await rows[i].click()
@@ -227,18 +237,22 @@ export class ComboSetting extends Setting {
 
     private async getOptions () {
         const menu = await this.openCombo()
-        return menu.$$(this.locators.itemRow)
+        return menu.$$(this.locators.itemRow).getElements()
     }
 
     private async openCombo () {
         const combo = await this.comboSetting$
         const workbench = await browser.$(this.locatorMap.Workbench.elem as string)
-        const menus = await workbench.$$(this.locatorMap.ContextMenu.contextView as string)
+        const menus = await workbench
+            .$$(this.locatorMap.ContextMenu.contextView as string)
+            .getElements()
         let menu!: WebdriverIO.Element
 
         if (menus.length < 1) {
             await combo.click()
-            menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string)
+            menu = await workbench
+                .$(this.locatorMap.ContextMenu.contextView as string)
+                .getElement()
             return menu
         }
         if (await menus[0].isDisplayed()) {
@@ -247,7 +261,9 @@ export class ComboSetting extends Setting {
             await browser.pause(200)
         }
         await combo.click()
-        menu = await workbench.$(this.locatorMap.ContextMenu.contextView as string)
+        menu = await workbench
+            .$(this.locatorMap.ContextMenu.contextView as string)
+            .getElement()
         return menu
     }
 }
@@ -266,7 +282,7 @@ export class TextSetting extends Setting {
     public locatorKey = 'SettingsEditor' as const
 
     async getValue (): Promise<string> {
-        return this.textSetting$.getAttribute('value')
+        return (await this.textSetting$.getAttribute('value')) ?? ''
     }
 
     async setValue (value: string): Promise<void> {

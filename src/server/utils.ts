@@ -64,6 +64,7 @@ export async function getWorkbenchOptions (
     config: IConfig
 ): Promise<IWorkbenchOptions> {
     const options: IWorkbenchOptions = {}
+    options.productConfiguration = { enableTelemetry: false }
     if (config.extensionPaths) {
         const extensionPromises = config.extensionPaths.map(
             (extensionPath, index) => scanForExtensions(extensionPath, {
@@ -115,7 +116,6 @@ export async function getWorkbenchOptions (
     } else {
         options.workspaceUri = URI.from({ scheme: 'tmp', path: '/default.code-workspace' })
     }
-    options.productConfiguration = { enableTelemetry: false }
     return options
 }
 

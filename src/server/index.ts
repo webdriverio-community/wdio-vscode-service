@@ -22,6 +22,43 @@ const log = logger('wdio-vscode-service/server')
 const mountPrefix = '/static/mount'
 const webviewHostRegexp = /^https:\/\/[^.]+\.vscode-webview\.net$/
 
+// eslint-disable-next-line max-len
+const workbenchBootstrapModule = `import { create, URI } from '../../../workbench/workbench.web.main.internal.js';
+(function () {
+    const configElement = document.getElementById('vscode-workbench-web-configuration');
+    const configElementAttribute = configElement ? configElement.getAttribute('data-settings') : undefined;
+    if (!configElement || !configElementAttribute) {
+        throw new Error('Missing web configuration element');
+    }
+    const config = JSON.parse(configElementAttribute);
+    let workspace;
+    if (config.folderUri) {
+        workspace = { folderUri: URI.revive(config.folderUri) };
+    } else if (config.workspaceUri) {
+        workspace = { workspaceUri: URI.revive(config.workspaceUri) };
+    }
+    if (config.additionalBuiltinExtensions) {
+        config.additionalBuiltinExtensions = config.additionalBuiltinExtensions.map(
+            function (ext) { return ext && ext.scheme ? URI.revive(ext) : ext; }
+        );
+    }
+    if (config.developmentOptions && config.developmentOptions.extensions) {
+        config.developmentOptions.extensions = config.developmentOptions.extensions.map(
+            function (ext) { return URI.revive(ext); }
+        );
+    }
+    create(document.body, {
+        ...config,
+        settingsSyncOptions: config.settingsSyncOptions ? { enabled: config.settingsSyncOptions.enabled } : undefined,
+        workspaceProvider: {
+            workspace,
+            trusted: true,
+            open: async () => false
+        }
+    });
+})();
+`
+
 type COIRequest = FastifyRequest<{
     Querystring: {
         'vscode-coi': '1' | '2' | '3'
@@ -61,6 +98,40 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
         }
     })
 
+    let bundlePath = standalone.path
+    let workbenchHtmlPath = path.join(bundlePath, 'out', 'vs', 'code', 'browser', 'workbench', 'workbench.html')
+    let hasEsmWorkbench = await fs.access(workbenchHtmlPath).then(() => true, () => false)
+
+    if (!hasEsmWorkbench) {
+        const topEntries = await fs.readdir(bundlePath).catch(() => [] as string[])
+        log.info(`Bundle root contents: ${topEntries.join(', ')}`)
+        if (topEntries.length === 1 && !topEntries[0].includes('.')) {
+            const nestedBase = path.join(bundlePath, topEntries[0])
+            const nestedPath = path.join(nestedBase, 'out', 'vs', 'code', 'browser', 'workbench', 'workbench.html')
+            hasEsmWorkbench = await fs.access(nestedPath).then(() => true, () => false)
+            if (hasEsmWorkbench) {
+                workbenchHtmlPath = nestedPath
+                bundlePath = nestedBase
+            }
+        }
+    }
+    log.info(`ESM workbench detection: ${hasEsmWorkbench} (path: ${bundlePath})`)
+
+    if (hasEsmWorkbench) {
+        app.get('/static/build/out/vs/code/browser/workbench/workbench.css', async (req, reply) => {
+            const cssPath = path.join(bundlePath, 'out', 'vs', 'workbench', 'workbench.web.main.internal.css')
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Content-Type', 'text/css')
+            return reply.send(await fs.readFile(cssPath))
+        })
+
+        app.get('/static/build/out/vs/code/browser/workbench/workbench.js', async (req, reply) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Content-Type', 'application/javascript')
+            return reply.send(workbenchBootstrapModule)
+        })
+    }
+
     if (options.extensionPath) {
         log.info(`Serving dev extensions from ${options.extensionPath}`)
         await app.register(fastifyStatic, {
@@ -71,7 +142,7 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
 
     await app.register(fastifyStatic, {
         prefix: '/static/build',
-        root: standalone.path,
+        root: bundlePath,
         decorateReply: false // the reply decorator has been added by the first plugin registration
     })
 
@@ -177,7 +248,7 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
                 extensionDevelopmentPath: options.extensionPath,
                 build: {
                     type: 'static' as const,
-                    location: standalone.path,
+                    location: bundlePath,
                     quality: (options.version || DEFAULT_CHANNEL) as 'stable' | 'insider',
                     version: standalone.version
                 },
@@ -188,8 +259,27 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
             }
         )
 
+        const baseUrl = `${host}/static/build`
+
+        if (hasEsmWorkbench) {
+            let html = await fs.readFile(workbenchHtmlPath, 'utf-8')
+            const nlsUrl = `${baseUrl}/out/nls.messages.js`
+            html = html
+                .replace(/\{\{WORKBENCH_WEB_BASE_URL\}\}/g, baseUrl)
+                .replace(
+                    /\{\{WORKBENCH_WEB_CONFIGURATION\}\}/g,
+                    JSON.stringify(webConfiguration).replace(/"/g, '&quot;')
+                )
+                .replace(/\{\{WORKBENCH_AUTH_SESSION\}\}/g, '')
+                .replace(/\{\{WORKBENCH_NLS_FALLBACK_URL\}\}/g, nlsUrl)
+                .replace(/\{\{WORKBENCH_NLS_URL\}\}/g, nlsUrl)
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.header('Content-Type', 'text/html')
+            return reply.send(html)
+        }
+
         const template = getWorkbench({
-            baseUrl: `${host}/static/build`,
+            baseUrl,
             webConfiguration: JSON.stringify(webConfiguration).replace(/"/g, '&quot;'),
             authSession: '',
             builtinExtensions: '[]'

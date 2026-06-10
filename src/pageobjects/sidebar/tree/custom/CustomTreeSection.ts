@@ -44,9 +44,9 @@ export class CustomTreeSection extends TreeSection {
 
         const elements = await container.$$(this.locators.itemRow)
         for (const element of elements) {
-            const temp = await element.$$(this.locators.rowWithLabel(label))
+            const temp = await element.$$(this.locators.rowWithLabel(label)).getElements()
             if (temp.length > 0) {
-                const level = +await temp[0].getAttribute(this.locatorMap.ViewSection.level as string)
+                const level = +((await temp[0].getAttribute(this.locatorMap.ViewSection.level as string)) ?? '')
                 if (maxLevel < 1 || level <= maxLevel) {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     item = await new CustomTreeItem(this.locatorMap, element as any, this).wait()

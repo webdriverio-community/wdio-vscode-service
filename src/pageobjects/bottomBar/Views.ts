@@ -221,37 +221,43 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
     async newTerminal (): Promise<void> {
         await new Workbench(this.locatorMap)
             .executeCommand(this.locators.newCommand)
-        const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string)
+        const combo = await this.panel.elem
+            .$$(this.locatorMap.BottomBarViews.channelCombo as string)
+            .getElements()
         if (combo.length < 1) {
             await browser.waitUntil(async () => {
-                const list = await this.tabList$$
+                const list = await this.tabList$$.getElements()
                 return list.length > 0
             }, { timeout: 5000 })
         }
     }
 
     async getCurrentChannel (): Promise<string> {
-        const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string)
+        const combo = await this.panel.elem
+            .$$(this.locatorMap.BottomBarViews.channelCombo as string)
+            .getElements()
         if (combo.length > 0) {
             return super.getCurrentChannel()
         }
-        const singleTerm = await this.panel.elem.$$(this.locators.singleTab)
+        const singleTerm = await this.panel.elem.$$(this.locators.singleTab).getElements()
         if (singleTerm.length > 0) {
             return singleTerm[0].getText()
         }
         const list = await this.tabList$
         const row = await list.$(this.locators.selectedRow)
-        const label = (await row.getAttribute('aria-label')).split(' ')
+        const label = ((await row.getAttribute('aria-label')) ?? '').split(' ')
 
         return `${label[1]}: ${label[2]}`
     }
 
     async selectChannel (name: string): Promise<void> {
-        const combo = await this.panel.elem.$$(this.locatorMap.BottomBarViews.channelCombo as string)
+        const combo = await this.panel.elem
+            .$$(this.locatorMap.BottomBarViews.channelCombo as string)
+            .getElements()
         if (combo.length > 0) {
             return super.selectChannel(name)
         }
-        const singleTerm = await this.panel.elem.$$(this.locators.singleTab)
+        const singleTerm = await this.panel.elem.$$(this.locators.singleTab).getElements()
         if (singleTerm.length > 0) {
             return undefined
         }
@@ -266,7 +272,7 @@ export class TerminalView extends ChannelView<typeof TerminalViewLocators> {
         const rows = await list.$$(this.locators.row)
 
         for (const row of rows) {
-            const label = await row.getAttribute('aria-label')
+            const label = (await row.getAttribute('aria-label')) ?? ''
             if (label.includes(channelNumber)) {
                 await row.click()
                 return undefined

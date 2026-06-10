@@ -32,6 +32,6 @@ export class ActionsControl extends ElementWithContextMenu<typeof ActivityBarLoc
      * Returns the title of the associated action
      */
     async getTitle (): Promise<string> {
-        return this.elem.getAttribute('aria-label')
+        return (await this.elem.getAttribute('aria-label')) ?? ''
     }
 }

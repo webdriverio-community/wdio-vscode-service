@@ -1,3 +1,4 @@
+import type { ChainablePromiseArray } from 'webdriverio'
 import { PageDecorator, IPageDecorator, BasePage } from '../utils.js'
 import { Dialog as DialogLocators } from '../../locators/1.73.0.js'
 
@@ -33,7 +34,7 @@ export class ModalDialog extends BasePage<typeof DialogLocators> {
      *
      * @returns Promise resolving to Array of WebElement items representing the buttons
      */
-    async getButtons () {
+    async getButtons (): Promise<ChainablePromiseArray> {
         return this.buttonContainer$.$$(this.locators.button)
     }
 

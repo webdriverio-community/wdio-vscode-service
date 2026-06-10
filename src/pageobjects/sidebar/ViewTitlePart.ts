@@ -41,7 +41,7 @@ export class ViewTitlePart extends ElementWithContextMenu<typeof ViewTitlePartLo
         const actions: TitleActionButton[] = []
         const elements = await this.action$$
         for (const element of elements) {
-            const title = await element.getAttribute(this.locators.actionLabel)
+            const title = (await element.getAttribute(this.locators.actionLabel)) ?? ''
             const link = element.$(this.locators.actionContstructor(title))
             actions.push(await new TitleActionButton(this.locatorMap, link, title, this).wait())
         }
@@ -74,7 +74,7 @@ export class TitleActionButton extends BasePage<typeof ViewTitlePartLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        elem: ChainablePromiseElement<WebdriverIO.Element>,
+        elem: ChainablePromiseElement,
         private title: string,
         viewTitle: ViewTitlePart
     ) {

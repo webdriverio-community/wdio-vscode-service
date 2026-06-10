@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import * as clipboard from 'tinyclip'
-import { Key, ChainablePromiseElement } from 'webdriverio'
+import { Key, type ChainablePromiseElement } from 'webdriverio'
 
 import logger from '@wdio/logger'
 import { ContentAssist, ContextMenu, InputBox } from '../index.js'
@@ -35,7 +35,7 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Promise resolving to true/false
      */
     async isDirty (): Promise<boolean> {
-        const klass = await this.parent.$(this.locators.activeTab).getAttribute('class')
+        const klass = (await this.parent.$(this.locators.activeTab).getAttribute('class')) ?? ''
         return klass.indexOf('dirty') >= 0
     }
 
@@ -73,7 +73,7 @@ export class TextEditor extends Editor<EditorLocators> {
      */
     async getFileUri (): Promise<string> {
         const ed = await this.editorContainer$
-        return ed.getAttribute(this.locators.dataUri)
+        return (await ed.getAttribute(this.locators.dataUri)) ?? ''
     }
 
     /**
@@ -94,7 +94,7 @@ export class TextEditor extends Editor<EditorLocators> {
         let isHidden = true
         try {
             const assist = await this.elem.$(this.locatorMap.ContentAssist.elem as string)
-            const klass = await assist.getAttribute('class')
+            const klass = (await assist.getAttribute('class')) ?? ''
             const visibility = await assist.getCSSProperty('visibility')
             isHidden = klass.indexOf('visible') < 0 || visibility.value === 'hidden'
         } catch (err) {
@@ -273,7 +273,7 @@ export class TextEditor extends Editor<EditorLocators> {
      * @returns Selection page object
      */
     async getSelection (): Promise<Selection | undefined> {
-        const selection = await this.selection$$
+        const selection = await this.selection$$.getElements()
         if (selection.length < 1) {
             return undefined
         }
@@ -381,7 +381,7 @@ export class TextEditor extends Editor<EditorLocators> {
 
     async openContextMenu (): Promise<ContextMenu> {
         await this.elem.click({ button: 2 })
-        const shadowRootHost = await this.view.elem.$$('.shadow-root-host')
+        const shadowRootHost = await this.view.elem.$$('.shadow-root-host').getElements()
 
         if (shadowRootHost.length > 0) {
             const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
@@ -417,7 +417,7 @@ export class TextEditor extends Editor<EditorLocators> {
         await lineNum.moveTo()
 
         const lineOverlay = await margin.$(this.locators.lineOverlay(line))
-        const breakPoint = await lineOverlay.$$(this.locators.breakPoint)
+        const breakPoint = await lineOverlay.$$(this.locators.breakPoint).getElements()
         if (breakPoint.length > 0) {
             await breakPoint[0].click()
             // eslint-disable-next-line wdio/no-pause
@@ -425,7 +425,7 @@ export class TextEditor extends Editor<EditorLocators> {
             return false
         }
 
-        const noBreak = await lineOverlay.$$(this.locators.debugHint)
+        const noBreak = await lineOverlay.$$(this.locators.debugHint).getElements()
         if (noBreak.length > 0) {
             await noBreak[0].click()
             // eslint-disable-next-line wdio/no-pause
@@ -490,7 +490,7 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public editor: TextEditor
     ) {
         super(locators, element)
@@ -498,7 +498,7 @@ class Selection extends ElementWithContextMenu<typeof TextEditorLocators> {
 
     async openContextMenu (): Promise<ContextMenu> {
         await this.elem.click({ button: 2 })
-        const shadowRootHost = await this.editor.view.elem.$$('.shadow-root-host')
+        const shadowRootHost = await this.editor.view.elem.$$('.shadow-root-host').getElements()
 
         if (shadowRootHost.length > 0) {
             const shadowRoot = $(await browser.execute('return arguments[0].shadowRoot', shadowRootHost[0]))
@@ -523,7 +523,7 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public editor: TextEditor
     ) {
         super(locators, element)
@@ -544,7 +544,7 @@ export class CodeLens extends BasePage<typeof TextEditorLocators> {
      */
     async getTooltip (): Promise<string> {
         const link = await this.elem.$('a')
-        return link.getAttribute('title')
+        return (await link.getAttribute('title')) ?? ''
     }
 }
 
@@ -563,7 +563,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public textEditor: TextEditor
     ) {
         super(locators, element)
@@ -575,7 +575,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      */
     async toggleReplace (replace: boolean): Promise<void> {
         const btn = await this.toggleReplace$
-        const klass = await btn.getAttribute('class')
+        const klass = (await btn.getAttribute('class')) ?? ''
 
         if ((replace && klass.includes('collapsed')) || (!replace && !klass.includes('collapsed'))) {
             await btn.addValue(' ')
@@ -603,7 +603,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * @returns value of find input as string
      */
     async getSearchText (): Promise<string> {
-        const findPart = await this.findPart$
+        const findPart = await this.findPart$.getElement()
         return this.getInputText(findPart)
     }
 
@@ -613,7 +613,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      */
     async setReplaceText (text: string): Promise<void> {
         await this.toggleReplace(true)
-        const replacePart = await this.replacePart$
+        const replacePart = await this.replacePart$.getElement()
         await this.setText(text, replacePart)
     }
 
@@ -622,7 +622,7 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
      * @returns value of replace input as string
      */
     async getReplaceText (): Promise<string> {
-        const replacePart = await this.replacePart$
+        const replacePart = await this.replacePart$.getElement()
         return this.getInputText(replacePart)
     }
 
@@ -760,6 +760,6 @@ export class FindWidget extends BasePage<typeof FindWidgetLocators> {
 
     private async getInputText (composite: WebdriverIO.Element) {
         const input = await composite.$(this.locators.content)
-        return input.getHTML(false)
+        return input.getHTML({ includeSelectorTag: false })
     }
 }

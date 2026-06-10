@@ -71,7 +71,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving to input placeholder
      */
     async getPlaceHolder (): Promise<string> {
-        return this.inputBox$.$(this.locators.input).getAttribute('placeholder')
+        return (await this.inputBox$.$(this.locators.input).getAttribute('placeholder')) ?? ''
     }
 
     /**
@@ -109,7 +109,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
             .down(Key.Backspace)
             .up(Key.Backspace)
             .perform()
-        if ((await input.getAttribute('value'))?.length > 0) {
+        if (((await input.getAttribute('value')) ?? '').length > 0) {
             await browser.action('key')
                 .down(Key.End).up(Key.End)
                 .perform()
@@ -149,8 +149,8 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving when all quick picks have been toggled to desired state
      */
     async toggleAllQuickPicks (state: boolean): Promise<void> {
-        const checkboxes = await this.quickPickSelectAll$$
-        if (checkboxes.length < 0) {
+        const checkboxes = await this.quickPickSelectAll$$.getElements()
+        if (checkboxes.length === 0) {
             return
         }
         if (!await checkboxes[0].isSelected()) {
@@ -167,7 +167,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolvnig to QuickPickItem if found, to undefined otherwise
      */
     async findQuickPick (indexOrText: string | number): Promise<QuickPickItem | undefined> {
-        const first = await this.quickPickPosition$$(1)
+        const first = await this.quickPickPosition$$(1).getElements()
         if (first.length < 1) {
             await this.resetPosition()
         }
@@ -176,7 +176,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
         while (!endReached) {
             const picks = await this.getQuickPicks()
             for (const pick of picks) {
-                const lastRow = await this.elem.$$(this.locatorMap.DefaultTreeSection.lastRow as string)
+                const lastRow = await this.elem.$$(this.locatorMap.DefaultTreeSection.lastRow as string).getElements()
                 if (lastRow.length > 0) {
                     endReached = true
                 } else if (
@@ -205,7 +205,7 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving to title if it exists, to undefined otherwise
      */
     async getTitle (): Promise<string | undefined> {
-        const titleBar = await this.titleBar$$
+        const titleBar = await this.titleBar$$.getElements()
         if (titleBar.length > 0 && await titleBar[0].isDisplayed()) {
             return (await titleBar[0].$(this.locators.title)).getText()
         }
@@ -217,9 +217,9 @@ export abstract class Input extends BasePage<AllInputLocators> {
      * @returns Promise resolving to true if a button was clicked, to false otherwise
      */
     async back (): Promise<boolean> {
-        const titleBar = await this.titleBar$$
+        const titleBar = await this.titleBar$$.getElements()
         if (titleBar.length > 0 && await titleBar[0].isDisplayed()) {
-            const backBtn = await titleBar[0].$$(this.locators.backButton)
+            const backBtn = await titleBar[0].$$(this.locators.backButton).getElements()
             if (backBtn.length > 0 && await backBtn[0].isEnabled()) {
                 await backBtn[0].click()
                 return true
@@ -329,7 +329,7 @@ export class InputBox extends Input {
     }
 
     async hasProgress (): Promise<boolean> {
-        const klass = await this.progress$.getAttribute('class')
+        const klass = (await this.progress$.getAttribute('class')) ?? ''
         return klass.indexOf('done') < 0
     }
 
@@ -343,7 +343,7 @@ export class InputBox extends Input {
             if (await element.isDisplayed()) {
                 picks.push(await new QuickPickItem(
                     this.locatorMap,
-                    parseInt(await element.getAttribute('data-index'), 10),
+                    parseInt((await element.getAttribute('data-index')) ?? '', 10),
                     this
                 ).wait())
             }
@@ -356,7 +356,7 @@ export class InputBox extends Input {
      * @returns Promise resolving to notification message
      */
     async hasError (): Promise<boolean> {
-        const klass = await this.inputBox$.getAttribute('class')
+        const klass = (await this.inputBox$.getAttribute('class')) ?? ''
         return klass.indexOf('error') > -1
     }
 
@@ -384,8 +384,8 @@ export class QuickOpenBox extends Input {
     public locatorKey = ['Input' as const, 'QuickOpenBox' as const]
 
     async hasProgress (): Promise<boolean> {
-        const klass = await this.progress$
-            .getAttribute('class')
+        const klass = (await this.progress$
+            .getAttribute('class')) ?? ''
         return klass.indexOf('done') < 0
     }
 
@@ -395,7 +395,7 @@ export class QuickOpenBox extends Input {
         await tree.waitForExist({ timeout: 1000 })
         const elements = await tree.$$(this.locators.row)
         for (const element of elements) {
-            const index = parseInt(await element.getAttribute('aria-posinset'), 10)
+            const index = parseInt((await element.getAttribute('aria-posinset')) ?? '', 10)
             if (await element.isDisplayed()) {
                 picks.push(await new QuickPickItem(this.locatorMap, index, this).wait())
             }
