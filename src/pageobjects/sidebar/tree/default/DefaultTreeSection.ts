@@ -41,16 +41,17 @@ export class DefaultTreeSection extends TreeSection {
         await browser.action('key').down(Key.Home).up(Key.Home).perform()
         let item: TreeItem | undefined
         do {
-            const temp = await container.$$((this.locatorMap.DefaultTreeItem.ctor as Function)(label) as string)
+            const selector = (this.locatorMap.DefaultTreeItem.ctor as Function)(label) as string
+            const temp = await container.$$(selector).getElements()
             if (temp.length > 0) {
-                const level = +await temp[0].getAttribute(this.locators.level)
+                const level = +((await temp[0].getAttribute(this.locators.level)) ?? '')
                 if (maxLevel < 1 || level <= maxLevel) {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     item = await new DefaultTreeItem(this.locatorMap, temp[0] as any, this).wait()
                 }
             }
             if (!item) {
-                const lastrow = await container.$$(this.locators.lastRow)
+                const lastrow = await container.$$(this.locators.lastRow).getElements()
                 if (lastrow.length > 0) {
                     break
                 }

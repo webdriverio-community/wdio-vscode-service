@@ -1,4 +1,4 @@
-import { Key, ChainablePromiseElement } from 'webdriverio'
+import { Key, type ChainablePromiseElement } from 'webdriverio'
 
 import {
     TextEditor, Menu, MenuItem, DebugConsoleView
@@ -38,12 +38,12 @@ export class ContentAssist extends Menu<typeof ContentAssistLocators> {
      */
     async getItem (name: string): Promise<ContentAssistItem | undefined> {
         let lastItem = false
-        let firstItem = await this.firstItem$$
+        let firstItem = await this.firstItem$$.getElements()
         while (firstItem.length < 1) {
             await browser.action('key')
                 .down(Key.PageUp).up(Key.PageUp)
                 .perform()
-            firstItem = await this.firstItem$$
+            firstItem = await this.firstItem$$.getElements()
         }
 
         while (!lastItem) {
@@ -119,7 +119,7 @@ export class ContentAssistItem extends MenuItem<typeof ContentAssistLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        item: string | ChainablePromiseElement<WebdriverIO.Element>,
+        item: string | ChainablePromiseElement,
         contentAssist: ContentAssist
     ) {
         super(locators, item)

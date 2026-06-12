@@ -25,7 +25,7 @@ export class ExtensionsViewItem extends ViewItem {
 
     constructor (
         locators: VSCodeLocatorMap,
-        extensionElement: ChainablePromiseElement<WebdriverIO.Element>,
+        extensionElement: ChainablePromiseElement,
         public section: ExtensionsViewSection
     ) {
         super(locators, extensionElement, section.elem)
@@ -43,11 +43,11 @@ export class ExtensionsViewItem extends ViewItem {
      * @returns Promise resolving to version string
      */
     async getVersion (): Promise<string> {
-        const version = await this.version$$
+        const version = await this.version$$.getElements()
         if (version.length > 0) {
             return version[0].getText()
         }
-        const label = await this.elem.getAttribute('aria-label')
+        const label = (await this.elem.getAttribute('aria-label')) ?? ''
         const ver = label.split(',')[1].trim()
 
         return ver
@@ -75,7 +75,7 @@ export class ExtensionsViewItem extends ViewItem {
      * @returns Promise resolving to true/false
      */
     async isInstalled (): Promise<boolean> {
-        if ((await this.install$.getAttribute('class')).indexOf('disabled') > -1) {
+        if (((await this.install$.getAttribute('class')) ?? '').indexOf('disabled') > -1) {
             return true
         }
         return false
@@ -86,7 +86,7 @@ export class ExtensionsViewItem extends ViewItem {
      * @returns Promise resolving to ContextMenu object
      */
     async manage (): Promise<ContextMenu> {
-        if ((await this.manage$.getAttribute('class')).indexOf('disabled') > -1) {
+        if (((await this.manage$.getAttribute('class')) ?? '').indexOf('disabled') > -1) {
             throw new Error(`Extension '${await this.getTitle()}' is not installed`)
         }
         return this.openContextMenu()

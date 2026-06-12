@@ -23,7 +23,7 @@ export class CustomTreeItem extends TreeItem {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public viewPart: TreeSection
     ) {
         super(locators, element, viewPart.elem)
@@ -34,7 +34,7 @@ export class CustomTreeItem extends TreeItem {
     }
 
     async getTooltip (): Promise<string> {
-        return this.elem.getAttribute(this.locators.tooltipAttribute)
+        return (await this.elem.getAttribute(this.locators.tooltipAttribute)) ?? ''
     }
 
     async getDescription (): Promise<string> {

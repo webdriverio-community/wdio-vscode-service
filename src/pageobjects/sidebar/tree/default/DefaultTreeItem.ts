@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio'
+import type { ChainablePromiseElement } from 'webdriverio'
 
 import { TreeItem, ViewItemLocators } from '../../ViewItem.js'
 import { TreeSection } from '../TreeSection.js'
@@ -23,7 +23,7 @@ export class DefaultTreeItem extends TreeItem {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public viewPart: TreeSection
     ) {
         super(locators, element, viewPart.elem)
@@ -34,15 +34,15 @@ export class DefaultTreeItem extends TreeItem {
     }
 
     async getLabel (): Promise<string> {
-        return this.elem.getAttribute(this.locatorMap.DefaultTreeSection.itemLabel as string)
+        return (await this.elem.getAttribute(this.locatorMap.DefaultTreeSection.itemLabel as string)) ?? ''
     }
 
     async getTooltip (): Promise<string> {
-        return this.tooltip$.getAttribute('title')
+        return (await this.tooltip$.getAttribute('title')) ?? ''
     }
 
     async isExpanded (): Promise<boolean> {
-        const twistieClass = await this.twistie$.getAttribute('class')
+        const twistieClass = (await this.twistie$.getAttribute('class')) ?? ''
         return twistieClass.indexOf('collapsed') < 0
     }
 
@@ -62,7 +62,7 @@ export class DefaultTreeItem extends TreeItem {
     }
 
     async isExpandable (): Promise<boolean> {
-        const twistieClass = await this.twistie$.getAttribute('class')
+        const twistieClass = (await this.twistie$.getAttribute('class')) ?? ''
         return twistieClass.indexOf('collapsible') > -1
     }
 }

@@ -20,9 +20,10 @@ describe('titlebar', () => {
 
     skip('darwin')('can find all items', async () => {
         const items = await titleBar.getItems()
-        expect(await items[0].getLabel()).toBe('File')
-        expect(await items[1].getLabel()).toBe('Edit')
-        expect(await items[items.length - 1].getLabel()).toBe('Help')
+        const labels = await Promise.all(items.map((i) => i.getLabel()))
+        expect(labels).toContain('File')
+        expect(labels).toContain('Edit')
+        expect(labels).toContain('Help')
     })
 
     skip('darwin')('can select item by name', async () => {

@@ -179,6 +179,7 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
          */
         capabilities.browserName = 'chrome'
         capabilities['goog:chromeOptions'] = { binary, args, windowTypes: ['webview'] }
+        capabilities['wdio:enforceWebDriverClassic'] = true
         log.info(`Start VSCode: ${binary} ${args.join(' ')}`)
     }
 
@@ -203,8 +204,8 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             await browser.url('/')
         }
 
-        const vsCodeVersion = capabilities[VSCODE_CAPABILITY_KEY]?.version || capabilities.browserVersion || 'insiders'
         this._browser = browser
+        const vsCodeVersion = capabilities[VSCODE_CAPABILITY_KEY]?.version || 'insiders'
         const locators = await getLocators(vsCodeVersion)
         const workbenchPO = new Workbench(locators)
         this._browser.addCommand('getWorkbench', () => workbenchPO.wait())
@@ -215,6 +216,11 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             capabilities.browserVersion === 'insiders' ? 'insiders' : 'vscode'
         ))
         await workbenchPO.elem.waitForExist()
+        const activityItems = 'div[id="workbench.parts.activitybar"] .action-item'
+        await browser.waitUntil(
+            async () => (await browser.$$(activityItems).getElements()).length > 0,
+            { timeout: 30000, timeoutMsg: 'Activity bar items did not render in time' }
+        )
 
         /**
          * VSCode in the browser doesn't allow to have a file directly opened,
@@ -312,10 +318,5 @@ interface VSCodeCommands {
 declare global {
     namespace WebdriverIO {
         interface Browser extends VSCodeCommands {}
-    }
-
-    namespace WebdriverIOAsync {
-        interface Browser extends VSCodeCommands {}
-        interface MultiRemoteBrowser extends VSCodeCommands { }
     }
 }

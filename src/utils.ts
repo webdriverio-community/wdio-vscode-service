@@ -3,6 +3,8 @@ import url from 'node:url'
 import path from 'node:path'
 import type { Dirent, Stats } from 'node:fs'
 
+import semver from 'semver'
+
 import { VSCODE_CAPABILITY_KEY } from './constants.js'
 import type { VSCodeLocatorMap } from './pageobjects/utils.js'
 import type { VSCodeCapabilities } from './types.js'
@@ -17,14 +19,23 @@ export async function getLocators (version: string): Promise<VSCodeLocatorMap> {
     const files = (await fs.readdir(path.join(__dirname, 'locators'), { encoding: 'utf-8' }))
         .filter((filename) => filename.endsWith('.js') && !filename.endsWith('.d.ts'))
         .map((filename) => filename.slice(0, -3))
+        .filter((f) => f !== 'insiders' && semver.valid(f))
+        .sort(semver.compare)
+
+    if (!semver.valid(version) && !semver.valid(`${version}.0`)) {
+        return import(`./locators/${files[files.length - 1]}.js`) as Promise<VSCodeLocatorMap>
+    }
 
     const [major, minor] = version.split('.')
-    const sanitizedVersion = `${major}.${minor}.0`
+    const sanitizedVersion = `${major}.${minor || '0'}.0`
 
-    const locatorFile = files.find((f, i) => (
-        f === sanitizedVersion
-        || (files[i + 1] && files[i + 1] > sanitizedVersion)
-    )) || files[files.length - 1]
+    let locatorFile = files[0]
+    for (let i = files.length - 1; i >= 0; i -= 1) {
+        if (semver.lte(files[i], sanitizedVersion)) {
+            locatorFile = files[i]
+            break
+        }
+    }
     return import(`./locators/${locatorFile}.js`) as Promise<VSCodeLocatorMap>
 }
 

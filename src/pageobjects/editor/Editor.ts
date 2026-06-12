@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio'
+import type { ChainablePromiseElement } from 'webdriverio'
 
 import { EditorView, EditorGroup, EditorTab } from '../index.js'
 import { ElementWithContextMenu, VSCodeLocatorMap } from '../utils.js'
@@ -29,7 +29,7 @@ export type EditorLocators = (
 export abstract class Editor<T> extends ElementWithContextMenu<T> {
     constructor (
         locators: VSCodeLocatorMap,
-        element?: ChainablePromiseElement<WebdriverIO.Element> | string,
+        element?: ChainablePromiseElement | string,
         public view: EditorView | EditorGroup = new EditorView(locators)
     ) {
         super(locators, element)

@@ -143,10 +143,10 @@ export abstract class TreeItem extends ViewItem {
             const elem = item.$((this.locatorMap.ViewSection.actionConstructor as () => string)())
             const label = (
                 // v1.69.0 and before
-                await elem.getAttribute(this.locators.actionTitle)
+                (await elem.getAttribute(this.locators.actionTitle))
                 // v1.70.0 and after
-                || await item.getAttribute(this.locators.actionTitle)
-            )
+                || (await item.getAttribute(this.locators.actionTitle))
+            ) ?? ''
             actions.push(new ViewItemAction(this.locatorMap, elem, label, this))
         }
         return actions
@@ -180,12 +180,12 @@ export abstract class TreeItem extends ViewItem {
         await this.expand()
 
         const rows = await this.parent.$$(locator)
-        const baseIndex = +await this.elem.getAttribute(this.locatorMap.ViewSection.index as string)
-        const baseLevel = +await this.elem.getAttribute(this.locatorMap.ViewSection.level as string)
+        const baseIndex = +((await this.elem.getAttribute(this.locatorMap.ViewSection.index as string)) ?? '')
+        const baseLevel = +((await this.elem.getAttribute(this.locatorMap.ViewSection.level as string)) ?? '')
 
         for (const row of rows) {
-            const level = +await row.getAttribute(this.locatorMap.ViewSection.level as string)
-            const index = +await row.getAttribute(this.locatorMap.ViewSection.index as string)
+            const level = +((await row.getAttribute(this.locatorMap.ViewSection.level as string)) ?? '')
+            const index = +((await row.getAttribute(this.locatorMap.ViewSection.index as string)) ?? '')
 
             if (index <= baseIndex) {
                 continue
@@ -224,7 +224,7 @@ export class ViewItemAction extends BasePage<typeof ViewSectionLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        elem: ChainablePromiseElement<WebdriverIO.Element>,
+        elem: ChainablePromiseElement,
         label: string,
         viewItem: TreeItem
     ) {

@@ -38,7 +38,7 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public bar: ActivityBar
     ) {
         super(locators, element, bar.elem)
@@ -49,14 +49,14 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
      * @returns Promise resolving to SideBarView object representing the opened view
      */
     async openView (): Promise<SideBarView<any> | NewScmView | ScmView | DebugView> {
-        const klass = await this.elem.getAttribute(this.locators.attribute)
+        const klass = (await this.elem.getAttribute(this.locators.attribute)) ?? ''
         if (klass.indexOf(this.locators.klass) < 0) {
             await this.elem.click()
             // eslint-disable-next-line wdio/no-pause
             await browser.pause(500)
         }
         const view = await new SideBarView(this.locatorMap).wait()
-        if ((await view.elem.$$(this.locators.scmId)).length > 0) {
+        if ((await view.elem.$$(this.locators.scmId).getElements()).length > 0) {
             const version = await browser.getVSCodeVersion()
             if (
                 (await browser.getVSCodeChannel()) === 'vscode'
@@ -66,7 +66,7 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
             }
             return new ScmView(this.locatorMap).wait()
         }
-        if ((await view.elem.$$(this.locators.debugId)).length > 0) {
+        if ((await view.elem.$$(this.locators.debugId).getElements()).length > 0) {
             return new DebugView(this.locatorMap).wait()
         }
         return view
@@ -77,7 +77,7 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
      * @returns Promise resolving when the view closes
      */
     async closeView (): Promise<void> {
-        const klass = await this.elem.getAttribute(this.locators.attribute)
+        const klass = (await this.elem.getAttribute(this.locators.attribute)) ?? ''
         if (klass.indexOf(this.locators.klass) > -1) {
             await this.elem.click()
         }
@@ -89,7 +89,7 @@ export class ViewControl extends ElementWithContextMenu<typeof ViewControlLocato
      *                                 in the title (e.g. "Source Control (Ctrl+Shift+G)")
      */
     async getTitle (includeKeyboardShortcuts = false): Promise<string> {
-        const title = await this.badge$.getAttribute('aria-label')
+        const title = (await this.badge$.getAttribute('aria-label')) ?? ''
         if (!includeKeyboardShortcuts) {
             /**
              * first strip out possible pending annotation, e.g.

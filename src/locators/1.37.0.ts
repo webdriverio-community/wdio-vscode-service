@@ -147,7 +147,8 @@ export const SettingsEditor = {
     checkboxSetting: '.setting-value-checkbox',
     checkboxChecked: 'aria-checked',
     linkButton: '.edit-in-settings-button',
-    itemCount: '.settings-count-widget'
+    itemCount: '.settings-count-widget',
+    searchInput: '.inputarea'
 }
 export const DiffEditor = {
     originalEditor: '.original-in-monaco-diff-editor',

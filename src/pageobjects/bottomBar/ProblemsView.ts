@@ -107,7 +107,7 @@ export class ProblemsView extends BasePage<typeof ProblemsViewLocators> {
      * @returns Promise resolving to the WebElement representing the count badge
      */
     getCountBadge (): Promise<WebdriverIO.Element> {
-        return this.changeCount$
+        return this.changeCount$.getElement()
     }
 }
 
@@ -127,7 +127,7 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public view: ProblemsView
     ) {
         super(locators, element, view.elem)
@@ -140,7 +140,7 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
      */
     async getType (): Promise<MarkerType> {
         const twist = await this.elem.$(this.locatorMap.ProblemsView.markerTwistie as string)
-        if ((await twist.getAttribute('class')).indexOf('collapsible') > -1) {
+        if ((await twist.getAttribute('class') ?? '').indexOf('collapsible') > -1) {
             return MarkerType.File
         }
         const text = await this.getText()
@@ -172,7 +172,7 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
      * @returns Promise resolving to marker text
      */
     async getText (): Promise<string> {
-        return this.elem.getAttribute(this.locators.rowLabel)
+        return (await this.elem.getAttribute(this.locators.rowLabel)) ?? ''
     }
 
     /**
@@ -181,7 +181,7 @@ export class Marker extends ElementWithContextMenu<typeof MarkerLocators> {
      * @returns Promise resolving when the expand/collapse twistie is clicked
      */
     async toggleExpand (expand: boolean): Promise<void> {
-        const klass = await this.markerTwistie$.getAttribute('class')
+        const klass = (await this.markerTwistie$.getAttribute('class')) ?? ''
         if ((klass.indexOf('collapsed') > -1) === expand) {
             await this.elem.click()
         }

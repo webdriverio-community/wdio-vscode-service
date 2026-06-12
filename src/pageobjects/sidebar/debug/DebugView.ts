@@ -22,7 +22,7 @@ export class DebugView extends SideBarView<typeof DebugViewLocators> {
     async getLaunchConfiguration (): Promise<string> {
         const action = await this.getTitlePart().elem.$(this.locators.launchCombo)
         const combo = await action.$(this.locators.launchSelect)
-        return combo.getAttribute('title')
+        return (await combo.getAttribute('title')) ?? ''
     }
 
     /**
@@ -37,7 +37,7 @@ export class DebugView extends SideBarView<typeof DebugViewLocators> {
 
         for (const option of options) {
             if (await option.isEnabled()) {
-                configs.push(await option.getAttribute('value'))
+                configs.push((await option.getAttribute('value')) ?? '')
             }
         }
 

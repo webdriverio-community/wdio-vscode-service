@@ -20,14 +20,14 @@ describe('bottombar', () => {
         await bottomBar.toggle(true)
     })
 
-    skip('win32')('can get output channels', async () => {
+    skip('win32')('can get output channels @skipWeb', async () => {
         const outputView = await bottomBar.openOutputView()
         const channels = await outputView.getChannelNames()
         expect(channels).toContain('Tasks')
         expect(channels).toContain('Guinea Pig')
     })
 
-    skip('win32')('can get extension logs', async () => {
+    skip('win32')('can get extension logs @skipWeb', async () => {
         const outputView = await bottomBar.openOutputView()
         await outputView.selectChannel('Guinea Pig')
         expect(await outputView.getCurrentChannel()).toBe('Guinea Pig')

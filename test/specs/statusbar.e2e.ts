@@ -9,7 +9,7 @@ import {
     StatusBar
 } from '../../dist/index.js'
 
-describe('statusbar', () => {
+describe('statusbar @skipWeb', () => {
     let statusBar: StatusBar
 
     before(async () => {

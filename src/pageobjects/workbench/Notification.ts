@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio'
+import type { ChainablePromiseElement } from 'webdriverio'
 import {
     BasePage, IPageDecorator, PageDecorator, VSCodeLocatorMap
 } from '../utils.js'
@@ -62,7 +62,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      * @returns Promise resolving to NotificationType
      */
     async getType (): Promise<NotificationType> {
-        const iconType = await this.icon$.getAttribute('class')
+        const iconType = (await this.icon$.getAttribute('class')) ?? ''
         if (iconType.indexOf('icon-info') > -1) {
             return NotificationType.Info
         } if (iconType.indexOf('icon-warning') > -1) {
@@ -77,7 +77,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      */
     async getSource (): Promise<string> {
         await this.expand()
-        return this.source$.getAttribute('title')
+        return (await this.source$.getAttribute('title')) ?? ''
     }
 
     /**
@@ -85,7 +85,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      * @returns Promise resolving to true/false
      */
     async hasProgress (): Promise<boolean> {
-        const klass = await this.progress$.getAttribute('class')
+        const klass = (await this.progress$.getAttribute('class')) ?? ''
         return klass.indexOf('done') < 0
     }
 
@@ -94,7 +94,7 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
      * @returns Promise resolving when notification is dismissed
      */
     async dismiss (): Promise<void> {
-        const btn = await this.dismiss$
+        const btn = await this.dismiss$.getElement()
 
         /**
          * make button interactable given they only contain
@@ -117,11 +117,12 @@ export abstract class Notification extends BasePage<typeof NotificationLocators>
         const buttons: NotificationButton[] = []
         const elements = await this.actions$
             .$$(this.locators.action)
+            .getElements()
 
         for (const button of elements) {
             buttons.push(await new NotificationButton(
                 this.locatorMap,
-                await button.getAttribute(this.locators.actionLabel)
+                (await button.getAttribute(this.locators.actionLabel)) ?? ''
             ).wait())
         }
         return buttons
@@ -165,7 +166,7 @@ export class StandaloneNotification extends Notification {
 
     constructor (
         locators: VSCodeLocatorMap,
-        notification: ChainablePromiseElement<WebdriverIO.Element>
+        notification: ChainablePromiseElement
     ) {
         super(locators, notification, locators.Notification.standaloneContainer as string)
     }

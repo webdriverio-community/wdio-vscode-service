@@ -113,7 +113,7 @@ export class EditorView extends BasePage<typeof EditorViewLocators> {
      */
     async getActiveTab (): Promise<EditorTab | undefined> {
         const tabs = await this.getOpenTabs()
-        const klasses = await Promise.all(tabs.map(async (tab) => tab.elem.getAttribute('class')))
+        const klasses = await Promise.all(tabs.map(async (tab) => (await tab.elem.getAttribute('class')) ?? ''))
         const index = klasses.findIndex((klass) => klass.indexOf('active') > -1)
 
         if (index > -1) {
@@ -191,7 +191,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public view = new EditorView(locators)
     ) {
         super(locators, element)
@@ -314,7 +314,7 @@ export class EditorGroup extends BasePage<typeof EditorViewLocators> {
      */
     async getActiveTab (): Promise<EditorTab | undefined> {
         const tabs = await this.getOpenTabs()
-        const klasses = await Promise.all(tabs.map(async (tab) => tab.elem.getAttribute('class')))
+        const klasses = await Promise.all(tabs.map(async (tab) => (await tab.elem.getAttribute('class')) ?? ''))
         const index = klasses.findIndex((klass) => klass.indexOf('active') > -1)
 
         if (index > -1) {
@@ -362,7 +362,7 @@ export class EditorTab extends ElementWithContextMenu<typeof EditorLocatorsObj> 
 
     constructor (
         locators: VSCodeLocatorMap,
-        element: ChainablePromiseElement<WebdriverIO.Element>,
+        element: ChainablePromiseElement,
         public view: EditorView
     ) {
         super(locators, element)

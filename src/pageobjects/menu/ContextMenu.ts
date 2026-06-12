@@ -48,7 +48,7 @@ export class ContextMenu extends Menu<typeof ContextMenuLocators> {
         const elements = await this.itemElement$$
 
         for (const element of elements) {
-            const classProperty = await element.getAttribute('class')
+            const classProperty = (await element.getAttribute('class')) ?? ''
             if (classProperty.indexOf('disabled') < 0) {
                 const item = new ContextMenuItem(
                     this.locatorMap,
@@ -107,7 +107,7 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
 
     constructor (
         locators: VSCodeLocatorMap,
-        base: ChainablePromiseElement<WebdriverIO.Element>,
+        base: ChainablePromiseElement,
         public parentMenu: Menu<typeof ContextMenuLocators>
     ) {
         super(locators, base, parentMenu.elem)
@@ -127,7 +127,7 @@ export class ContextMenuItem extends MenuItem<typeof ContextMenuLocators> {
 
     async getLabel (): Promise<string> {
         const labelItem = await this.itemLabel$
-        return labelItem.getAttribute(this.locators.itemText)
+        return (await labelItem.getAttribute(this.locators.itemText)) ?? ''
     }
 
     private async isNesting (): Promise<boolean> {

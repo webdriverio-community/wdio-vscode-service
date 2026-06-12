@@ -28,8 +28,7 @@
       "node",
       "vscode",
       "@wdio/globals/types",
-      "@wdio/mocha-framework",
-      "expect-webdriverio"
+      "@wdio/mocha-framework"
     ]
   },
   "include": [

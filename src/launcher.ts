@@ -13,7 +13,7 @@ import { HttpsProxyAgent } from 'hpagent'
 import startServer from './server/index.js'
 import { fileExist, directoryExists } from './utils.js'
 import {
-    DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_INSIDER_RELEASES, VSCODE_MANIFEST_URL, VSCODE_INSIDER_MANIFEST_URL,
+    DEFAULT_CHANNEL, VSCODE_RELEASES, VSCODE_MANIFEST_URL,
     DEFAULT_CACHE_PATH, VSCODE_CAPABILITY_KEY, VSCODE_WEB_STANDALONE, DEFAULT_VSCODE_WEB_HOSTNAME
 } from './constants.js'
 import type {
@@ -48,7 +48,6 @@ if (httpsProxy) {
         : undefined
 
     setGlobalDispatcher(new ProxyAgent({ uri: proxyUrl.protocol + proxyUrl.host, token }))
-    // @ts-expect-error downloadAgentConfiguration is not part of the official API
     downloadAgentConfiguration = { agent: new HttpsProxyAgent({ proxy: proxyUrl }) }
 }
 // use HTTPS_PROXY or https_proxy for @vscode/test-electron if not already set
@@ -66,10 +65,10 @@ export default class VSCodeServiceLauncher {
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
     }
 
-    async onPrepare (_: never, capabilities: Capabilities.RemoteCapabilities) {
+    async onPrepare (_: never, capabilities: Capabilities.TestrunnerCapabilities) {
         const caps: VSCodeCapabilities[] = Array.isArray(capabilities)
             ? capabilities.map((c) => ((c as Capabilities.W3CCapabilities).alwaysMatch || c) as VSCodeCapabilities)
-            : Object.values(capabilities).map((c) => c.capabilities as VSCodeCapabilities)
+            : Object.values(capabilities).map((c) => (c as any).capabilities as VSCodeCapabilities)
 
         /**
          * Check if we already have the VS Code bundle for the given version
@@ -164,15 +163,32 @@ export default class VSCodeServiceLauncher {
                     `Skipping download, bundle for VSCode v${vscodeVersion} already exists`
                 )
                 cap.browserVersion = chromedriverVersion
+                cap[VSCODE_CAPABILITY_KEY].version = version === 'insiders' ? 'insiders' : vscodeVersion
                 cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
                 return
             }
         }
 
-        const vscodeVersion = await this._fetchVSCodeVersion(version)
-        const chromedriverVersion = await this._fetchChromedriverVersion(vscodeVersion)
+        let vscodeVersion = await this._fetchVSCodeVersion(version)
+        let chromedriverVersion: string | undefined
+        try {
+            chromedriverVersion = await this._fetchChromedriverVersion(vscodeVersion)
+        } catch {
+            const match = vscodeVersion.match(/^(\d+)\.(\d+)\.\d+$/)
+            if (match) {
+                const fallbackVersion = `${match[1]}.${parseInt(match[2], 10) - 1}.0`
+                log.info(`Manifest not available for ${vscodeVersion}, falling back to ${fallbackVersion}`)
+                vscodeVersion = fallbackVersion
+                chromedriverVersion = await this._fetchChromedriverVersion(vscodeVersion)
+            } else {
+                throw new SevereServiceError(
+                    `Couldn't fetch Chromedriver version for VS Code ${vscodeVersion}`
+                )
+            }
+        }
 
         cap.browserVersion = chromedriverVersion
+        cap[VSCODE_CAPABILITY_KEY].version = version === 'insiders' ? 'insiders' : vscodeVersion
         cap[VSCODE_CAPABILITY_KEY].binary ||= await this._downloadVSCode(vscodeVersion)
         await this._updateVersionsTxt(version, vscodeVersion, chromedriverVersion, versionsFileExist)
     }
@@ -201,39 +217,66 @@ export default class VSCodeServiceLauncher {
      * @returns "main" if `desiredReleaseChannel` is "insiders" otherwise a concrete VSCode version
      */
     private async _fetchVSCodeVersion (desiredReleaseChannel?: string) {
-        try {
-            if (desiredReleaseChannel === 'insiders') {
-                log.info(`Fetch latest insider release from ${VSCODE_INSIDER_RELEASES}`)
-                const { body: versions } = await request(VSCODE_INSIDER_RELEASES, {})
-                const availableVersions: string[] = await versions.json() as string[]
+        if (desiredReleaseChannel === 'insiders') {
+            return 'main'
+        }
 
-                return availableVersions[0]
-            }
-            log.info(`Fetch releases from ${VSCODE_RELEASES}`)
-            const { body: versions } = await request(VSCODE_RELEASES, {})
-            const availableVersions: string[] = await versions.json() as string[]
-
-            if (desiredReleaseChannel) {
-                /**
-                 * validate provided VSCode version
-                 */
-                const newDesiredReleaseChannel = desiredReleaseChannel === 'stable'
-                    ? availableVersions[0]
-                    : desiredReleaseChannel
-                if (!availableVersions.includes(newDesiredReleaseChannel)) {
+        const maxRetries = 3
+        for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+            try {
+                log.info(`Fetch releases from ${VSCODE_RELEASES}`)
+                const { statusCode, body: versions } = await request(VSCODE_RELEASES, {})
+                if (statusCode !== 200) {
+                    const text = await versions.text()
                     throw new Error(
-                        `Desired version "${newDesiredReleaseChannel}" is not existent, available versions:`
-                        + `${availableVersions.slice(0, 5).join(', ')}..., see ${VSCODE_RELEASES}`
+                        `VS Code releases API returned HTTP ${statusCode}: ${
+                            text.slice(0, 200)}`
+                    )
+                }
+                const availableVersions: string[] = await versions.json() as string[]
+                if (!Array.isArray(availableVersions) || availableVersions.length === 0) {
+                    const data = JSON.stringify(availableVersions)
+                    throw new Error(
+                        `VS Code releases API returned unexpected data: ${
+                            data.slice(0, 200)}`
                     )
                 }
 
-                return newDesiredReleaseChannel
-            }
+                if (desiredReleaseChannel) {
+                    const newDesiredReleaseChannel = desiredReleaseChannel === 'stable'
+                        ? availableVersions[0]
+                        : desiredReleaseChannel
+                    if (!availableVersions.includes(newDesiredReleaseChannel)) {
+                        throw new Error(
+                            `Desired version "${newDesiredReleaseChannel}" is not existent, `
+                            + `available versions: ${availableVersions.slice(0, 5).join(', ')}..., `
+                            + `see ${VSCODE_RELEASES}`
+                        )
+                    }
 
-            return availableVersions[0]
-        } catch (err: any) {
-            throw new SevereServiceError(`Couldn't fetch latest VSCode: ${err.message}`)
+                    return newDesiredReleaseChannel
+                }
+
+                return availableVersions[0]
+            } catch (err: any) {
+                if (attempt < maxRetries) {
+                    const msg = err.message || String(err)
+                    log.warn(
+                        `Attempt ${attempt}/${maxRetries} to fetch VSCode version failed: `
+                        + `${msg}, retrying...`
+                    )
+                    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt))
+                    continue
+                }
+                throw new SevereServiceError(
+                    `Couldn't fetch latest VSCode after ${maxRetries} attempts: `
+                    + `${err.message || String(err)}`
+                )
+            }
         }
+        throw new SevereServiceError(
+            'Couldn\'t fetch latest VSCode: unexpected control flow'
+        )
     }
 
     /**
@@ -242,13 +285,16 @@ export default class VSCodeServiceLauncher {
      * @returns required Chromedriver version
      */
     private async _fetchChromedriverVersion (vscodeVersion: string) {
+        const normalizedVersion = vscodeVersion.replace(/^(\d+\.\d+)\.\d+$/, '$1.0')
+        const url = format(VSCODE_MANIFEST_URL, normalizedVersion)
         try {
-            const manifestUrl = vscodeVersion.includes('insider')
-                ? VSCODE_INSIDER_MANIFEST_URL
-                : format(VSCODE_MANIFEST_URL, vscodeVersion)
-
-            log.info(`manifest url: ${manifestUrl}`)
-            const { body } = await request(manifestUrl, {})
+            const { statusCode, body } = await request(url, {})
+            if (statusCode !== 200) {
+                const text = await body.text()
+                throw new Error(
+                    `Manifest request returned HTTP ${statusCode} for ${normalizedVersion}: ${text.slice(0, 200)}`
+                )
+            }
             const manifest = await body.json() as Manifest
             const chromium = manifest.registrations.find((r: any) => r.component.git.name === 'chromium')
 
@@ -258,7 +304,9 @@ export default class VSCodeServiceLauncher {
 
             return chromium.version.split('.')[0]
         } catch (err: any) {
-            throw new SevereServiceError(`Couldn't fetch Chromedriver version: ${err.message}`)
+            throw new SevereServiceError(
+                `Couldn't fetch Chromedriver version for ${normalizedVersion}: ${err.message || String(err)}`
+            )
         }
     }
 

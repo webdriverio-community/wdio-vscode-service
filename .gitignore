@@ -104,6 +104,7 @@ dist
 .tern-port
 
 # project ignore
+.vscode-test
 example/.vscode-test
 example/.wdio-vscode-service
 docs

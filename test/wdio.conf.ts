@@ -67,33 +67,6 @@ export const config: Options.Testrunner = {
     // ====================
     //
     //
-    // =====================
-    // ts-node Configurations
-    // =====================
-    //
-    // You can write tests using TypeScript to get autocompletion and type safety.
-    // You will need typescript and ts-node installed as devDependencies.
-    // WebdriverIO will automatically detect if these dependencies are installed
-    // and will compile your config and tests for you.
-    // If you need to configure how ts-node runs please use the
-    // environment variables for ts-node or use wdio config's autoCompileOpts section.
-    //
-
-    autoCompileOpts: {
-        autoCompile: true,
-        // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
-        // for all available options
-        tsNodeOpts: {
-            transpileOnly: true,
-            project: path.join(__dirname, 'tsconfig.json')
-        }
-        // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
-        // do please make sure "tsconfig-paths" is installed as dependency
-        // tsConfigPathsOpts: {
-        //     baseUrl: './'
-        // }
-    },
-    //
     // ==================
     // Specify Test Files
     // ==================
@@ -214,7 +187,7 @@ export const config: Options.Testrunner = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: Infinity,
+        timeout: 600000,
         grep: grep.length > 0 ? grep.join('|') : undefined,
         invert: true
     },

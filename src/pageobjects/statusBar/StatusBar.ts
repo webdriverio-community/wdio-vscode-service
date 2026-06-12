@@ -23,7 +23,8 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
         const elems = await this.item$$
         const items: string[] = []
         for (const elem of elems) {
-            items.push(await elem.getAttribute(this.locators.itemTitle))
+            const attr = await elem.getAttribute(this.locators.itemTitle)
+            items.push(typeof attr === 'string' ? attr : '')
         }
         return items.map((i) => i.trim()).filter(Boolean)
     }
@@ -157,10 +158,10 @@ export class StatusBar extends BasePage<typeof StatusBarLocators> {
     private async toggleNotificationsCentre (open: boolean): Promise<void> {
         let visible = false
         try {
-            const klass = await browser
+            const klass = (await browser
                 .$(this.locatorMap.Workbench.elem as string)
                 .$(this.locators.notifications)
-                .getAttribute('class')
+                .getAttribute('class')) ?? ''
             visible = klass.indexOf('visible') > -1
         } catch (err) {
             // element doesn't exist until the button is first clicked
