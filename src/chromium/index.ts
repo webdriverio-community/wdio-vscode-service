@@ -34,12 +34,52 @@ function run (p: NodeJS.Process, execFile: typeof childProcess.execFile) {
         throw new Error('Missing parameter "--vscode-binary-path=/..."')
     }
 
-    const params = Object.entries(argv).map(([key, value]) => {
-        if (typeof value === 'boolean' && value) {
-            return `--${key}`
-        }
-        return `--${key}=${value}`
-    })
+    /**
+     * Flags injected by ChromeDriver that VS Code's Electron binary does not recognise.
+     * Passing them causes onUnknownOption → console.warn → EPIPE → crash (see issue #60).
+     */
+    const CHROMIUM_ONLY_FLAGS = new Set([
+        // Added by ChromeDriver automatically
+        'log-level', 'test-type', 'password-store', 'use-mock-keychain',
+        'no-service-autorun', 'no-first-run', 'enable-automation',
+        'remote-debugging-address', 'flag-switches-begin', 'flag-switches-end',
+        'disable-field-trial-config', 'allow-pre-commit-input',
+        'origin-trial-disabled-features', 'variations-seed-version',
+        // Chrome-specific behaviour flags passed by wdio-vscode-service Chrome options
+        'disable-background-networking', 'disable-client-side-phishing-detection',
+        'disable-default-apps', 'disable-hang-monitor', 'disable-popup-blocking',
+        'disable-prompt-on-repost', 'disable-sync', 'disable-updates',
+        // Chrome-specific: must NOT reach VS Code (conflicts with disableExtensions: false)
+        'disable-extensions',
+        // Chrome feature-flag overrides — not valid VS Code CLI flags
+        'enable-features', 'disable-features',
+    ])
+
+    const params = Object.entries(argv)
+        .filter(([key, value]) =>
+            // yargs-parser produces both kebab-case and camelCase keys; drop the camelCase duplicates
+            !/[A-Z]/.test(key) &&
+            // drop the internal routing flag consumed above
+            key !== 'vscode-binary-path' &&
+            // drop ChromeDriver-injected flags that VS Code doesn't understand
+            !CHROMIUM_ONLY_FLAGS.has(key) &&
+            // drop flags explicitly set to false / 'false'
+            value !== false &&
+            value !== 'false'
+        )
+        .flatMap(([key, value]) => {
+            // Array values (e.g. extensionDevelopmentPath) → one --flag=val per element
+            if (Array.isArray(value)) {
+                const items = (value as unknown[]).filter((v) => v !== false && v !== 'false')
+                return items.map((v) =>
+                    typeof v === 'boolean' && v ? `--${key}` : `--${key}=${v}`
+                )
+            }
+            if (typeof value === 'boolean' && value) {
+                return [`--${key}`]
+            }
+            return [`--${key}=${value}`]
+        })
     const args: string[] = [...params, ...positionalParams.map(String)]
 
     // eslint-disable-next-line no-console
