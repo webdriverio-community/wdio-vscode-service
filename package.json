@@ -5,10 +5,21 @@
   "author": "Christian Bromann <mail@bromann.dev>",
   "homepage": "https://github.com/webdriverio-community/wdio-vscode-service",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webdriverio-community/wdio-vscode-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webdriverio-community/wdio-vscode-service/issues"
+  },
   "type": "module",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typeScriptVersion": "3.8.3",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "engines": {
     "node": ">=18"
   },

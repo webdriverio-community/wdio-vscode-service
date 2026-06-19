@@ -17,12 +17,12 @@ on:
         required: true
         default: "latest"
 
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # required to mint the OIDC token for npm
+      contents: write # required for release-it to push tags / create the GitHub release
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -31,11 +31,10 @@ jobs:
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version-file: .nvmrc
-      - name: NPM Setup
-        run: |
-          npm set registry "https://registry.npmjs.org/"
-          npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
-          npm whoami
+          registry-url: "https://registry.npmjs.org"
+      - name: Update npm
+        # Trusted publishing / OIDC requires npm >= 11.5.1
+        run: npm install -g npm@latest
       - name: Git Setup
         run: |
           git config --global user.email "bot@webdriver.io"
@@ -47,7 +46,6 @@ jobs:
       - name: Release
         run: npm run release:ci -- ${{github.event.inputs.releaseType}}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
     runs-on: ubuntu-latest
