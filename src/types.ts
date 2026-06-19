@@ -1,3 +1,5 @@
+import type { Options } from '@wdio/types'
+
 import type { VSCODE_CAPABILITY_KEY } from './constants.js'
 
 /**
@@ -69,6 +71,29 @@ export interface BundleInformation {
     path: string
 }
 
+export interface WorkspacePathResolverContext {
+    /**
+     * WDIO runner config for the worker that is starting the VS Code session.
+     */
+    config: Options.Testrunner
+    /**
+     * Capabilities for the worker that is starting the VS Code session.
+     */
+    capabilities: VSCodeCapabilities
+    /**
+     * Specs assigned to the current worker.
+     */
+    specs: string[]
+    /**
+     * WDIO worker id.
+     */
+    cid: string
+}
+
+export type WorkspacePathResolver = (
+    context: WorkspacePathResolverContext
+) => string | undefined | Promise<string | undefined>
+
 /**
  * Options to manage VSCode session as part of session capability
  */
@@ -94,9 +119,11 @@ export interface VSCodeOptions {
      */
     userSettings?: Record<string, number | string | object | boolean>
     /**
-     * Opens VSCode for a specific workspace
+     * Opens VSCode for a specific workspace.
+     * Use a callback to resolve a worker-specific workspace path when running
+     * suites in parallel.
      */
-    workspacePath?: string
+    workspacePath?: string | WorkspacePathResolver
     /**
      * Opens VSCode with a specific file opened
      */
