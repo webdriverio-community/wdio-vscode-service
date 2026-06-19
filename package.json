@@ -104,7 +104,7 @@
     "eslint-plugin-wdio": "^8.24.12",
     "husky": "^9.1.1",
     "npm-run-all2": "^6.2.2",
-    "release-it": "^17.6.0",
+    "release-it": "^20.2.0",
     "rimraf": "^6.0.1",
     "tsx": "^4.16.2",
     "typedoc": "^0.26.4",
