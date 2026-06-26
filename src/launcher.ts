@@ -398,9 +398,15 @@ export default class VSCodeServiceLauncher {
                 'report',
                 '--temp-directory', this._coverageTempDir,
                 '--reports-dir', reportsDir,
+                '--exclude-after-remap',
                 ...reporters.flatMap((r) => ['--reporter', r])
             ]
 
+            if (this._coverageOptions.sourceDirectories) {
+                for (const dir of this._coverageOptions.sourceDirectories) {
+                    c8Args.push('--src', dir)
+                }
+            }
             if (this._coverageOptions.include) {
                 for (const pattern of this._coverageOptions.include) {
                     c8Args.push('--include', pattern)

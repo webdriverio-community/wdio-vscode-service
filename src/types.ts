@@ -76,8 +76,13 @@ export interface CoverageOptions {
      */
     reportsDirectory?: string
     /**
+     * Source directories for resolving source maps.
+     * Passed as --src to c8 so coverage maps back to original source.
+     */
+    sourceDirectories?: string[]
+    /**
      * Glob patterns for files to include in coverage.
-     * @example ['dist/**']
+     * When using source maps, specify source paths (not dist).
      */
     include?: string[]
     /**
