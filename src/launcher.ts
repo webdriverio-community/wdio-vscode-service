@@ -397,7 +397,7 @@ export default class VSCodeServiceLauncher {
                 'report',
                 '--temp-directory', this._coverageTempDir,
                 '--reports-dir', reportsDir,
-                ...reporters.flatMap((r) => ['--reporter', r]),
+                ...reporters.flatMap((r) => ['--reporter', r])
             ]
 
             if (this._coverageOptions.include) {
@@ -414,12 +414,19 @@ export default class VSCodeServiceLauncher {
             log.info(`Generating coverage reports: ${reporters.join(', ')}`)
             const c8Bin = path.resolve(
                 path.dirname(new URL(import.meta.url).pathname),
-                '..', 'node_modules', '.bin', 'c8'
+                '..',
+                'node_modules',
+                '.bin',
+                'c8'
             )
-            execFileSync(c8Bin, c8Args, {
-                cwd: process.cwd(),
-                stdio: 'inherit',
-            })
+            execFileSync(
+                c8Bin,
+                c8Args,
+                {
+                    cwd: process.cwd(),
+                    stdio: 'inherit'
+                }
+            )
             log.info(`Coverage reports written to ${reportsDir}`)
         } catch (err: any) {
             log.error(`Coverage report generation failed: ${err.message}`)
