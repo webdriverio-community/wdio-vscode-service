@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { format } from 'node:util'
+import { execFileSync } from 'node:child_process'
 
 import downloadBundle, { DownloadOptions } from '@xhmikosr/downloader'
 import logger from '@wdio/logger'
@@ -18,7 +19,7 @@ import {
 } from './constants.js'
 import type {
     ServiceOptions, VSCodeCapabilities, WebStandaloneResponse,
-    Bundle
+    Bundle, CoverageOptions
 } from './types.js'
 
 interface BundleInformation {
@@ -60,12 +61,22 @@ const log = logger('wdio-vscode-service/launcher')
 export default class VSCodeServiceLauncher {
     private _cachePath: string
     private _vscodeServerPort?: number
+    private _coverageOptions?: CoverageOptions
+    private _coverageTempDir?: string
 
     constructor (private _options: ServiceOptions) {
         this._cachePath = this._options.cachePath || DEFAULT_CACHE_PATH
+        this._coverageOptions = this._options.coverage
     }
 
     async onPrepare (_: never, capabilities: Capabilities.TestrunnerCapabilities) {
+        if (this._coverageOptions?.enabled) {
+            const tmpDir = path.resolve(process.cwd(), '.wdio-v8-coverage')
+            await fs.mkdir(tmpDir, { recursive: true })
+            this._coverageTempDir = tmpDir
+            process.env.NODE_V8_COVERAGE = tmpDir
+            log.info(`V8 coverage enabled, collecting to ${tmpDir}`)
+        }
         const caps: VSCodeCapabilities[] = Array.isArray(capabilities)
             ? capabilities.map((c) => ((c as Capabilities.W3CCapabilities).alwaysMatch || c) as VSCodeCapabilities)
             : Object.values(capabilities).map((c) => (c as any).capabilities as VSCodeCapabilities)
@@ -362,5 +373,56 @@ export default class VSCodeServiceLauncher {
             JSON.stringify({ ...content, ...newContent }, null, 4),
             'utf-8'
         )
+    }
+
+    async onComplete () {
+        if (!this._coverageOptions?.enabled || !this._coverageTempDir) {
+            return
+        }
+
+        const reportsDir = path.resolve(
+            process.cwd(),
+            this._coverageOptions.reportsDirectory || './coverage/wdio'
+        )
+        const reporters = this._coverageOptions.reporter || ['lcov', 'text']
+
+        try {
+            const entries = await fs.readdir(this._coverageTempDir)
+            if (entries.length === 0) {
+                log.warn('No V8 coverage data found; skipping report generation')
+                return
+            }
+
+            const c8Args = [
+                'report',
+                '--temp-directory', this._coverageTempDir,
+                '--reports-dir', reportsDir,
+                ...reporters.flatMap((r) => ['--reporter', r]),
+            ]
+
+            if (this._coverageOptions.include) {
+                for (const pattern of this._coverageOptions.include) {
+                    c8Args.push('--include', pattern)
+                }
+            }
+            if (this._coverageOptions.exclude) {
+                for (const pattern of this._coverageOptions.exclude) {
+                    c8Args.push('--exclude', pattern)
+                }
+            }
+
+            log.info(`Generating coverage reports: ${reporters.join(', ')}`)
+            const c8Bin = path.resolve(
+                path.dirname(new URL(import.meta.url).pathname),
+                '..', 'node_modules', '.bin', 'c8'
+            )
+            execFileSync(c8Bin, c8Args, {
+                cwd: process.cwd(),
+                stdio: 'inherit',
+            })
+            log.info(`Coverage reports written to ${reportsDir}`)
+        } catch (err: any) {
+            log.error(`Coverage report generation failed: ${err.message}`)
+        }
     }
 }

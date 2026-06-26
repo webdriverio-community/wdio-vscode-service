@@ -55,6 +55,38 @@ export interface ServerOptions {
 export type ArgsParams = Record<string, string | string[] | boolean>
 
 /**
+ * V8 code coverage options for VS Code extension testing.
+ * When enabled, the service collects V8 coverage from the extension
+ * host process and converts it to standard report formats.
+ */
+export interface CoverageOptions {
+    /**
+     * Enable V8 code coverage collection.
+     * @default false
+     */
+    enabled: boolean
+    /**
+     * Coverage report formats to generate (passed to c8).
+     * @default ['lcov', 'text']
+     */
+    reporter?: string[]
+    /**
+     * Directory for coverage reports.
+     * @default './coverage/wdio'
+     */
+    reportsDirectory?: string
+    /**
+     * Glob patterns for files to include in coverage.
+     * @example ['dist/**']
+     */
+    include?: string[]
+    /**
+     * Glob patterns for files to exclude from coverage.
+     */
+    exclude?: string[]
+}
+
+/**
  * wdio-vscode-service options
  */
 export interface ServiceOptions {
@@ -62,6 +94,11 @@ export interface ServiceOptions {
      * Define a cache path to avoid re-downloading VS Code bundles
      */
     cachePath?: string
+    /**
+     * V8 code coverage configuration.
+     * Collects coverage from the VS Code extension host process.
+     */
+    coverage?: CoverageOptions
 }
 
 export interface BundleInformation {

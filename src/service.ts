@@ -18,8 +18,8 @@ import {
     SETTINGS_KEY, VSCODE_CAPABILITY_KEY, DEFAULT_VSCODE_WEB_PORT
 } from './constants.js'
 import type {
-    VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
-    PendingMessageResolver, VSCodeProxyOptions, VSCodeOptions
+    ServiceOptions, VSCodeCapabilities, WDIOLogs, ArgsParams, RemoteCommand, RemoteResponse,
+    PendingMessageResolver, VSCodeProxyOptions, VSCodeOptions, CoverageOptions
 } from './types.js'
 
 const log = logger('wdio-vscode-service')
@@ -32,13 +32,15 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     private _promisedSocket?: Promise<WebSocket>
     private _proxyOptions: VSCodeProxyOptions
     private _vscodeOptions: VSCodeOptions
+    private _coverageOptions?: CoverageOptions
     private _isWebSession = false
     private _isCucumberSession = false
     private _deletingSession = false
 
-    constructor (_: never, private _capabilities: VSCodeCapabilities) {
+    constructor (options: ServiceOptions, private _capabilities: VSCodeCapabilities) {
         this._vscodeOptions = this._capabilities[VSCODE_CAPABILITY_KEY] || <VSCodeOptions>{}
         this._proxyOptions = { ...DEFAULT_PROXY_OPTIONS, ...this._vscodeOptions.vscodeProxyOptions }
+        this._coverageOptions = options?.coverage
     }
 
     private _handleIncoming (data: Buffer) {
@@ -237,12 +239,35 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
     }
 
+    async afterTest () {
+        if (!this._coverageOptions?.enabled || !this._browser || !this._promisedSocket) {
+            return
+        }
+        try {
+            await this._executeVSCode("() => require('v8').takeCoverage()")
+        } catch (err: any) {
+            log.warn(`Failed to flush V8 coverage after test: ${err.message}`)
+        }
+    }
+
     async after () {
+        if (this._coverageOptions?.enabled && this._browser && this._promisedSocket) {
+            try {
+                await this._executeVSCode("() => require('v8').takeCoverage()")
+                log.info('Final V8 coverage flush completed')
+            } catch (err: any) {
+                log.warn(`Failed to flush V8 coverage in after hook: ${err.message}`)
+            }
+        }
+
         if (
             !isVSCodeCapability(this._capabilities)
             || !this._browser
             || !this._capabilities[VSCODE_CAPABILITY_KEY]?.verboseLogging
         ) {
+            if (this._wss) {
+                this._wss.close()
+            }
             return
         }
 
@@ -252,6 +277,9 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         )
 
         if (logs instanceof Error) {
+            if (this._wss) {
+                this._wss.close()
+            }
             return
         }
 
