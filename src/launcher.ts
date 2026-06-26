@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { format } from 'node:util'
 import { execFileSync } from 'node:child_process'
@@ -412,16 +413,15 @@ export default class VSCodeServiceLauncher {
             }
 
             log.info(`Generating coverage reports: ${reporters.join(', ')}`)
-            const c8Bin = path.resolve(
-                path.dirname(new URL(import.meta.url).pathname),
-                '..',
-                'node_modules',
-                '.bin',
-                'c8'
+            const ownRequire = createRequire(import.meta.url)
+            const c8Main = path.join(
+                path.dirname(ownRequire.resolve('c8/package.json')),
+                'bin',
+                'c8.js'
             )
             execFileSync(
-                c8Bin,
-                c8Args,
+                process.execPath,
+                [c8Main, ...c8Args],
                 {
                     cwd: process.cwd(),
                     stdio: 'inherit'

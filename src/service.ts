@@ -244,7 +244,9 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
             return
         }
         try {
-            await this._executeVSCode("() => require('v8').takeCoverage()")
+            await this._executeVSCode(
+                "async () => { const v8 = await import('node:v8'); v8.takeCoverage(); }"
+            )
         } catch (err: any) {
             log.warn(`Failed to flush V8 coverage after test: ${err.message}`)
         }
@@ -253,7 +255,9 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
     async after () {
         if (this._coverageOptions?.enabled && this._browser && this._promisedSocket) {
             try {
-                await this._executeVSCode("() => require('v8').takeCoverage()")
+                await this._executeVSCode(
+                    "async () => { const v8 = await import('node:v8'); v8.takeCoverage(); }"
+                )
                 log.info('Final V8 coverage flush completed')
             } catch (err: any) {
                 log.warn(`Failed to flush V8 coverage in after hook: ${err.message}`)
