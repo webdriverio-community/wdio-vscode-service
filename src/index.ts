@@ -4,6 +4,7 @@ import type { WDIOVSCodeServiceOptions as WDIOVSCodeServiceOptionsExtension } fr
 
 export default VSCodeWorkerService
 export const launcher = VSCodeServiceLauncher
+export type { CoverageOptions, ServiceOptions } from './types.js'
 
 export * from './pageobjects/index.js'
 
