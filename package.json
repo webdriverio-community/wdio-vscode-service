@@ -28,7 +28,7 @@
     "build": "run-s build:*",
     "build:ts": "tsc -b .",
     "build:compile": "pkg --target node18-win --out-path ./dist/chromium ./dist/chromium/index.js",
-    "build:chmod": "chmod +x ./dist/chromium/index.js",
+    "build:chmod": "node -e \"try{require('fs').chmodSync('./dist/chromium/index.js',0o755)}catch{}\"",
     "ci": "run-s test:lint build test",
     "clean": "rimraf ./node_modules ./dist",
     "docs": "typedoc",
