@@ -290,7 +290,7 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
         return reply.send(template)
     })
 
-    await app.listen(port)
+    await app.listen({ port })
     log.info(`VSCode server started on port ${port}`)
     return port
 }
