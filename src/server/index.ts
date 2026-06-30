@@ -228,17 +228,17 @@ export default async function startServer (standalone: Bundle, options: VSCodeOp
      * Workbench
      */
     app.get('/callback', async (req, reply) => {
-        const host = `${req.protocol}://${req.hostname || DEFAULT_VSCODE_WEB_HOSTNAME}:${port}`
+        const host = `${req.protocol}://${req.host || `${DEFAULT_VSCODE_WEB_HOSTNAME}:${port}`}`
         const cbUrl = `${host}/${req.url}/out/vs/code/browser/workbench/callback.html`
         const { body } = await request(cbUrl, {})
         await reply.send(body)
     })
 
     app.get('/', async (req, reply) => {
-        const hostname = req.hostname || DEFAULT_VSCODE_WEB_HOSTNAME
-        const host = `${req.protocol}://${hostname}`
+        const hostWithPort = req.host || `${DEFAULT_VSCODE_WEB_HOSTNAME}:${port}`
+        const host = `${req.protocol}://${hostWithPort}`
         const webConfiguration = await getWorkbenchOptions(
-            { protocol: req.protocol, host: hostname },
+            { protocol: req.protocol, host: hostWithPort },
             {
                 /**
                  * modify when support additional extension
