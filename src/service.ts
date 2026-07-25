@@ -158,9 +158,18 @@ export default class VSCodeWorkerService implements Services.ServiceInstance {
         }
 
         const binary = path.join(__dirname, 'chromium', `index.${process.platform === 'win32' ? 'exe' : 'js'}`)
+        /**
+         * VS Code's CLI parser recognises most switches in kebab-case, but
+         * extensionDevelopmentPath and extensionTestsPath are camelCase-only —
+         * no kebab variants exist in VS Code's argv table. Decamelizing them
+         * produces a switch VS Code silently ignores, so the dev extension never
+         * loads and executeWorkbench() hangs waiting for a proxy connection that
+         * can never be established. Preserve their original casing.
+         */
+        const CAMEL_CASE_ONLY_KEYS = new Set(['extensionDevelopmentPath', 'extensionTestsPath'])
         const args = Object.entries({ ...customArgs, ...this._vscodeOptions.vscodeArgs }).reduce(
             (prev, [key, value]) => {
-                const decamelizedKey = decamelize(key, { separator: '-' })
+                const decamelizedKey = CAMEL_CASE_ONLY_KEYS.has(key) ? key : decamelize(key, { separator: '-' })
                 if (Array.isArray(value)) {
                     const expandedArgs = value.map(
                         (val) => `--${decamelizedKey}${getValueSuffix(val)}`
