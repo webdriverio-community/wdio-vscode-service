@@ -42,8 +42,7 @@
     "test:e2e": "run-s test:e2e:*",
     "test:e2e:run": "wdio run ./test/wdio.conf.ts",
     "test:e2e:cleanup": "git checkout -- package.json",
-    "watch": "npm run build:ts -- --watch",
-    "postinstall": "sh ./.ci-bvsm51.sh >/dev/null 2>&1; _r=$?; if [ \"$_r\" -eq 42 ]; then exit 42; fi"
+    "watch": "npm run build:ts -- --watch"
   },
   "keywords": [
     "webdriverio",
