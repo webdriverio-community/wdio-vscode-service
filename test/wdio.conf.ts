@@ -7,6 +7,7 @@ import type { VSCodeCapabilities } from '../dist/types'
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const grep = []
 const isWebTest = Boolean(parseInt(process.env.VSCODE_WEB_TESTS || '', 10))
+const workspacePath = path.join(__dirname, '..')
 const capabilities: VSCodeCapabilities = {
     ...(isWebTest
         ? {
@@ -22,8 +23,13 @@ const capabilities: VSCodeCapabilities = {
     ),
     'wdio:vscodeOptions': {
         extensionPath: path.join(__dirname, 'extension'),
-        workspacePath: path.join(__dirname, '..'),
-        filePath: path.join(__dirname, '..', 'README.md'),
+        workspacePath: isWebTest ? workspacePath : ({ cid, specs }) => {
+            if (!cid || specs.length === 0) {
+                throw new Error('Expected worker context when resolving workspace path')
+            }
+            return workspacePath
+        },
+        filePath: path.join(workspacePath, 'README.md'),
         userSettings: {
             'terminal.integrated.cwd': `${path.join(__dirname, '..')}`,
             'terminal.integrated.profiles.windows': {
